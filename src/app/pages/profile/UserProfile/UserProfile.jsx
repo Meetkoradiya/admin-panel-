@@ -6,31 +6,41 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
-import { Skeleton } from "primereact/skeleton";
 import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
-import { login, logout } from "../../../../redux/slice/AuthSlice";
+import { InputSwitch } from "primereact/inputswitch";
+import { Password } from "primereact/password";
+import { classNames } from "primereact/utils";
 
 const UserProfile = () => {
   const toast = useRef(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
-  const AdminToken = useSelector((state) => state.auth.token);
-  const userId = useSelector((state) => state.auth.userData.userId);
   const auth = useSelector((state) => state.auth);
-  const [errors, setErrors] = useState({});
+
+  // States
+  const [activeTab, setActiveTab] = useState("profile");
   const [isLoading, setIsLoading] = useState(false);
-  const [profile, setProfile] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [profile, setProfile] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState("");
 
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    mobileNumber: "",
-    gender: "",
+    username: auth.userData?.username || "",
+    mobileNumber: auth.userData?.mobileNumber || "",
+    email: auth.userData?.email || "",
+    gender: auth.userData?.gender || "",
+  });
+
+  const [securityData, setSecurityData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [notifConfig, setNotifConfig] = useState({
+    emailNotif: true,
+    orderUpdates: true,
+    newsletters: false,
   });
 
   const genderType = [
@@ -39,451 +49,167 @@ const UserProfile = () => {
     { name: "Other", code: "Other" },
   ];
 
-  useEffect(() => {
-    fetchUserData();
-    fetchProfilePicture();
-  }, []);
-
-  const fetchUserData = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${AdminToken}`,
-      },
-    };
-
-    axios
-      .get(`API_URL`, config)
-      .then((response) => {
-        const user = response.data.data || {};
-        setFormData({
-          username: user.username || "Admin user",
-          email: user.email || "admin@gmail.com",
-          mobileNumber: user.mobileNumber || "1234567890",
-          gender: user.gender || "Male",
-        });
-      })
-      .catch((error) => {
-        if (error?.response?.status === 401) {
-          toast.current.show({
-            severity: "warn",
-            detail: "Session expired. Please log in again.",
-            life: 1500,
-          });
-
-          setTimeout(() => {
-            dispatch(logout());
-            navigate("/login");
-          }, 1500);
-        } else if (error?.response?.status === 400) {
-          toast.current.show({
-            severity: "error",
-            detail: error.response.data.message || "Invalid credintials !",
-            life: 1500,
-          });
-        } else if (error?.response?.status === 500) {
-          toast.current.show({
-            severity: "warn",
-            detail: "Internet connection lost. Check your network.",
-            life: 2000,
-          });
-        } else {
-          toast.current?.show({
-            severity: "error",
-            detail: "Something went wrong ! login again.",
-            life: 2000,
-          });
-        }
-      });
-  };
-
-  const fetchProfilePicture = () => {
-    setIsLoading(true);
-
-    axios
-      .get(`API_URL`, {
-        headers: {
-          Authorization: `Bearer ${AdminToken}`,
-        },
-        responseType: "blob",
-      })
-      .then((response) => {
-        setProfile("/images/User.webp");
-      })
-      .catch((error) => {
-        setProfile("/images/User.webp");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    Object.entries(formData).forEach(([key, value]) => {
-      const err = validateField(key, value);
-      if (err) newErrors[key] = err;
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const validateField = (name, value) => {
-    if (["username", "email", "gender"].includes(name) && !value?.trim()) {
-      return `${name.charAt(0).toUpperCase() + name.slice(1)} is required.`;
-    }
-
-    if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return "Invalid email format.";
-    }
-
-    if (name === "mobileNumber" && !value.trim()) {
-      return "Mobile number is required.";
-    }
-
-    if (name === "mobileNumber" && !/^\d{10}$/.test(value)) {
-      return "Mobile number must be 10 digits.";
-    }
-
-    return "";
-  };
+  const sidebarItems = [
+    { id: "profile", label: "Profile", icon: "pi pi-user" },
+    { id: "security", label: "Security", icon: "pi pi-lock" },
+    { id: "notification", label: "Notification", icon: "pi pi-bell" },
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validateField(name, value),
-    }));
   };
 
-  const handleFileSelect = (e) => {
-    const file = e.files?.[0];
-    if (file) {
-      setImageFile(file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const updateUserData = () => {
-    if (!validateForm()) return;
-    setIsLoading(true);
-    const payload = {
-      username: formData.username,
-      email: formData.email,
-      mobileNumber: formData.mobileNumber,
-      gender: formData.gender,
-    };
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${AdminToken}`,
-      },
-    };
-
-    axios
-      .put(`API_URL`, payload, config)
-      .then(() => {
-        dispatch(
-          login({
-            token: AdminToken,
-            refreshToken: auth.refreshToken,
-            expires_at: auth.expires_at,
-            time: auth.time,
-            userData: {
-              ...auth.userData,
-              ...payload,
-            },
-          }),
-        );
-
-        toast.current.show({
-          severity: "success",
-          detail: "User Updated Successfully.",
-          life: 1500,
-        });
-
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        if (error.response) {
-          const status = error?.response?.status;
-
-          if (status === 400) {
-            toast.current.show({
-              severity: "error",
-              detail: error.response.data.message || "User not updated.",
-              life: 2000,
-            });
-          } else if (status === 401) {
-            toast.current.show({
-              severity: "warn",
-              detail: "Session expired. Please log in again.",
-              life: 2000,
-            });
-
-            setTimeout(() => {
-              dispatch(logout());
-              navigate("/login");
-            }, 1500);
-          } else {
-            toast.current?.show({
-              severity: "error",
-              detail: "Something went wrong ! login again.",
-              life: 2500,
-            });
-          }
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const handleProfileImageUpload = async () => {
-    if (!imageFile) return;
-
-    const payload = new FormData();
-    if (imageFile) {
-      payload.append("image", imageFile);
-    }
-
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${AdminToken}`,
-        },
-      };
-
-      await axios.put(`API_URL`, payload, config);
-
-      toast.current.show({
-        severity: "success",
-        detail: "Profile image updated.",
-        life: 1000,
-      });
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (error) {
-      toast.current.show({
-        severity: "error",
-        detail: "Upload failed. Try again.",
-        life: 2000,
-      });
-    }
+  const handleSecurityChange = (e) => {
+    const { name, value } = e.target;
+    setSecurityData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <>
+    <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
       <Toast ref={toast} />
-      <div className="card justify-content-between align-items-center mb-3 flex">
-        <div className="text-lg font-bold">Acoount prefrences</div>
-        <div
-          className="border-round cursor-pointer p-1 transition-colors hover:bg-gray-200"
-          onClick={() => navigate("/")}
-        >
-          <i className="pi pi-list" style={{ fontSize: "1.3rem" }} />
+
+      <div className="max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Settings</h1>
         </div>
-      </div>
 
-      <div className="grid">
-        <div className="col-12">
-          <div className="card p-fluid">
-            <div>
-              <p className="text-sm font-bold text-(--primary-color)">
-                Admin Details
-              </p>
-            </div>
-            <hr />
-
-            <div className="align-items-center flex px-2 py-3">
-              <div className="align-items-center flex gap-3">
-                {isLoading ? (
-                  <Skeleton shape="circle" size="5rem" />
-                ) : (
-                  <img
-                    src={profile || "/images/User.webp"}
-                    alt=""
-                    className="mb-2 h-20 w-20 rounded-full border border-[#d1d1d1] object-cover select-none"
-                  />
-                )}
-              </div>
-
-              <div className="align-items-center flex w-full flex-wrap justify-between px-3">
-                <div className="flex flex-col">
-                  <span className="font-bold">Profile Picture</span>
-                  <span className="text-xs text-[#a4a4a4]">
-                    JPG, PNG under 3MB
-                  </span>
-                </div>
-                <div>
-                  <span
-                    className="cursor-pointer text-sm font-bold text-(--primary-color) underline"
-                    onClick={() => setShowDialog(true)}
+        <div className="grid grid-cols-12 gap-6">
+          {/* SIDEBAR NAVIGATION */}
+          <div className="col-span-12 lg:col-span-3">
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 sticky top-24">
+              <nav className="flex flex-col gap-2">
+                {sidebarItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={classNames(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 text-left",
+                      {
+                        "bg-blue-50 text-blue-600 shadow-sm": activeTab === item.id,
+                        "text-gray-500 hover:bg-gray-50": activeTab !== item.id,
+                      }
+                    )}
                   >
-                    Update Profile
-                  </span>
+                    <i className={classNames(item.icon, "text-lg")}></i>
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </div>
+
+          {/* MAIN CONTENT AREA */}
+          <div className="col-span-12 lg:col-span-9">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
+              
+              {/* PROFILE TAB */}
+              {activeTab === "profile" && (
+                <div className="animate-fadein">
+                  <h2 className="text-xl font-bold text-gray-800 mb-8 tracking-tight">Personal information</h2>
+                  
+                  <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
+                    <div className="relative">
+                      <img src={profile || "/images/User.webp"} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-gray-50 shadow-sm" />
+                    </div>
+                    <div className="flex gap-3">
+                      <Button label="Upload New" className="p-button-sm rounded-lg bg-blue-600 border-none px-4 font-bold" onClick={() => setShowDialog(true)} />
+                      <Button label="Remove" className="p-button-sm p-button-outlined p-button-secondary rounded-lg px-4" onClick={() => {setProfile(""); setImageFile(null);}} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-fluid">
+                    <div className="field">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Full Name</label>
+                      <InputText name="username" value={formData.username} onChange={handleInputChange} className="p-3 bg-gray-50 border-none rounded-xl font-semibold" />
+                    </div>
+                    <div className="field">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Mobile Number</label>
+                      <InputText name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} className="p-3 bg-gray-50 border-none rounded-xl font-semibold" />
+                    </div>
+                    <div className="col-span-full field">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Email Address</label>
+                      <InputText name="email" value={formData.email} onChange={handleInputChange} className="p-3 bg-gray-50 border-none rounded-xl font-semibold" />
+                    </div>
+
+                    {/* Gender Dropdown Added Back */}
+                    <div className="field">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Gender</label>
+                      <Dropdown 
+                        value={genderType.find(g => g.code === formData.gender)} 
+                        options={genderType} 
+                        onChange={(e) => setFormData({...formData, gender: e.value.code})} 
+                        optionLabel="name" 
+                        placeholder="Select Gender"
+                        className="bg-gray-50 border-none rounded-xl h-12 flex items-center font-semibold" 
+                      />
+                    </div>
+                  </div>
                 </div>
+              )}
+
+              {/* SECURITY TAB */}
+              {activeTab === "security" && (
+                <div className="animate-fadein">
+                  <div className="mb-8">
+                    <h2 className="text-xl font-bold text-gray-800 mb-1">Password</h2>
+                    <p className="text-gray-500 text-sm">Keep your account safe with a strong password.</p>
+                  </div>
+                  <div className="flex flex-col gap-6 p-fluid">
+                    <div className="field">
+                      <label className="text-sm font-semibold text-gray-700 mb-2 block">Current password</label>
+                      <Password name="currentPassword" value={securityData.currentPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full" />
+                    </div>
+                    <div className="field">
+                      <label className="text-sm font-semibold text-gray-700 mb-2 block">New password</label>
+                      <Password name="newPassword" value={securityData.newPassword} onChange={handleSecurityChange} toggleMask inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full"  />
+                    </div>
+                    <div className="field">
+                      <label className="text-sm font-semibold text-gray-700 mb-2 block">Confirm new password</label>
+                      <Password name="confirmPassword" value={securityData.confirmPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full"  />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* NOTIFICATION TAB */}
+              {activeTab === "notification" && (
+                <div className="animate-fadein">
+                  <h2 className="text-xl font-bold text-gray-800 mb-8">Notification Preferences</h2>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl">
+                      <div>
+                        <p className="font-bold text-gray-800">Order Updates</p>
+                        <p className="text-xs text-gray-500">Updates about your delivery status.</p>
+                      </div>
+                      <InputSwitch checked={notifConfig.orderUpdates} onChange={(e) => setNotifConfig({...notifConfig, orderUpdates: e.value})} />
+                    </div>
+                    <div className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl">
+                      <div>
+                        <p className="font-bold text-gray-800">Email Alerts</p>
+                        <p className="text-xs text-gray-500">Security and account alerts.</p>
+                      </div>
+                      <InputSwitch checked={notifConfig.emailNotif} onChange={(e) => setNotifConfig({...notifConfig, emailNotif: e.value})} />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end mt-12 pt-6 border-t border-gray-100">
+                <Button label="Save Changes" loading={isLoading} className="bg-blue-600 border-none px-10 py-3 rounded-xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700" />
               </div>
-            </div>
 
-            <div className="flex flex-col">
-              <p className="text-sm font-bold">Personal Details</p>
-            </div>
-            <hr />
-
-            <div className="card-data flex-wrap justify-between md:flex">
-              <div className="field col-12 md:col-6">
-                <label htmlFor="username">Name</label>
-                <InputText
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={formData.username ?? ""}
-                  onChange={handleInputChange}
-                />
-                {errors.name && (
-                  <small className="p-error block">{errors.name}</small>
-                )}
-              </div>
-
-              <div className="field col-12 md:col-6">
-                <label htmlFor="email">Email</label>
-                <InputText
-                  id="email"
-                  name="email"
-                  type="text"
-                  value={formData.email ?? ""}
-                  onChange={handleInputChange}
-                />
-                {errors.email && (
-                  <small className="p-error block">{errors.email}</small>
-                )}
-              </div>
-
-              <div className="field col-12 md:col-6">
-                <label htmlFor="mobileNumber">Mobile Number</label>
-                <InputText
-                  id="mobileNumber"
-                  name="mobileNumber"
-                  type="text"
-                  maxLength={10}
-                  value={formData.mobileNumber ?? ""}
-                  onChange={handleInputChange}
-                />
-                {errors.mobileNumber && (
-                  <small className="p-error block">{errors.mobileNumber}</small>
-                )}
-              </div>
-
-              <div className="field col-12 md:col-6">
-                <label>Gender</label>
-                <Dropdown
-                  value={
-                    genderType.find((g) => g.code === formData.gender) ?? null
-                  }
-                  options={genderType}
-                  onChange={(e) => {
-                    const selectedGender = e.value?.code || "";
-                    setFormData((prev) => ({
-                      ...prev,
-                      gender: selectedGender,
-                    }));
-                    setErrors((prev) => ({
-                      ...prev,
-                      gender: selectedGender ? "" : "Gender is required.",
-                    }));
-                  }}
-                  optionLabel="name"
-                  placeholder="Select Type"
-                  showClear
-                />
-                {errors.gender && (
-                  <small className="p-error block">{errors.gender}</small>
-                )}
-              </div>
-            </div>
-
-            <div className="submit-btn col-12 mt-3 flex justify-center md:justify-end">
-              <Button
-                type="submit"
-                className="col-8 flex items-center justify-center text-sm md:col-3"
-                onClick={updateUserData}
-                disabled={isLoading}
-                loading={isLoading}
-                icon="pi pi-user"
-              >
-                Update Profile
-              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <Dialog
-        header="Update Profile Picture"
-        visible={showDialog}
-        style={{ width: "25rem" }}
-        breakpoints={{
-          "960px": "50vw",
-          "640px": "95vw",
-        }}
-        onHide={() => {
-          setShowDialog(false);
-          setImageFile(null);
-          setPreviewImage("");
-        }}
-      >
-        <div className="flex flex-col gap-3">
-          <FileUpload
-            mode="basic"
-            customUpload
-            auto
-            accept=".jpg,.jpeg,.png,.webp"
-            maxFileSize={3 * 1024 * 1024}
-            uploadHandler={handleFileSelect}
-            chooseLabel="Choose Image"
-          />
-
-          {previewImage && (
-            <img
-              src={previewImage}
-              alt="Preview"
-              className="w-8rem h-8rem border-round mx-auto object-cover"
-            />
-          )}
-
-          <div className="mt-3 flex justify-between gap-2">
-            <Button
-              label="Cancel"
-              className="p-button-rounded h-6 p-3 text-sm"
-              severity="secondary"
-              onClick={() => {
-                setShowDialog(false);
-                setImageFile(null);
-                setPreviewImage("");
-              }}
-            />
-            <Button
-              label="Update"
-              className="p-button-rounded h-6 p-3 text-sm"
-              icon="pi pi-check"
-              disabled={!imageFile}
-              onClick={handleProfileImageUpload}
-            />
-          </div>
+      <Dialog header="Update Avatar" visible={showDialog} style={{ width: "25rem" }} onHide={() => setShowDialog(false)} className="rounded-3xl">
+        <div className="flex flex-col items-center gap-4 py-4">
+          <FileUpload mode="basic" auto customUpload uploadHandler={(e) => { /* handle upload */ setShowDialog(false); }} accept="image/*" chooseLabel="Select Image" className="p-button-rounded bg-blue-50 text-blue-600 border-none" />
         </div>
       </Dialog>
-    </>
+    </div>
   );
 };
 

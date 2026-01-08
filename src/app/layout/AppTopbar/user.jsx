@@ -60,7 +60,7 @@ export const User = () => {
             type="button"
             onClick={() => {
               op.current.hide();
-              navigate("/user");
+              navigate("/master/profile");
             }}
             className="cursor-pointer"
           >
@@ -93,7 +93,7 @@ export const User = () => {
               className="p-link layout-topbar-button"
               onClick={() => {
                 op.current.hide();
-                navigate("/user");
+                navigate("/master/profile");
               }}
             >
               <i className="pi pi-user mr-2"></i>
