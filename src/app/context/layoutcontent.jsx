@@ -1,0 +1,94 @@
+import React, { useState, createContext } from "react";
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const LayoutContext = createContext({
+  layoutConfig: {
+    ripple: false,
+    inputStyle: "filled",
+    menuMode: "static",
+    colorScheme: "light",
+    theme: "lara-light-cyan",
+    scale: 14,
+  },
+  setLayoutConfig: () => {}, // Default to a no-op function
+  layoutState: {
+    staticMenuDesktopInactive: false,
+    overlayMenuActive: false,
+    profileSidebarVisible: false,
+    configSidebarVisible: false,
+    staticMenuMobileActive: false,
+    menuHoverActive: false,
+  },
+  setLayoutState: (prevLayoutState) => {}, // Default to a no-op function
+  onMenuToggle: () => {}, // Default to a no-op function
+  showProfileSidebar: (prevLayoutState) => {}, // Default to a no-op function
+});
+
+export const LayoutProvider = ({ children }) => {
+  const [layoutConfig, setLayoutConfig] = useState({
+    ripple: false,
+    inputStyle: "filled",
+    menuMode: "static",
+    colorScheme: "light",
+    theme: "lara-light-cyan",
+    scale: 14,
+  });
+
+  const [layoutState, setLayoutState] = useState({
+    staticMenuDesktopInactive: false,
+    overlayMenuActive: false,
+    profileSidebarVisible: false,
+    configSidebarVisible: false,
+    staticMenuMobileActive: false,
+    menuHoverActive: false,
+  });
+
+  const onMenuToggle = () => {
+    if (isOverlay()) {
+      setLayoutState((prevLayoutState) => ({
+        ...prevLayoutState,
+        overlayMenuActive: !prevLayoutState.overlayMenuActive,
+      }));
+    }
+
+    if (isDesktop()) {
+      setLayoutState((prevLayoutState) => ({
+        ...prevLayoutState,
+        staticMenuDesktopInactive: !prevLayoutState.staticMenuDesktopInactive,
+      }));
+    } else {
+      setLayoutState((prevLayoutState) => ({
+        ...prevLayoutState,
+        staticMenuMobileActive: !prevLayoutState.staticMenuMobileActive,
+      }));
+    }
+  };
+
+  const showProfileSidebar = () => {
+    setLayoutState((prevLayoutState) => ({
+      ...prevLayoutState,
+      profileSidebarVisible: !prevLayoutState.profileSidebarVisible,
+    }));
+  };
+
+  const isOverlay = () => {
+    return layoutConfig.menuMode === "overlay";
+  };
+
+  const isDesktop = () => {
+    return window.innerWidth > 991;
+  };
+
+  const value = {
+    layoutConfig,
+    setLayoutConfig,
+    layoutState,
+    setLayoutState,
+    onMenuToggle,
+    showProfileSidebar,
+  };
+
+  return (
+    <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
+  );
+};

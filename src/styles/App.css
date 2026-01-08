@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+h2, .h2 {
+    font-size: var(--text-3xl);
+    /* line-height: var(--tw-leading, var(--text-3xl--line-height)); */
+    /* --tw-font-weight: var(--font-weight-bold); */
+    font-weight: var(--font-weight-bold);
+    color: var(--gray-900);
+}
+.form-label {
+    /* --tw-font-weight: var(--font-weight-semibold); */
+    font-weight: var(--font-weight-semibold);
+    align-items: center;
+    display: flex;
+}
+.form-item.vertical {
+    flex-direction: column;
+    display: flex;
+}
+
+.form-item {
+    margin-bottom: calc(var(--spacing) * 7);
+    position: relative;
+}
+
+@layer base {
+  @media (max-width: 1440px) {
+    html {
+      font-size: 99%;
+    }
+  }
+
+  @media (max-width: 1280px) {
+    html {
+      font-size: 98%;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    html {
+      font-size: 97%;
+    }
+  }
+
+  @media (max-width: 900px) {
+    html {
+      font-size: 96%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    html {
+      font-size: 95%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 94%;
+    }
+  }
+
+  @media (max-width: 540px) {
+    html {
+      font-size: 93%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    html {
+      font-size: 93%;
+    }
+  }
+
+  @media (max-width: 420px) {
+    html {
+      font-size: 92%;
+    }
+  }
+
+  @media (max-width: 375px) {
+    html {
+      font-size: 91%;
+    }
+  }
+
+  @media (max-width: 360px) {
+    html {
+      font-size: 90%;
+    }
+  }
+
+  @media (max-width: 340px) {
+    html {
+      font-size: 89%;
+    }
+  }
+
+  @media (max-width: 300px) {
+    html {
+      font-size: 88%;
+    }
+  }
+}
+
+* {
+  /* box-sizing: border-box; */
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 10px;
+    border: 2px solid #f0f0f0;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #939393;
+  }
+}
+
+.p-password {
+  display: block !important;
+  width: 100%;
+}

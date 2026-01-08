@@ -1,0 +1,19 @@
+@use "./_variables" as vars;
+
+.layout-footer {
+    transition: margin-left vars.$transitionDuration;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--surface-border);
+}
+
+.layout-footer-text {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  color: #555;
+  background: transparent;
+  position: relative;
+}
