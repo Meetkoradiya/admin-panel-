@@ -1,360 +1,193 @@
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
-import { Checkbox } from "primereact/checkbox";
 import { InputText } from "primereact/inputtext";
+import { Checkbox } from "primereact/checkbox";
 import { login } from "../../../redux/slice/AuthSlice";
-import AuthImage from "../../../assets/auth-side-bg.png";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
 
-  const passwordRef = useRef(null);
-  const signInButtonRef = useRef(null);
-
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
-  const [checked, setChecked] = useState(false);
   const [formData, setFormData] = useState({
     username: "admin@gmail.com",
     password: "admin@123",
   });
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+  /* ---------------- LOGIC ---------------- */
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validateField(name, value),
-    }));
-  };
-
-  const handleKeyDown = (e, field) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (field === "username" && passwordRef.current) {
-        passwordRef.current.focus();
-      } else if (field === "password" && signInButtonRef.current) {
-        signInButtonRef.current.click();
-      }
-    }
+    setFormData((p) => ({ ...p, [name]: value }));
+    setErrors((p) => ({ ...p, [name]: "" }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    Object.entries(formData).forEach(([key, value]) => {
-      const err = validateField(key, value);
-      if (err) newErrors[key] = err;
-    });
+    if (!formData.username) newErrors.username = "Username is required";
+    if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateField = (name, value) => {
-    if (name === "username" && !value.trim()) {
-      return "Username is required.";
-    }
-
-    if (name === "password" && !value.trim()) {
-      return "Password is required.";
-    }
-
-    return "";
-  };
-
   const handleLogin = () => {
     if (!validateForm()) return;
-
     setIsLoading(true);
 
-    // Simulate API call delay
     setTimeout(() => {
-      // --- DUMMY API RESPONSE ---
-      const dummyResponse = {
+      const response = {
         data: {
-          status: true,
-          message: "Login successful",
           data: {
-            admin: true,
-            role: "MASTER_ADMIN",
             masterAdmin: true,
-            token:
-              "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NzEyNzA1MTQ0IiwiaWF0IjoxNzU5ODE1MzE2LCJleHAiOjE3NTk4MTg5MTZ9.v04hsqhU6j9eJirRj1SDhrR-zFjqA-92gLomadGketI",
-            refreshToken:
-              "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NzEyNzA1MTQ0IiwiaWF0IjoxNzU5ODE1MzE2LCJleHAiOjE3NjA0MjAxMTZ9.l3CdV3KK5BmZSKgtpA0ESvu9MPH3QWDZDuuffo1tTYo",
-            userName: "Admin User",
+            role: "MASTER_ADMIN",
+            token: "token",
+            refreshToken: "refresh",
             email: formData.username,
           },
         },
       };
 
-      const response = dummyResponse;
+      dispatch(
+        login({
+          token: response.data.data.token,
+          refreshToken: response.data.data.refreshToken,
+          userData: response.data.data,
+        })
+      );
 
-      // --- Your existing logic reused ---
-      if (
-        response.data.data.masterAdmin === true &&
-        response.data.data.role === "MASTER_ADMIN"
-      ) {
-        dispatch(
-          login({
-            token: response?.data?.data?.token || "",
-            refreshToken: response?.data?.data?.refreshToken,
-            userData: response?.data?.data || {},
-          }),
-        );
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Login successful",
+        life: 2000,
+      });
 
-        sessionStorage.setItem("loginSuccess", "Logged in successfully");
-
-        toast.current.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Logged in successfully!",
-          life: 2000,
-        });
-
-        setTimeout(() => {
-          navigate("/master/dashboard"); // navigate to Master Dashboard
-        }, 1500);
-      } else if (
-        response.data.data?.masterAdmin === false &&
-        response.data.data?.role === "MASTER_ADMIN"
-      ) {
-        toast.current.show({
-          severity: "info",
-          detail: "Support approval is required before login.",
-          life: 2000,
-        });
-      } else if (response.data.data?.role === "ADMIN") {
-        dispatch(
-          login({
-            token: response?.data?.data?.token || "",
-            refreshToken: response?.data?.data?.refreshToken,
-            userData: response?.data?.data || {},
-          }),
-        );
-
-        sessionStorage.setItem("loginSuccess", "Logged in successfully");
-
-        toast.current.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Logged in successfully!",
-          life: 2000,
-        });
-
-        setTimeout(() => {
-          navigate("/admin/dashboard"); // navigate to Admin Dashboard
-        }, 1500);
-      } else if (
-        response.data.data?.admin === false &&
-        response.data.data?.role !== "ADMIN"
-      ) {
-        toast.current.show({
-          severity: "warn",
-          summary: "Access Denied",
-          detail: "You are not authorized to access the system.",
-          life: 2000,
-        });
-      } else {
-        toast.current.show({
-          severity: "error",
-          detail: "Server error, please try again later!",
-          life: 2000,
-        });
-      }
-
+      setTimeout(() => navigate("/master/dashboard"), 1200);
       setIsLoading(false);
-    }, 1200); // simulate ~1.2s API delay
+    }, 1000);
   };
 
+  /* ---------------- UI ---------------- */
+
   return (
-    <>
+    <div className="min-h-screen flex items-center justify-center bg-slate-100">
       <Toast ref={toast} />
 
-      <div className="flex h-screen flex-auto flex-col">
-        <div className="flex h-full bg-white p-6 dark:bg-gray-800">
-          <div className="flex flex-1 flex-col items-center justify-center">
-            <div className="w-full max-w-95 px-8 lg:max-w-112.5">
-              <div className="mb-8">
-                <div className="logo" style={{ width: "60px" }}>
-                  <img
-                    className="mx-auto"
-                    alt="Water logo"
-                    src="/img/logo/logo-light-streamline.png"
-                  />
-                </div>
+      <div className="flex w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden bg-white">
+
+        {/* LEFT – LOGIN FORM */}
+        <div
+          className="w-full lg:w-1/2 flex items-center justify-center px-10 bg-white"
+          style={{ marginRight: "-1px" }}   // 👈 WHITE GAP FIX
+        >
+          <div className="w-full max-w-md">
+
+            {/* Logo */}
+            <div className="flex items-center gap-3 mb-10">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500 flex items-center justify-center text-white text-xl">
+                💧
               </div>
-              <div className="mb-10">
-                <h2 className="mb-2">Welcome back!</h2>
-                <p className="heading-text font-semibold">
-                  Please enter your credentials to sign in!
-                </p>
-              </div>
-              <div>
-                <form onSubmit={handleLogin}>
-                  <div className="form-container vertical">
-                    <div className="form-item vertical">
-                      <label className="form-label mb-2">Username</label>
-                      <div className="">
-                        <InputText
-                          placeholder="Username"
-                          autoComplete="off"
-                          value={formData.username}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              username: e.target.value,
-                            })
-                          }
-                          name="username"
-                        />
-                      </div>
-                    </div>
-                    <div className="form-item vertical mb-0">
-                      <label className="form-label mb-2">Password</label>
-                      <div className="">
-                        <span className="input-wrapper">
-                          <Password
-                            placeholder="Password"
-                            autoComplete="off"
-                            value={formData.password}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                password: e.target.value,
-                              })
-                            }
-                            name="password"
-                            toggleMask
-                          />
-                          {/* <input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Password"
-                            autoComplete="off"
-                            value={formData.password}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                password: e.target.value,
-                              })
-                            }
-                            name="password"
-                            style={{ paddingRight: "2.25rem" }}
-                            className="p-inputtext p-component"
-                          />
-                          {showPassword ? (
-                            <span
-                              onClick={() => setShowPassword(false)}
-                              role={"button"}
-                              aria-label={"Hide password"}
-                              tabIndex={0}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") setShowPassword(false);
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                userSelect: "none",
-                                fontSize: "1.5rem",
-                              }}
-                            >
-                              Hide
-                            </span>
-                          ) : (
-                            <span
-                              onClick={() => setShowPassword(true)}
-                              role={"button"}
-                              aria-label={"Show password"}
-                              tabIndex={0}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") setShowPassword(true);
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                userSelect: "none",
-                                fontSize: "1.5rem",
-                              }}
-                            >
-                              Show
-                            </span>
-                          )} */}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-2 mb-7">
-                      <a
-                        href="/forgot-password"
-                        data-discover={true}
-                        className="heading-text mt-2 font-semibold underline"
-                      >
-                        Forgot password
-                      </a>
-                    </div>
-                    {isLoading ? (
-                      <>
-                        {/* Loading spinner */}
-                        {/* You can add a loading spinner here if needed */}
-                      </>
-                    ) : (
-                      <>
-                        {/* Submit button */}
-                        <Button
-                          type={"submit"}
-                          disabled={isLoading}
-                          onClick={handleLogin}
-                          //   style={{
-                          //     backgroundColor:
-                          //       isLoading || !formData.email || !formData.password
-                          //         ? "#ccc"
-                          //         : "#3b82f6",
-                          //     color:
-                          //       isLoading || !formData.email || !formData.password
-                          //         ? "#999"
-                          //         : "#fff",
-                          //     cursor:
-                          //       isLoading || !formData.email || !formData.password
-                          //         ? "not-allowed"
-                          //         : "pointer",
-                          //   }}
-                          //   disabled={isLoading || !formData.email || !formData.password}
-                          aria-disabled={isLoading}
-                        >
-                          Sign In
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </form>
-              </div>
+              <h2 className="text-xl font-bold text-gray-800">
+                Water Flow
+              </h2>
             </div>
-          </div>
 
-          {/* Background image container */}
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
+              Welcome Back
+            </h1>
+            <p className="text-gray-400 mb-8">
+              Sign in to manage your water system
+            </p>
 
-          <div className="relative hidden max-w-130 flex-1 flex-col items-end justify-between rounded-3xl px-10 py-6 lg:flex 2xl:max-w-180">
-            <img
-              className="absolute top-0 left-0 h-full w-full rounded-3xl"
-              src={AuthImage}
-              alt="auth"
+            {/* Username */}
+            <div className="mb-5">
+              <label className="text-sm font-semibold text-gray-500">
+                Username
+              </label>
+              <InputText
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                className={`w-full mt-2 p-4 rounded-xl bg-gray-50 ${
+                  errors.username ? "border border-red-400" : ""
+                }`}
+              />
+              {errors.username && (
+                <small className="text-red-500">
+                  {errors.username}
+                </small>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="mb-5">
+              <label className="text-sm font-semibold text-gray-500">
+                Password
+              </label>
+              <Password
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                toggleMask
+                feedback={false}
+                className={`w-full mt-2 rounded-xl ${
+                  errors.password ? "border border-red-400" : ""
+                }`}
+              />
+              {errors.password && (
+                <small className="text-red-500">
+                  {errors.password}
+                </small>
+              )}
+            </div>
+
+            {/* Remember Me */}
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.checked)}
+                />
+                <span className="text-sm text-gray-600">
+                  Remember me
+                </span>
+              </div>
+              <a
+                href="#"
+                className="text-sm text-cyan-600 font-semibold"
+              >
+                Forgot password?
+              </a>
+            </div>
+
+            {/* Button */}
+            <Button
+              label="Sign In"
+              loading={isLoading}
+              onClick={handleLogin}
+              className="w-full py-4 text-lg bg-cyan-500 border-none rounded-xl font-bold hover:bg-cyan-600"
             />
           </div>
-          {/* Add background image container here if needed */}
         </div>
+
+        {/* RIGHT – IMAGE FROM PUBLIC */}
+        <div className="hidden lg:block lg:w-1/2 relative">
+          <img
+            src="/images/authImage.png"
+            alt="Auth Background"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
       </div>
-    </>
+    </div>
   );
 };
 
