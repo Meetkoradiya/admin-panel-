@@ -8,8 +8,6 @@ import { Toast } from 'primereact/toast';
 import { Password } from 'primereact/password';
 import { Dialog } from 'primereact/dialog';
 import { classNames } from 'primereact/utils';
-
-// Integrated login action from your Redux slice
 import { login } from "../../../redux/slice/AuthSlice";
 
 const SignUp = () => {
@@ -83,7 +81,6 @@ const SignUp = () => {
             <div className="flex w-full max-w-6xl h-auto md:h-[90vh] rounded-3xl shadow-2xl overflow-hidden bg-white">
                 
                 {/* LEFT: FORM SECTION */}
-                {/* Removed any border-right or divider classes here */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center px-6 md:px-12 bg-white overflow-y-auto py-8">
                     <div className="w-full max-w-md">
                         <div className="mb-8">
@@ -139,7 +136,7 @@ const SignUp = () => {
                                     onChange={(e) => handleInputChange({ target: { name: 'gender', value: e.value?.code || '' } })}
                                     optionLabel="name"
                                     placeholder="Select Gender"
-                                    className={classNames("w-full rounded-xl border border-slate-200 bg-slate-50 h-[46px] flex items-center", { 'p-invalid': errors.gender })}
+                                    className={classNames("w-full rounded-xl border border-slate-200 bg-slate-50 h-11.5 flex items-center", { 'p-invalid': errors.gender })}
                                 />
                                 {errors.gender && <small className="text-red-500 font-semibold">{errors.gender}</small>}
                             </div>
@@ -174,7 +171,6 @@ const SignUp = () => {
                                 {errors.confirmPassword && <small className="text-red-500 font-semibold">{errors.confirmPassword}</small>}
                             </div>
 
-                            {/* Spacing added below button with mb-8 and mt-4 */}
                             <div className="mt-4 mb-8"> 
                                 <Button
                                     label="Sign Up"
