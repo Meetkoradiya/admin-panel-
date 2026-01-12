@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
@@ -20,8 +20,6 @@ const Login = () => {
     username: "admin@gmail.com",
     password: "admin@123",
   });
-
-  /* ---------------- LOGIC ---------------- */
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,28 +72,19 @@ const Login = () => {
     }, 1000);
   };
 
-  /* ---------------- UI ---------------- */
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
       <Toast ref={toast} />
 
       <div className="flex w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden bg-white">
-
-        {/* LEFT – LOGIN FORM */}
-        <div
-          className="w-full lg:w-1/2 flex items-center justify-center px-10 bg-white"
-          style={{ marginRight: "-1px" }}   // 👈 WHITE GAP FIX
-        >
+        <div className="w-full lg:w-1/2 flex items-center justify-center px-10 bg-white">
           <div className="w-full max-w-md">
-
-            {/* Logo */}
             <div className="flex items-center gap-3 mb-10">
               <div className="w-12 h-12 rounded-xl bg-cyan-500 flex items-center justify-center text-white text-xl">
                 💧
               </div>
-              <h2 className="text-xl font-bold text-gray-800">
-                Water Flow
+              <h2 className="text-xl font-bold text-gray-800 tracking-tight">
+                Amrut Water
               </h2>
             </div>
 
@@ -106,86 +95,56 @@ const Login = () => {
               Sign in to manage your water system
             </p>
 
-            {/* Username */}
             <div className="mb-5">
-              <label className="text-sm font-semibold text-gray-500">
-                Username
-              </label>
+              <label className="text-sm font-semibold text-gray-500">Username</label>
               <InputText
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                className={`w-full mt-2 p-4 rounded-xl bg-gray-50 ${
-                  errors.username ? "border border-red-400" : ""
-                }`}
+                className={`w-full mt-2 p-4 rounded-xl bg-gray-50 ${errors.username ? "border border-red-400" : ""}`}
               />
-              {errors.username && (
-                <small className="text-red-500">
-                  {errors.username}
-                </small>
-              )}
+              {errors.username && <small className="text-red-500">{errors.username}</small>}
             </div>
 
-            {/* Password */}
             <div className="mb-5">
-              <label className="text-sm font-semibold text-gray-500">
-                Password
-              </label>
+              <label className="text-sm font-semibold text-gray-500">Password</label>
               <Password
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 toggleMask
                 feedback={false}
-                className={`w-full mt-2 rounded-xl ${
-                  errors.password ? "border border-red-400" : ""
-                }`}
+                className={`w-full mt-2 rounded-xl ${errors.password ? "border border-red-400" : ""}`}
               />
-              {errors.password && (
-                <small className="text-red-500">
-                  {errors.password}
-                </small>
-              )}
+              {errors.password && <small className="text-red-500">{errors.password}</small>}
             </div>
 
-            {/* Remember Me */}
             <div className="flex justify-between items-center mb-8">
               <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.checked)}
-                />
-                <span className="text-sm text-gray-600">
-                  Remember me
-                </span>
+                <Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} />
+                <span className="text-sm text-gray-600">Remember me</span>
               </div>
-              <a
-                href="#"
-                className="text-sm text-cyan-600 font-semibold"
+              {/* Linked Forgot Password here */}
+              <Link
+                to="/forgot-password"
+                className="text-sm text-cyan-600 font-bold hover:underline"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
-            {/* Button */}
             <Button
               label="Sign In"
               loading={isLoading}
               onClick={handleLogin}
-              className="w-full py-4 text-lg bg-cyan-500 border-none rounded-xl font-bold hover:bg-cyan-600"
+              className="w-full py-4 text-lg bg-cyan-500 border-none rounded-xl font-bold hover:bg-cyan-600 shadow-lg shadow-cyan-100"
             />
           </div>
         </div>
 
-        {/* RIGHT – IMAGE FROM PUBLIC */}
         <div className="hidden lg:block lg:w-1/2 relative">
-          <img
-            src="/images/authImage.png"
-            alt="Auth Background"
-            className="w-full h-full object-cover"
-          />
+          <img src="/images/authImage.png" alt="Auth Background" className="w-full h-full object-cover" />
         </div>
-
       </div>
     </div>
   );

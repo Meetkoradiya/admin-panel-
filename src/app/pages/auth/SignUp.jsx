@@ -1,298 +1,229 @@
-import { useContext, useRef, useState } from 'react';
-import axios from 'axios';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { Password } from 'primereact/password';
-import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
-import { LayoutContext } from '../../context/layoutcontent';
+import { classNames } from 'primereact/utils';
+
+// Integrated login action from your Redux slice
+import { login } from "../../../redux/slice/AuthSlice";
 
 const SignUp = () => {
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
-	const toast = useRef(null);
-	const { layoutConfig } = useContext(LayoutContext);
-	const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const toast = useRef(null);
 
-	const [formData, setFormData] = useState({
-		username: '',
-		email: '',
-		mobileNumber: '',
-		gender: '',
-		password: '',
-	});
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        mobileNumber: '',
+        gender: '',
+        password: '',
+        confirmPassword: '',
+    });
 
-	const [errors, setErrors] = useState({});
-	const [isLoading, setIsLoading] = useState(false);
-	const [splash, setSplash] = useState(false);
-	const [showApprovalDialog, setShowApprovalDialog] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [showApprovalDialog, setShowApprovalDialog] = useState(false);
 
-	const Genders = [
-		{ name: 'Male', code: 'Male' },
-		{ name: 'Female', code: 'Female' },
-		{ name: 'Other', code: 'Other' },
-	];
+    const genderOptions = [
+        { name: 'Male', code: 'Male' },
+        { name: 'Female', code: 'Female' },
+        { name: 'Other', code: 'Other' },
+    ];
 
-	const containerClassName = classNames(
-		'bg-[var(--background)] flex items-center justify-center min-h-screen overflow-x-hidden overflow-y-auto p-2'
-	);
+    const validateField = (name, value) => {
+        if (['username', 'email', 'password', 'gender', 'confirmPassword'].includes(name) && !value?.trim()) {
+            return `${name.charAt(0).toUpperCase() + name.slice(1).replace(/([A-Z])/g, ' $1')} is required.`;
+        }
+        if (name === 'mobileNumber' && !/^\d{10}$/.test(value)) {
+            return 'Mobile number must be 10 digits.';
+        }
+        if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            return 'Invalid email format.';
+        }
+        if (name === 'confirmPassword' && value !== formData.password) {
+            return 'Passwords do not match.';
+        }
+        return '';
+    };
 
-	const validateForm = () => {
-		const newErrors = {};
-		Object.entries(formData).forEach(([key, value]) => {
-			const err = validateField(key, value);
-			if (err) newErrors[key] = err;
-		});
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    };
 
-	const validateField = (name, value) => {
-		if (['username', 'email', 'password', 'gender'].includes(name) && !value?.trim()) {
-			return `${name.charAt(0).toUpperCase() + name.slice(1)} is required.`;
-		}
+    const handleSignUp = () => {
+        const newErrors = {};
+        Object.entries(formData).forEach(([key, value]) => {
+            const err = validateField(key, value);
+            if (err) newErrors[key] = err;
+        });
+        
+        setErrors(newErrors);
 
-		if (name === 'mobileNumber' && !/^\d{10}$/.test(value)) {
-			return 'Mobile number must be 10 digits.';
-		}
+        if (Object.keys(newErrors).length === 0) {
+            setIsLoading(true);
+            setTimeout(() => {
+                setIsLoading(false);
+                setShowApprovalDialog(true);
+            }, 1500);
+        }
+    };
 
-		if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-			return 'Invalid email format.';
-		}
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-100 p-2 md:p-4">
+            <Toast ref={toast} />
 
-		return '';
-	};
+            <div className="flex w-full max-w-6xl h-auto md:h-[90vh] rounded-3xl shadow-2xl overflow-hidden bg-white">
+                
+                {/* LEFT: FORM SECTION */}
+                {/* Removed any border-right or divider classes here */}
+                <div className="w-full lg:w-1/2 flex items-center justify-center px-6 md:px-12 bg-white overflow-y-auto py-8">
+                    <div className="w-full max-w-md">
+                        <div className="mb-8">
+                            <h1 className="text-4xl font-extrabold text-slate-900 mb-2">Create Account</h1>
+                            <p className="text-slate-500 text-sm font-medium">Join the system to manage your water services.</p>
+                        </div>
 
-	const handleInputChange = (e) => {
-		const { name, value } = e.target;
+                        <div className="space-y-4">
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-sm font-bold text-slate-700">Full Name</label>
+                                <InputText
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter your name"
+                                    className={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50 focus:border-cyan-500 focus:bg-white transition-all", { 'p-invalid': errors.username })}
+                                />
+                                {errors.username && <small className="text-red-500 font-semibold">{errors.username}</small>}
+                            </div>
 
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-bold text-slate-700">Email</label>
+                                    <InputText
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        placeholder="admin@email.com"
+                                        className={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50", { 'p-invalid': errors.email })}
+                                    />
+                                    {errors.email && <small className="text-red-500 font-semibold">{errors.email}</small>}
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-bold text-slate-700">Mobile No.</label>
+                                    <InputText
+                                        name="mobileNumber"
+                                        maxLength={10}
+                                        value={formData.mobileNumber}
+                                        onChange={handleInputChange}
+                                        placeholder="1234567890"
+                                        className={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50", { 'p-invalid': errors.mobileNumber })}
+                                    />
+                                    {errors.mobileNumber && <small className="text-red-500 font-semibold">{errors.mobileNumber}</small>}
+                                </div>
+                            </div>
 
-		setErrors((prev) => ({
-			...prev,
-			[name]: validateField(name, value),
-		}));
-	};
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-sm font-bold text-slate-700">Gender</label>
+                                <Dropdown
+                                    name="gender"
+                                    value={genderOptions.find((g) => g.code === formData.gender)}
+                                    options={genderOptions}
+                                    onChange={(e) => handleInputChange({ target: { name: 'gender', value: e.value?.code || '' } })}
+                                    optionLabel="name"
+                                    placeholder="Select Gender"
+                                    className={classNames("w-full rounded-xl border border-slate-200 bg-slate-50 h-[46px] flex items-center", { 'p-invalid': errors.gender })}
+                                />
+                                {errors.gender && <small className="text-red-500 font-semibold">{errors.gender}</small>}
+                            </div>
 
-	const handleSignUp = () => {
-		if (!validateForm()) return;
-		// setIsLoading(true);
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-sm font-bold text-slate-700">Password</label>
+                                <Password
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleInputChange}
+                                    toggleMask
+                                    feedback={false}
+                                    placeholder="••••••••"
+                                    className="w-full"
+                                    inputClassName={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50", { 'p-invalid': errors.password })}
+                                />
+                                {errors.password && <small className="text-red-500 font-semibold">{errors.password}</small>}
+                            </div>
 
-		// axios
-		//   .post(`${BASE_URL}/users/register-admin`, formData)
-		//   .then(() => {
-		//     toast.current.show({
-		//       severity: "success",
-		//       detail: "Signup successful.",
-		//       life: 1500,
-		//     });
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-sm font-bold text-slate-700">Confirm Password</label>
+                                <Password
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleInputChange}
+                                    toggleMask
+                                    feedback={false}
+                                    placeholder="••••••••"
+                                    className="w-full"
+                                    inputClassName={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50", { 'p-invalid': errors.confirmPassword })}
+                                />
+                                {errors.confirmPassword && <small className="text-red-500 font-semibold">{errors.confirmPassword}</small>}
+                            </div>
 
-		//     setShowApprovalDialog(true);
-		//   })
-		//   .catch((error) => {
-		//     if (error?.response?.status === 400) {
-		//       toast.current.show({
-		//         severity: "error",
-		//         detail: error.response?.data?.message,
-		//         life: 2000,
-		//       });
-		//     }
-		//   })
-		//   .finally(() => setIsLoading(false));
-	};
+                            {/* Spacing added below button with mb-8 and mt-4 */}
+                            <div className="mt-4 mb-8"> 
+                                <Button
+                                    label="Sign Up"
+                                    loading={isLoading}
+                                    onClick={handleSignUp}
+                                    className="w-full py-4 text-lg bg-cyan-500 border-none rounded-xl font-bold hover:bg-cyan-600 transition-all shadow-lg shadow-cyan-100"
+                                />
+                                
+                                <div className="text-center mt-6">
+                                    <p className="text-slate-500 text-sm font-medium">
+                                        Already have an account? {' '}
+                                        <span 
+                                            className="text-cyan-600 font-bold hover:underline cursor-pointer" 
+                                            onClick={() => navigate('/login')}
+                                        >
+                                            Sign In
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-	return (
-		<>
-			<Toast ref={toast} />
-			<div className={containerClassName}>
-				<div className="flex flex-col align-items-center justify-center">
-					<div
-						style={{
-							borderRadius: '56px',
-							padding: '0.3rem',
-							background:
-								'linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)',
-						}}
-					>
-						<div
-							className="surface-card py-4 md:px-5 px-4 md:min-w-108"
-							style={{ borderRadius: '53px', maxWidth: '27rem' }}
-						>
-							<div className="text-center mb-5">
-								<img
-									src="/vite.svg"
-									alt="Image"
-									width="50"
-									className="md:mb-2 mb-0 mx-auto select-none"
-								/>
-								<div className="md:text-3xl text-xl font-medium md:mb-2 mb-1">
-									Welcome, Admin!
-								</div>
-								<span className="text-600 font-medium">Sign Up to continue</span>
-							</div>
+                {/* RIGHT: IMAGE SECTION */}
+                <div className="hidden lg:block lg:w-1/2 relative bg-white">
+                    <img
+                        src="/images/authImage.png"
+                        alt="Water Management"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+            </div>
 
-							<div>
-								<label htmlFor="name" className="block md:text-base text-sm mb-2">
-									Name
-								</label>
-								<InputText
-									id="username"
-									name="username"
-									value={formData.username}
-									onChange={handleInputChange}
-									type="text"
-									placeholder="Enter name"
-									className={`w-full mb-1 h-10 ${errors.name ? 'mb-1' : 'mb-3'}`}
-									style={{ padding: '1rem' }}
-								/>
-								{errors.username && (
-									<small className="p-error block mb-3">{errors.username}</small>
-								)}
-
-								<label htmlFor="email" className="block md:text-base text-sm mb-2">
-									Email
-								</label>
-								<InputText
-									id="email"
-									name="email"
-									value={formData.email}
-									onChange={handleInputChange}
-									type="text"
-									placeholder="Enter email"
-									className={`w-full mb-1 h-10 ${errors.email ? 'mb-1' : 'mb-3'}`}
-									style={{ padding: '1rem' }}
-								/>
-								{errors.email && (
-									<small className="p-error block mb-3">{errors.email}</small>
-								)}
-
-								<label
-									htmlFor="mobileNumber"
-									className="block md:text-base text-sm mb-2"
-								>
-									Mobile No.
-								</label>
-								<InputText
-									id="mobileNumber"
-									name="mobileNumber"
-									maxLength={10}
-									value={formData.mobileNumber}
-									onChange={handleInputChange}
-									type="text"
-									placeholder="Mobile No."
-									className={`w-full mb-1 h-10 ${
-										errors.mobileNumber ? 'mb-1' : 'mb-3'
-									}`}
-									style={{ padding: '1rem' }}
-								/>
-								{errors.mobileNumber && (
-									<small className="p-error block mb-3">
-										{errors.mobileNumber}
-									</small>
-								)}
-
-								<label htmlFor="gender" className="block md:text-base text-sm mb-2">
-									Gender
-								</label>
-								<Dropdown
-									id="gender"
-									value={Genders.find((g) => g.code === formData.gender)}
-									options={Genders}
-									onChange={(e) => {
-										const selectedGender = e.value?.code || '';
-										setFormData((prev) => ({
-											...prev,
-											gender: selectedGender,
-										}));
-										setErrors((prev) => ({
-											...prev,
-											gender: selectedGender ? '' : 'Gender is required.',
-										}));
-									}}
-									optionLabel="name"
-									placeholder="Select Type"
-									className={`w-full mb-1 h-10 ${
-										errors.gender ? 'mb-1' : 'mb-3'
-									}`}
-									showClear
-								/>
-								{errors.gender && (
-									<small className="p-error block mb-3">{errors.gender}</small>
-								)}
-
-								<label
-									htmlFor="password"
-									className="block md:text-base text-sm mb-2"
-								>
-									Password
-								</label>
-								<Password
-									inputId="password"
-									name="password"
-									value={formData.password}
-									onChange={handleInputChange}
-									placeholder="Password"
-									toggleMask
-									feedback={false}
-									className={`w-full h-10 ${errors.password ? 'mb-1' : 'mb-4'}`}
-									inputClassName="w-full p-3"
-								></Password>
-								{errors.password && (
-									<small className="p-error block mb-3">{errors.password}</small>
-								)}
-
-								<Button
-									label="Sign Up"
-									className="w-full text-lg h-11 mb-3"
-									onClick={handleSignUp}
-									loading={isLoading}
-								></Button>
-
-								<div className="flex align-items-center justify-center gap-1">
-									<span className="text-sm">Already have an account?</span>
-									<span
-										className="text-(--primary-color) text-sm font-bold hover:underline cursor-pointer"
-										onClick={() => navigate('/login')}
-									>
-										Sign In
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<Dialog
-					header="Registration Submitted"
-					visible={showApprovalDialog}
-					style={{ width: '90%', maxWidth: '25rem' }}
-					modal
-					closable={false}
-					footer={
-						<div className="flex justify-content-end">
-							<Button
-								label="Back to Login"
-								onClick={() => navigate('/login')}
-								className="p-button-primary"
-							/>
-						</div>
-					}
-				>
-					<p className="m-0 text-sm">
-						Please wait for super admin approval. You will be able to log in once your
-						registration is approved.
-					</p>
-				</Dialog>
-			</div>
-		</>
-	);
+            <Dialog
+                header="Registration Submitted"
+                visible={showApprovalDialog}
+                style={{ width: '90%', maxWidth: '25rem' }}
+                modal
+                closable={false}
+                className="rounded-3xl"
+                footer={<Button label="Back to Login" onClick={() => navigate('/login')} className="bg-slate-900 border-none rounded-xl px-8" />}
+            >
+                <p className="m-0 text-slate-600 text-sm leading-relaxed">
+                    Your registration has been submitted. For security purposes, a Super Admin must review and approve your account before you can log in.
+                </p>
+            </Dialog>
+        </div>
+    );
 };
 
 export default SignUp;
