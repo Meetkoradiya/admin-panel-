@@ -4,8 +4,9 @@ import PublicRoute from "./public";
 import ProtectedRoute from "./protected";
 import { AdminRoutes, MasterRoutes, PublicRoutes } from "./router";
 import HomeLayout from "../layout/HomeLayout/HomeLayout";
-// Import ForgotPassword from your auth folder
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import VerifyOtp from "../pages/auth/VerifyOtp";
+import CreateNewPassword from "../pages/auth/CreateNewPassword"; 
 
 const AppRoutes = () => {
   const toastRef = useRef(null);
@@ -17,8 +18,11 @@ const AppRoutes = () => {
           {PublicRoutes.map((route) => (
             <Route key={route.name} path={route.path} element={route.element} />
           ))}
-          {/* Added Forgot Password Route */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
+          
+          {/* 2. Added Create New Password Route */}
+          <Route path="/create-new-password" element={<CreateNewPassword />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["MASTER_ADMIN"]} />}>

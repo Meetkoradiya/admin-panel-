@@ -1,15 +1,26 @@
+
 import React, { useState } from "react";
-import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleSendOtp = () => {
+    if (!email) {
+      alert("Please enter your email.");
+      return;
+    }
+    // TODO: Add API call to send OTP to the email
+    alert(`OTP sent to ${email}`);
+    navigate("/verify-otp"); // Navigate to OTP page
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-6">
-      <div className="flex w-full max-w-6xl h-[85vh] bg-white rounded-[3rem] shadow-xl overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="flex w-full max-w-6xl h-[85vh] bg-white overflow-hidden">
 
         {/* LEFT SECTION */}
         <div className="w-full lg:w-1/2 flex items-center justify-center px-12 md:px-20">
@@ -17,71 +28,58 @@ const ForgotPassword = () => {
 
             {/* Branding */}
             <div className="flex items-center gap-4 mb-10">
-              <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-white text-2xl">
+              <div className="w-12 h-12 rounded-xl bg-[#1e293b] flex items-center justify-center text-[#22bedb] text-xl">
                 💧
               </div>
-              <div>
-                <h2 className="text-2xl font-black text-slate-800 leading-none">
-                  Amrut Water
-                </h2>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-bold mt-1">
-                  Smart Management
-                </p>
-              </div>
+              <h2 className="text-2xl font-bold text-slate-800">Amrut Water</h2>
             </div>
 
-            {/* Title */}
+            {/* Title & Description */}
             <div className="mb-8">
-              <h1 className="text-4xl font-extrabold text-slate-900 mb-4">
-                Password Recovery
+              <h1 className="text-3xl font-extrabold text-slate-900 mb-4">
+                Forgot Password
               </h1>
-              <p className="text-slate-500 text-lg leading-relaxed">
-                Enter your email below. We&apos;ll send you a 6-digit verification
-                code to reset your account access safely.
+              <p className="text-slate-500 text-base leading-relaxed">
+                Enter your registered email below to receive a verification code.
               </p>
             </div>
 
-            {/* FORM */}
-            <div>
-              {/* Email */}
+            {/* Input Field */}
+            <div className="mb-6">
               <InputText
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="w-full p-4 rounded-2xl bg-gray-50 border border-slate-200 text-lg"
+                placeholder="Enter your email"
+                className="w-full p-3.5 border rounded-lg focus:border-cyan-500 border-slate-200 bg-white"
               />
-
-              {/* SPACE BETWEEN INPUT & BUTTON */}
-              <div className="mt-4"></div>
-
-              {/* Button */}
-              <Button
-                label="Request Reset Password"
-                className="w-full py-4 text-lg bg-slate-900 border-none rounded-2xl font-bold text-white hover:bg-slate-800 transition-all"
-                onClick={() => navigate("/verify-otp")}
-              />
-
-              {/* Back to Login */}
-              <div className="pt-6 text-center">
-                <button
-                  onClick={() => navigate("/login")}
-                  className="text-slate-500 font-semibold hover:text-slate-800 flex items-center justify-center gap-2 mx-auto"
-                >
-                  <i className="pi pi-arrow-left text-sm" />
-                  Back to Sign In
-                </button>
-              </div>
             </div>
 
+            {/* Buttons */}
+            <div className="space-y-4">
+              <Button
+                label="Verify OTP"
+                className="w-full py-4 text-lg bg-[#06b6d4] border-none rounded-lg font-bold text-white hover:bg-cyan-600 shadow-lg shadow-cyan-100 transition-all active:scale-[0.98]"
+                onClick={handleSendOtp}
+              />
+
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="w-full text-center text-slate-400 font-semibold hover:text-slate-800 flex items-center justify-center gap-2 py-3 rounded-lg border border-slate-200 bg-transparent transition-colors"
+              >
+                <i className="pi pi-arrow-left text-sm" />
+                Back to Sign In
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* RIGHT IMAGE */}
-        <div className="hidden lg:block lg:w-1/2 p-8">
-          <div className="w-full h-full rounded-[2.5rem] overflow-hidden shadow-inner">
+        {/* RIGHT IMAGE SECTION */}
+        <div className="hidden lg:block lg:w-1/2 p-6">
+          <div className="w-full h-full rounded-[3rem] overflow-hidden bg-[#22bedb] flex items-center justify-center shadow-2xl">
             <img
               src="/images/authImage.png"
-              alt="Amrut Water Visual"
+              alt="Forgot Password Illustration"
               className="w-full h-full object-cover"
             />
           </div>
