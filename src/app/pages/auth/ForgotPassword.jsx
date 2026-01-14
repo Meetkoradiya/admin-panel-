@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -8,14 +7,22 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
+  // Email validation regex (a-z, number, @ required)
+  const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
   const handleSendOtp = () => {
     if (!email) {
       alert("Please enter your email.");
       return;
     }
-    // TODO: Add API call to send OTP to the email
+
+    if (!emailRegex.test(email.toLowerCase())) {
+      alert("Please enter a valid email (a-z, number and @ required).");
+      return;
+    }
+
     alert(`OTP sent to ${email}`);
-    navigate("/verify-otp"); // Navigate to OTP page
+    navigate("/verify-otp");
   };
 
   return (
@@ -31,10 +38,12 @@ const ForgotPassword = () => {
               <div className="w-12 h-12 rounded-xl bg-[#1e293b] flex items-center justify-center text-[#22bedb] text-xl">
                 💧
               </div>
-              <h2 className="text-2xl font-bold text-slate-800">Amrut Water</h2>
+              <h2 className="text-2xl font-bold text-slate-800">
+                Amrut Water
+              </h2>
             </div>
 
-            {/* Title & Description */}
+            {/* Title */}
             <div className="mb-8">
               <h1 className="text-3xl font-extrabold text-slate-900 mb-4">
                 Forgot Password
@@ -44,11 +53,11 @@ const ForgotPassword = () => {
               </p>
             </div>
 
-            {/* Input Field */}
+            {/* Email Input */}
             <div className="mb-6">
               <InputText
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.toLowerCase())}
                 placeholder="Enter your email"
                 className="w-full p-3.5 border rounded-lg focus:border-cyan-500 border-slate-200 bg-white"
               />
