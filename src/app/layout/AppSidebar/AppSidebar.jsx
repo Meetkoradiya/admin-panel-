@@ -10,7 +10,6 @@ import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
 import RouteIcon from "../../../assets/dualicons/routes.svg?react";
 import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
 import CustomersIcon from "../../../assets/dualicons/useradd.svg?react";
-
 import Logo from "../../../assets/appLogo.svg?react";
 
 const AppSidebar = () => {
@@ -19,14 +18,9 @@ const AppSidebar = () => {
     {
       label: "Dashboard",
       items: [
-        {
-          label: "Dashboard",
-          Icon: DashboardsIcon,
-          to: "/",
-        },
+        { label: "Dashboard", Icon: DashboardsIcon, to: "/master/dashboard" },
       ],
     },
-
     {
       label: "Operations",
       items: [
@@ -34,101 +28,51 @@ const AppSidebar = () => {
           label: "Routes",
           Icon: RouteIcon,
           items: [
-            {
-              label: "Role",
-              to: "/role",
-              Icon: ComponentsIcon,
-            },
+            { label: "Manage Routes", to: "/master/routes", Icon: ComponentsIcon },
           ],
         },
-
         {
           label: "Inventory",
           Icon: ComponentsIcon,
-          items: [
-            {
-              label: "Role",
-              to: "/role",
-              Icon: ComponentsIcon,
-            },
-          ],
+          items: [ { label: "Stock", to: "/master/inventory", Icon: ComponentsIcon } ],
         },
         {
           label: "Drivers",
           Icon: DriverIcon,
-          items: [
-            {
-              label: "Role",
-              to: "/role",
-              Icon: ComponentsIcon,
-            },
-          ],
+          items: [ { label: "List", to: "/master/drivers", Icon: ComponentsIcon } ],
         },
         {
           label: "Customers",
           Icon: CustomersIcon,
-          items: [
-            {
-              label: "Role",
-              to: "/role",
-              Icon: ComponentsIcon,
-            },
-          ],
+          items: [ { label: "Manage", to: "/master/customers", Icon: ComponentsIcon } ],
         },
       ],
     },
-
     {
       label: "Billing & Finance",
       items: [
-        {
-          label: "Orders",
-          Icon: OrdersIcon,
-        },
-        {
-          label: "Billings",
-          Icon: BillingIcon,
-        },
+        { label: "Orders", Icon: OrdersIcon, to: "/master/orders" },
+        { label: "Billings", Icon: BillingIcon, to: "/master/billings" },
       ],
     },
-
-    // {
-    //   label: "General",
-    //   items: [],
-    // },
   ]);
-
-  const handleLogoClick = () => {
-    navigate("/");
-  };
 
   return (
     <MenuProvider>
       <div className="sidebar">
-        <div
-          className="sidebar-header-image flex cursor-pointer flex-col"
-          onClick={handleLogoClick}
-        >
+        <div className="sidebar-header-image flex cursor-pointer flex-col" onClick={() => navigate("/")}>
           <div className="flex items-center gap-2">
-            <span>
-              <Logo className="h-12 w-12 select-none" />
-            </span>
+            <Logo className="h-12 w-12 select-none" />
             <div className="flex flex-col">
-              <span className="text-xl font-extrabold text-(--primary-color)">
-                Amrut Water
-              </span>
-              <span className="text-xs">Smart Managment</span>
+              <span className="text-xl font-extrabold text-(--primary-color)">Amrut Water</span>
+              <span className="text-xs">Smart Management</span>
             </div>
           </div>
         </div>
         <ul className="layout-menu">
-          {originalModel.map((item, i) => {
-            return !item?.seperator ? (
-              <AppMenuitem item={item} root={true} index={i} key={item.label} />
-            ) : (
-              <li className="menu-separator"></li>
-            );
-          })}
+          {originalModel.map((item, i) => (
+            <AppMenuitem item={item} root={true} index={i} key={item.label} />
+          ))}
         </ul>
       </div>
     </MenuProvider>
