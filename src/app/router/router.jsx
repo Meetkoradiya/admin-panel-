@@ -1,32 +1,33 @@
 import { lazy } from "react";
 
-// Public Routes
+// Public
 const Login = lazy(() => import("../pages/auth/Login"));
 const SignUp = lazy(() => import("../pages/auth/SignUp"));
+
+// Master
+const CRMAnalytics = lazy(() => import("@/app/pages/home"));
+const UserProfile = lazy(() => import("@/app/pages/Profile/UserProfile/UserProfile"));
+const ChangePassword = lazy(() => import("@/app/pages/Profile/ChangePassword/ChangePassword"));
+const RouteManagement = lazy(() => import("@/app/pages/operations/RouteManagement"));
+const Stock = lazy(() => import("@/app/pages/operations/inventory/Stock")); // stock 
 
 export const PublicRoutes = [
   { path: "login", name: "Login", element: <Login /> },
   { path: "signup", name: "Signup", element: <SignUp /> },
 ];
 
-// Master Routes
-const CRMAnalytics = lazy(() => import("@/app/pages/home"));
-const UserProfile = lazy(() => import("@/app/pages/Profile/UserProfile/UserProfile"));
-const ChangePassword = lazy(() => import("@/app/pages/Profile/ChangePassword/ChangePassword"));
-const RouteManagement = lazy(() => import("@/app/pages/operations/RouteManagement")); // NEW 
-
 export const MasterRoutes = [
   { path: "dashboard", name: "Dashboard", element: <CRMAnalytics /> },
-  { path: "profile", name: "UserProfile", element: <UserProfile /> },
+  { path: "profile", name: "Profile", element: <UserProfile /> },
   { path: "change-password", name: "ChangePassword", element: <ChangePassword /> },
-  { path: "routes", name: "RouteManagement", element: <RouteManagement /> }, // NEW add
+
+  // Operations
+  { path: "routes", name: "Routes", element: <RouteManagement /> },
+
+  //  Inventory
+  { path: "inventory/stock", name: "Stock", element: <Stock /> },
 ];
 
-// Admin routes
-const ManagerDashboard = lazy(() => import("@/app/pages/home"));
-
 export const AdminRoutes = [
-  { path: "dashboard", name: "Dashboard", element: <ManagerDashboard /> },
-  { path: "profile", name: "UserProfile", element: <UserProfile /> },
-  { path: "change-password", name: "ChangePassword", element: <ChangePassword /> },
+  { path: "dashboard", name: "Dashboard", element: <CRMAnalytics /> },
 ];

@@ -99,7 +99,7 @@ const RouteManagement = () => {
 
     return (
         <Page title="Route Management">
-            <div className="p-6 md:p-8 bg-slate-50 min-h-screen">
+            <div className=" bg-slate-50 min-h-screen">
                 <Toast ref={toast} />
                 
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">

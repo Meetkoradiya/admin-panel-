@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MenuProvider } from "../../context/menucontext";
 import AppMenuitem from "../../context/AppMenuitem";
+
 import DashboardsIcon from "../../../assets/dualicons/dashboards.svg?react";
 import OrdersIcon from "../../../assets/dualicons/bag.svg?react";
 import BillingIcon from "../../../assets/dualicons/ticket.svg?react";
@@ -14,7 +15,8 @@ import Logo from "../../../assets/appLogo.svg?react";
 
 const AppSidebar = () => {
   const navigate = useNavigate();
-  const [originalModel, setOriginalModel] = useState([
+
+  const [menu] = useState([
     {
       label: "Dashboard",
       items: [
@@ -28,23 +30,37 @@ const AppSidebar = () => {
           label: "Routes",
           Icon: RouteIcon,
           items: [
-            { label: "Manage Routes", to: "/master/routes", Icon: ComponentsIcon },
+            {
+              label: "Manage Routes",
+              to: "/master/routes",
+              Icon: ComponentsIcon,
+            },
           ],
         },
         {
           label: "Inventory",
           Icon: ComponentsIcon,
-          items: [ { label: "Stock", to: "/master/inventory", Icon: ComponentsIcon } ],
+          items: [
+            {
+              label: "Stock",
+              to: "/master/inventory/stock", // ✅ MATCHED
+              Icon: ComponentsIcon,
+            },
+          ],
         },
         {
           label: "Drivers",
           Icon: DriverIcon,
-          items: [ { label: "List", to: "/master/drivers", Icon: ComponentsIcon } ],
+          items: [
+            { label: "List", to: "/master/drivers", Icon: ComponentsIcon },
+          ],
         },
         {
           label: "Customers",
           Icon: CustomersIcon,
-          items: [ { label: "Manage", to: "/master/customers", Icon: ComponentsIcon } ],
+          items: [
+            { label: "Manage", to: "/master/customers", Icon: ComponentsIcon },
+          ],
         },
       ],
     },
@@ -60,18 +76,20 @@ const AppSidebar = () => {
   return (
     <MenuProvider>
       <div className="sidebar">
-        <div className="sidebar-header-image flex cursor-pointer flex-col" onClick={() => navigate("/")}>
-          <div className="flex items-center gap-2">
-            <Logo className="h-12 w-12 select-none" />
-            <div className="flex flex-col">
-              <span className="text-xl font-extrabold text-(--primary-color)">Amrut Water</span>
-              <span className="text-xs">Smart Management</span>
-            </div>
+        <div
+          className="sidebar-header-image flex cursor-pointer"
+          onClick={() => navigate("/master/dashboard")}
+        >
+          <Logo className="h-12 w-12" />
+          <div>
+            <div className="text-xl font-bold">Amrut Water</div>
+            <div className="text-xs">Smart Management</div>
           </div>
         </div>
+
         <ul className="layout-menu">
-          {originalModel.map((item, i) => (
-            <AppMenuitem item={item} root={true} index={i} key={item.label} />
+          {menu.map((item, i) => (
+            <AppMenuitem item={item} root index={i} key={item.label} />
           ))}
         </ul>
       </div>
