@@ -6,7 +6,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Toast } from "primereact/toast";
-import { Tag } from "primereact/tag";
+import { Tag } from "primereact/tag"; // Status માટે Tag ઉપયોગી છે
 import { Page } from "@/components/shared/Page";
 
 const Stock = () => {
@@ -23,7 +23,7 @@ const Stock = () => {
     const [stock, setStock] = useState(emptyStock);
     const [submitted, setSubmitted] = useState(false);
 
-    // Status logic matching the route design style
+    // --- Logic for Status ---
     const getStatusLabel = (qty) => {
         if (qty <= 0) return { label: "OUT OF STOCK", severity: "danger" };
         if (qty > 0 && qty <= 20) return { label: "LOW STOCK", severity: "warning" };
@@ -35,9 +35,10 @@ const Stock = () => {
         return <Tag value={status.label} severity={status.severity} className="rounded-md px-3 text-[10px]" />;
     };
 
-    // Summary Calculations
+    // --- Summary Calculations ---
     const totalItems = stocks.length;
     const lowStockCount = stocks.filter(s => s.quantity > 0 && s.quantity <= 20).length;
+    const outOfStockCount = stocks.filter(s => s.quantity <= 0).length;
 
     const openNew = () => {
         setStock(emptyStock);
@@ -71,7 +72,7 @@ const Stock = () => {
 
     const header = (
         <div className="flex flex-wrap items-center justify-between gap-4 p-4">
-            <h2 className="m-0 text-xl font-bold text-slate-700">Stock Inventory</h2>
+            <h2 className="m-0 text-xl font-bold text-slate-700">Detailed Inventory</h2>
             <Button
                 label="Add New Item"
                 icon="pi pi-plus"
@@ -93,19 +94,23 @@ const Stock = () => {
             <div className="bg-slate-50 min-h-screen p-4 md:p-6">
                 <Toast ref={toast} />
 
-                {/* Top Cards - Same size as Route Page */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {/* --- Top Summary Cards --- */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-indigo-500">
                         <p className="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Products</p>
                         <h3 className="text-3xl font-black text-slate-800">{totalItems}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-amber-500">
-                        <p className="text-slate-500 text-sm font-bold uppercase tracking-wider">Alert: Low Stock</p>
+                        <p className="text-slate-500 text-sm font-bold uppercase tracking-wider">Low Stock Items</p>
                         <h3 className="text-3xl font-black text-amber-600">{lowStockCount}</h3>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-rose-500">
+                        <p className="text-slate-500 text-sm font-bold uppercase tracking-wider">Out of Stock</p>
+                        <h3 className="text-3xl font-black text-rose-600">{outOfStockCount}</h3>
                     </div>
                 </div>
 
-                {/* Table - Same layout and size as Route Page */}
+                {/* --- Data Table --- */}
                 <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                     <DataTable
                         value={stocks}
@@ -117,17 +122,17 @@ const Stock = () => {
                         dataKey="id"
                     >
                         <Column field="itemName" header="Item Name" sortable className="font-semibold text-slate-700 pl-4" />
-                        <Column field="quantity" header="Quantity" sortable body={(row) => <Tag value={`${row.quantity} ${row.unit}`} severity="info" className="bg-slate-100 text-slate-700 font-bold" />} />
+                        <Column field="quantity" header="Quantity" sortable body={(row) => <b>{row.quantity} {row.unit}</b>} />
                         <Column header="Status" body={statusBodyTemplate} style={{ width: "12rem" }} />
                         <Column header="Actions" body={actionBodyTemplate} style={{ width: "8rem" }} />
                     </DataTable>
                 </div>
 
-                {/* Dialog - Same size as Route Configuration */}
+                {/* --- Dialog (Remains Same with better styling) --- */}
                 <Dialog
                     visible={stockDialog}
                     style={{ width: "400px" }}
-                    header="Stock Details"
+                    header="Stock Management"
                     modal
                     className="p-fluid rounded-2xl"
                     onHide={hideDialog}
