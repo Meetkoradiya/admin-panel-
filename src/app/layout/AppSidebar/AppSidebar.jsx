@@ -43,7 +43,7 @@ const AppSidebar = () => {
           items: [
             {
               label: "Stock",
-              to: "/master/inventory/stock", // ✅ MATCHED
+              to: "/master/inventory/stock",
               Icon: ComponentsIcon,
             },
           ],
@@ -68,6 +68,7 @@ const AppSidebar = () => {
       label: "Billing & Finance",
       items: [
         { label: "Orders", Icon: OrdersIcon, to: "/master/orders" },
+        //billing
         { label: "Billings", Icon: BillingIcon, to: "/master/billings" },
       ],
     },

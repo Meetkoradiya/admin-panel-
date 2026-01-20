@@ -9,7 +9,8 @@ const CRMAnalytics = lazy(() => import("@/app/pages/home"));
 const UserProfile = lazy(() => import("@/app/pages/Profile/UserProfile/UserProfile"));
 const ChangePassword = lazy(() => import("@/app/pages/Profile/ChangePassword/ChangePassword"));
 const RouteManagement = lazy(() => import("@/app/pages/operations/RouteManagement"));
-const Stock = lazy(() => import("@/app/pages/operations/inventory/Stock")); // stock 
+const Stock = lazy(() => import("@/app/pages/operations/inventory/Stock"));
+const BillingManagement = lazy(() => import("../pages/billing/BillingManagement")); 
 
 export const PublicRoutes = [
   { path: "login", name: "Login", element: <Login /> },
@@ -24,8 +25,11 @@ export const MasterRoutes = [
   // Operations
   { path: "routes", name: "Routes", element: <RouteManagement /> },
 
-  //  Inventory
+  // Inventory
   { path: "inventory/stock", name: "Stock", element: <Stock /> },
+
+  // Billing & Finance
+  { path: "billings", name: "Billings", element: <BillingManagement /> },
 ];
 
 export const AdminRoutes = [
