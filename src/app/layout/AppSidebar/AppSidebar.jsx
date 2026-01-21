@@ -52,7 +52,7 @@ const AppSidebar = () => {
           label: "Drivers",
           Icon: DriverIcon,
           items: [
-            { label: "List", to: "/master/drivers", Icon: ComponentsIcon },
+            { label: "Manage Drivers", to: "/master/drivers", Icon: ComponentsIcon }, // Updated to match router
           ],
         },
         {
@@ -68,7 +68,6 @@ const AppSidebar = () => {
       label: "Billing & Finance",
       items: [
         { label: "Orders", Icon: OrdersIcon, to: "/master/orders" },
-        //billing
         { label: "Billings", Icon: BillingIcon, to: "/master/billings" },
       ],
     },
