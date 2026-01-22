@@ -16,7 +16,7 @@
     "@tailwindcss/vite": "^4.1.15",
     "apexcharts": "^4.7.0",
     "axios": "^1.10.0",
-    "chart.js": "^4.5.0",
+    "chart.js": "^4.5.1",
     "dayjs": "^1.11.13",
     "eslint-config-prettier": "^10.1.1",
     "eslint-define-config": "^2.1.0",
