@@ -13,7 +13,6 @@ export default function CRMAnalytics() {
           <RealTimeAnalytics />
         </div>
         
-        {/* ગ્રાફ સેક્શન */}
         <div className="mt-3 px-(--margin-x)">
           <StatisticsChart />
         </div>
