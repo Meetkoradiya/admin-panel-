@@ -1,85 +1,159 @@
-import React from 'react';
-import { Chart } from 'primereact/chart';
+import React, { useState } from "react";
+import { Chart } from "primereact/chart";
+import { SelectButton } from "primereact/selectbutton";
+import AnimatedCounter from "@/components/template/AnimatedCounter";
 
-const StatisticsChart = () => {
+const AnalyticsDashboard = () => {
+    const [view, setView] = useState("Daily");
 
-    const lineData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-            {
-                label: 'Sales',
-                data: [45, 75, 50, 85, 60, 95],
-                fill: true,
-                borderColor: '#06b6d4',
-                backgroundColor: 'rgba(6, 182, 212, 0.08)',
-                tension: 0.4,
-                pointRadius: 0
-            }
-        ]
-    };
+    const options = ["Daily", "Monthly", "Yearly"];
 
-    const pieData = {
-        labels: ['Full', 'Empty', 'Refill'],
-        datasets: [
-            {
-                data: [60, 25, 15],
-                backgroundColor: ['#06b6d4', '#fbbf24', '#10b981'],
-                borderWidth: 0
-            }
-        ]
-    };
-
-    const options = {
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    boxWidth: 8,
-                    font: { size: 10 },
-                    usePointStyle: true
-                }
+    // Centralized data configuration
+    const chartConfig = {
+        Daily: {
+            title: "Daily Sales",
+            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            data: [120, 180, 150, 220, 300, 250, 200],
+            stats: {
+                orders: 154,
+                revenue: 12500,
+                growth: 5
             }
         },
+        Monthly: {
+            title: "Monthly Revenue",
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+            data: [4500, 6000, 5200, 7000, 6800, 8500],
+            stats: {
+                orders: 1240,
+                revenue: 850000,
+                growth: 18
+            }
+        },
+        Yearly: {
+            title: "Yearly Growth",
+            labels: ["2021", "2022", "2023", "2024", "2025"],
+            data: [55000, 68000, 82000, 95000, 110000],
+            stats: {
+                orders: 14850,
+                revenue: 9200000,
+                growth: 24
+            }
+        }
+    };
+
+    const active = chartConfig[view];
+
+    // Line chart data
+    const lineData = {
+        labels: active.labels,
+        datasets: [
+            {
+                label: active.title,
+                data: active.data,
+                fill: true,
+                borderColor: "#06b6d4",
+                backgroundColor: "rgba(6, 182, 212, 0.15)",
+                tension: 0.4,
+                pointRadius: 4
+            }
+        ]
+    };
+
+    const lineOptions = {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
         scales: {
-            x: { display: false },
-            y: { display: false }
+            x: {
+                grid: { display: false }
+            },
+            y: {
+                grid: { color: "#f1f5f9" }
+            }
         }
     };
 
     return (
-        <div className="grid grid-cols-12 gap-3">
-
-            {/* Revenue Overview */}
-            <div className="col-span-12 md:col-span-8 bg-white p-4 rounded-xl border border-gray-100 shadow-sm overflow-hidden h-50">
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        Revenue Overview
-                    </span>
-                    <i className="pi pi-chart-line text-cyan-500 text-sm"></i>
+        <div className="p-6 space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+                        Analytics Dashboard
+                    </h2>
+                    <p className="text-sm text-slate-500">
+                        Performance overview for {view.toLowerCase()} activity
+                    </p>
                 </div>
 
-                <div className="relative h-35">
-                    <Chart type="line" data={lineData} options={options} />
-                </div>
+                <SelectButton
+                    value={view}
+                    options={options}
+                    onChange={(e) => e.value && setView(e.value)}
+                />
             </div>
 
-            {/* Inventory Status */}
-            <div className="col-span-12 md:col-span-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm overflow-hidden h-50">
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        Inventory Status
-                    </span>
-                    <i className="pi pi-box text-amber-500 text-sm"></i>
-                </div>
-
-                <div className="relative h-35 flex justify-center">
-                    <Chart type="pie" data={pieData} options={options} />
-                </div>
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <SummaryCard
+                    title="Orders"
+                    value={active.stats.orders}
+                />
+                <SummaryCard
+                    title="Revenue"
+                    value={active.stats.revenue}
+                    prefix="₹ "
+                />
+                <SummaryCard
+                    title="Growth"
+                    value={active.stats.growth}
+                    suffix="%"
+                />
             </div>
 
+            {/* Line Chart */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-96">
+                <h3 className="text-lg font-semibold mb-4 text-slate-700">
+                    {active.title}
+                </h3>
+
+                <div className="h-64">
+                    <Chart
+                        type="line"
+                        data={lineData}
+                        options={lineOptions}
+                    />
+                </div>
+            </div>
         </div>
     );
 };
 
-export default StatisticsChart;
+// Reusable animated summary card
+const SummaryCard = ({ title, value, prefix = "", suffix = "" }) => (
+    <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm transition-all hover:shadow-md">
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            {title}
+        </p>
+
+        <div className="text-2xl font-black text-slate-800 mt-1 flex items-baseline gap-1">
+            {prefix && (
+                <span className="text-lg font-bold text-slate-400">
+                    {prefix}
+                </span>
+            )}
+
+            <AnimatedCounter to={value} />
+
+            {suffix && (
+                <span className="text-lg font-bold text-slate-400">
+                    {suffix}
+                </span>
+            )}
+        </div>
+    </div>
+);
+
+export default AnalyticsDashboard;
