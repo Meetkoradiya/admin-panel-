@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import { SelectButton } from "primereact/selectbutton";
+import { Card } from "primereact/card";
 import AnimatedCounter from "@/components/template/AnimatedCounter";
-import { Chart as ChartJS } from 'chart.js/auto';
+import { Chart as ChartJS } from "chart.js/auto";
 
 const AnalyticsDashboard = () => {
     const [view, setView] = useState("Daily");
     const options = ["Daily", "Monthly", "Yearly"];
 
-    // This runs once when the component mounts
     useEffect(() => {
-        ChartJS.defaults.backgroundColor = '#9BD0F5';
-        ChartJS.defaults.borderColor = '#36A2EB';
-        ChartJS.defaults.color = '#000';
-        ChartJS.defaults.font.size = 16;
+        ChartJS.defaults.color = "#64748b";
+        ChartJS.defaults.font.family = "Inter, sans-serif";
     }, []);
 
     const chartConfig = {
         Daily: {
-            title: "Daily Sales",
+            title: "Daily Water Sales",
             labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             data: [120, 180, 150, 220, 300, 250, 200],
             stats: { orders: 154, revenue: 12500, growth: 5 }
@@ -46,45 +44,37 @@ const AnalyticsDashboard = () => {
                 label: active.title,
                 data: active.data,
                 fill: true,
-                borderColor: "#06b6d4",
-                backgroundColor: "rgba(6, 182, 212, 0.15)",
+                borderColor: "#0ea5e9",
+                backgroundColor: "rgba(14, 165, 233, 0.1)",
                 tension: 0.4,
-                pointRadius: 4
+                pointRadius: 5,
+                pointBackgroundColor: "#fff",
+                pointBorderColor: "#0ea5e9"
             }
         ]
     };
 
-    //Specific Chart Options (Overrides)
     const lineOptions = {
         maintainAspectRatio: false,
-        plugins: {
-            legend: { 
-                labels: {
-                    // This specific font property overrides the global ChartJS.defaults.font.size
-                    font: {
-                        size: 14 
-                    }
-                }
-            }
-        },
+        plugins: { legend: { display: false } },
         scales: {
             x: { grid: { display: false } },
-            y: { grid: { color: "#f1f5f9" } }
+            y: { grid: { color: "#f1f5f9" }, border: { display: false } }
         }
     };
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row justify-between gap-4">
+        <div className="p-4 md:p-6 space-y-6 bg-slate-50/50">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
                         Analytics Dashboard
                     </h2>
                     <p className="text-sm text-slate-500">
-                        Performance overview for {view.toLowerCase()} activity
+                        Amrut Water Performance Overview
                     </p>
                 </div>
-
                 <SelectButton
                     value={view}
                     options={options}
@@ -92,32 +82,76 @@ const AnalyticsDashboard = () => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <SummaryCard title="Orders" value={active.stats.orders} />
-                <SummaryCard title="Revenue" value={active.stats.revenue} prefix="₹ " />
-                <SummaryCard title="Growth" value={active.stats.growth} suffix="%" />
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <SummaryCard title="Orders" value={active.stats.orders} color="blue" />
+                <SummaryCard
+                    title="Revenue"
+                    value={active.stats.revenue}
+                    prefix="₹ "
+                    color="cyan"
+                />
+                <SummaryCard
+                    title="Growth"
+                    value={active.stats.growth}
+                    suffix="%"
+                    color="emerald"
+                />
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-96">
-                <h3 className="text-lg font-semibold mb-4 text-slate-700">
-                    {active.title}
-                </h3>
-                <div className="h-64">
-                    <Chart type="line" data={lineData} options={lineOptions} />
+            {/* Chart Card */}
+            <Card className="shadow-sm border-round-2xl border-none overflow-hidden">
+                <div className="flex flex-col">
+                    {/* Card Header */}
+                    <div className="flex justify-between items-center p-4 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                            <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
+                            <h3 className="text-lg font-bold text-slate-700 m-0">
+                                {active.title}
+                            </h3>
+                        </div>
+                        <span className="text-xs font-semibold px-2 py-1 rounded bg-blue-50 text-blue-600">
+                            Live
+                        </span>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-4" style={{ height: "350px" }}>
+                        <Chart
+                            type="line"
+                            data={lineData}
+                            options={lineOptions}
+                            className="h-full w-full"
+                        />
+                    </div>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 };
 
-const SummaryCard = ({ title, value, prefix = "", suffix = "" }) => (
-    <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm transition-all hover:shadow-md">
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{title}</p>
+/* Tailwind-safe color map */
+const colorMap = {
+    blue: "bg-blue-500",
+    cyan: "bg-cyan-500",
+    emerald: "bg-emerald-500"
+};
+
+const SummaryCard = ({ title, value, prefix = "", suffix = "", color }) => (
+    <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            {title}
+        </p>
         <div className="text-2xl font-black text-slate-800 mt-1 flex items-baseline gap-1">
-            {prefix && <span className="text-lg font-bold text-slate-400">{prefix}</span>}
+            {prefix && <span className="text-slate-400 font-bold">{prefix}</span>}
             <AnimatedCounter to={value} />
-            {suffix && <span className="text-lg font-bold text-slate-400">{suffix}</span>}
+            {suffix && <span className="text-slate-400 font-bold">{suffix}</span>}
         </div>
+        <div
+            className={`mt-3 h-1 w-12 rounded-full ${
+                colorMap[color] || "bg-blue-500"
+            }`}
+        ></div>
     </div>
 );
 

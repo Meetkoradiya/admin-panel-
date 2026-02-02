@@ -10,7 +10,7 @@ import BillingIcon from "../../../assets/dualicons/ticket.svg?react";
 import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
 import RouteIcon from "../../../assets/dualicons/routes.svg?react";
 import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
-import CustomersIcon from "../../../assets/dualicons/useradd.svg?react";
+import CustomersIcon from "../../../assets/dualicons/group.svg?react"; // Using group icon for customers
 import Logo from "../../../assets/appLogo.svg?react";
 
 const AppSidebar = () => {
@@ -52,14 +52,14 @@ const AppSidebar = () => {
           label: "Drivers",
           Icon: DriverIcon,
           items: [
-            { label: "Manage Drivers", to: "/master/drivers", Icon: ComponentsIcon }, // Updated to match router
+            { label: "Manage Drivers", to: "/master/drivers", Icon: ComponentsIcon },
           ],
         },
         {
           label: "Customers",
           Icon: CustomersIcon,
           items: [
-            { label: "Manage", to: "/master/customers", Icon: ComponentsIcon },
+            { label: "Manage Customers", to: "/master/customers", Icon: ComponentsIcon },
           ],
         },
       ],
@@ -81,7 +81,7 @@ const AppSidebar = () => {
           onClick={() => navigate("/master/dashboard")}
         >
           <Logo className="h-12 w-12" />
-          <div>
+          <div className="ml-2">
             <div className="text-xl font-bold">Amrut Water</div>
             <div className="text-xs">Smart Management</div>
           </div>
