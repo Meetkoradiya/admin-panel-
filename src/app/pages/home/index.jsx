@@ -7,7 +7,7 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
-import { useNavigate } from "react-router-dom"; // Navigation mate hook
+import { useNavigate } from "react-router-dom"; 
 
 export default function UnifiedDashboard() {
   const navigate = useNavigate(); // Hook initialize karyo

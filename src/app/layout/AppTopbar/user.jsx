@@ -104,8 +104,8 @@ export const User = () => {
               type="button"
               className="p-link layout-topbar-button"
               onClick={() => {
-                op.current.hide();
-                navigate("/change-password");
+              navigate("/master/change-password");
+              op.current.hide();
               }}
             >
               <i className="pi pi-cog mr-2"></i>

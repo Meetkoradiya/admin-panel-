@@ -1,13 +1,43 @@
-import React from "react";
-import { Icons } from "../../../constants/icons.constant";
+import { useRef } from "react";
+import { OverlayPanel } from "primereact/overlaypanel";
 
 export const Instruction = () => {
-  const Icon = Icons.instruction;
+  const op = useRef(null);
+
+  const instructions = [
+    "Use the sidebar to navigate between modules",
+    "Check notifications for important updates",
+    "Keep your profile information updated",
+    "Change your password regularly for security",
+  ];
+
   return (
-    <div>
-      <button className="p-link layout-topbar-button">
-        <Icon className="size-6" />
+    <>
+      <button
+        type="button"
+        className="p-link layout-topbar-button"
+        onClick={(e) => op.current.toggle(e)}
+      >
+        <i className="pi pi-info-circle"></i>
       </button>
-    </div>
+
+      <OverlayPanel ref={op} dismissable className="mt-4">
+        <div className="w-80 rounded-xl">
+          <h4 className="font-semibold text-base mb-3">Quick Instructions</h4>
+
+          <ul className="flex flex-col gap-2">
+            {instructions.map((item, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-2 p-2 rounded-lg border"
+              >
+                <i className="pi pi-check-circle text-green-500 mt-1"></i>
+                <span className="text-sm">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </OverlayPanel>
+    </>
   );
 };

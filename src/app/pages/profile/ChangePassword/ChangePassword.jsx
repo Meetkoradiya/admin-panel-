@@ -1,243 +1,189 @@
 import axios from "axios";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
-import { Toast } from "primereact/toast";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import { Button } from "primereact/button";
+import { Password } from "primereact/password";
+import { classNames } from "primereact/utils";
 import { logout } from "../../../../redux/slice/AuthSlice";
 
 const ChangePassword = () => {
   const toast = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
-  const [isLoading, setIsLoading] = useState(false);
-  const superAdminToken = useSelector((state) => state.auth.token);
-  const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    oldPassword: "",
+  const token = useSelector((state) => state.auth.token);
+
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const [errors, setErrors] = useState({});
 
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validateField(name, value),
-    }));
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const validateForm = () => {
+  const validate = () => {
     const newErrors = {};
-    Object.entries(formData).forEach(([key, value]) => {
-      const err = validateField(key, value);
-      if (err) newErrors[key] = err;
-    });
+
+    if (!form.currentPassword.trim())
+      newErrors.currentPassword = "Current password is required";
+
+    if (!form.newPassword.trim())
+      newErrors.newPassword = "New password is required";
+    else if (form.newPassword.length < 8)
+      newErrors.newPassword = "Password must be at least 8 characters";
+
+    if (!form.confirmPassword.trim())
+      newErrors.confirmPassword = "Confirm password is required";
+    else if (form.confirmPassword !== form.newPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateField = (name, value) => {
-    if (name === "oldPassword" && !value.trim()) {
-      return "Old Password is required";
-    }
+  const handleSubmit = async () => {
+    if (!validate()) return;
 
-    if (name === "newPassword") {
-      if (!value.trim()) {
-        return "New Password is required";
-      }
-      if (value.length < 8) {
-        return "New Password must be at least 8 characters long";
-      }
-    }
+    try {
+      setLoading(true);
 
-    if (name === "confirmPassword" && !value.trim()) {
-      return "Confirm Password is required";
-    }
+      await axios.post(
+        `${BASE_URL}/users/change-password`,
+        {
+          oldPassword: form.currentPassword,
+          newPassword: form.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    if (name === "confirmPassword" && value !== formData.newPassword) {
-      return "Passwords do not match.";
-    }
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Password changed successfully",
+        life: 2000,
+      });
 
-    return "";
-  };
+      setForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
 
-  const handleSubmit = () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${superAdminToken}`,
-      },
-    };
-
-    axios
-      .post(`${BASE_URL}/users/change-password`, formData, config)
-      .then(() => {
+      setTimeout(() => navigate("/master/profile"), 1500);
+    } catch (error) {
+      if (error?.response?.status === 401) {
         toast.current.show({
-          severity: "success",
-          detail: "Password Changed Successfully.",
+          severity: "warn",
+          summary: "Session Expired",
+          detail: "Please login again",
           life: 2000,
         });
-
-        setFormData({
-          oldPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+        dispatch(logout());
+        navigate("/login");
+      } else {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail:
+            error?.response?.data?.message || "Failed to change password",
+          life: 2500,
         });
-
-        setTimeout(() => navigate("/"), 1500);
-      })
-      .catch((error) => {
-        if (error?.response?.status === 401) {
-          toast.current.show({
-            severity: "warn",
-            detail: "Session expired. Please log in again.",
-            life: 1500,
-          });
-
-          setTimeout(() => {
-            dispatch(logout());
-            navigate("/login");
-          }, 1500);
-        } else if (error?.response?.status === 400) {
-          toast.current.show({
-            severity: "error",
-            detail: error.response.data.message || "Invalid credintials !",
-            life: 1500,
-          });
-        } else if (error?.response?.status === 500) {
-          toast.current.show({
-            severity: "warn",
-            detail: "Internet connection lost. Check your network.",
-            life: 2000,
-          });
-        } else {
-          toast.current?.show({
-            severity: "error",
-            detail: "Something went wrong ! login again.",
-            life: 2000,
-          });
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const isFormValid = () => {
-    const hasErrors = Object.values(errors).some((e) => e);
-    const hasEmptyRequired = [
-      "oldPassword",
-      "newPassword",
-      "confirmPassword",
-    ].some((key) => !formData[key]?.trim());
-    return !hasErrors && !hasEmptyRequired;
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
+    <div className="p-4 md:p-6">
       <Toast ref={toast} />
-      <div className="card flex justify-content-between align-items-center mb-3">
-        <div className="font-bold text-lg">Change Password</div>
-        <div
-          className="hover:bg-gray-200 transition-colors p-1 border-round cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          <i className="pi pi-list" style={{ fontSize: "1.3rem" }} />
+
+      <div className="card max-w-2xl mx-auto">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-1">Password</h2>
+          <p className="text-gray-500 text-sm">
+            Keep your account safe with a strong password.
+          </p>
         </div>
-      </div>
 
-      <div className="grid">
-        <div className="col-12">
-          <div className="card p-fluid">
-            <div>
-              <p className="font-bold text-sm text-[var(--primary-color)]">
-                Password
-              </p>
-            </div>
-            <hr />
+        <div className="p-fluid flex flex-col gap-5">
+          {/* Current Password */}
+          <div className="field">
+            <label className="font-medium mb-2 block">Current password</label>
+            <Password
+              name="currentPassword"
+              value={form.currentPassword}
+              onChange={onChange}
+              toggleMask
+              feedback={false}
+              className={classNames("w-full", {
+                "p-invalid": errors.currentPassword,
+              })}
+            />
+            {errors.currentPassword && (
+              <small className="p-error">{errors.currentPassword}</small>
+            )}
+          </div>
 
-            <div className="card-data md:flex justify-between">
-              <div className="field grid md:col-4 col-12">
-                <label htmlFor="oldPassword">Old Password</label>
-                <Password
-                  id="oldPassword"
-                  name="oldPassword"
-                  type="text"
-                  toggleMask
-                  feedback={false}
-                  onChange={handleInputChange}
-                />
-                {errors.oldPassword && (
-                  <small className="p-error block">{errors.oldPassword}</small>
-                )}
-              </div>
+          {/* New Password */}
+          <div className="field">
+            <label className="font-medium mb-2 block">New password</label>
+            <Password
+              name="newPassword"
+              value={form.newPassword}
+              onChange={onChange}
+              toggleMask
+              className={classNames("w-full", {
+                "p-invalid": errors.newPassword,
+              })}
+            />
+            {errors.newPassword && (
+              <small className="p-error">{errors.newPassword}</small>
+            )}
+          </div>
 
-              <div className="field grid md:col-4 col-12">
-                <label htmlFor="newPassword">New Password</label>
-                <Password
-                  id="newPassword"
-                  name="newPassword"
-                  toggleMask
-                  feedback={false}
-                  type="text"
-                  onChange={handleInputChange}
-                />
-                {errors.newPassword && (
-                  <small className="p-error block">{errors.newPassword}</small>
-                )}
-              </div>
+          {/* Confirm Password */}
+          <div className="field">
+            <label className="font-medium mb-2 block">Confirm new password</label>
+            <Password
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={onChange}
+              toggleMask
+              feedback={false}
+              className={classNames("w-full", {
+                "p-invalid": errors.confirmPassword,
+              })}
+            />
+            {errors.confirmPassword && (
+              <small className="p-error">{errors.confirmPassword}</small>
+            )}
+          </div>
 
-              <div className="field grid md:col-4 col-12">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <Password
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  toggleMask
-                  feedback={false}
-                  onChange={handleInputChange}
-                  disabled={!formData.newPassword.trim()}
-                />
-                {errors.confirmPassword && (
-                  <small className="p-error block">
-                    {errors.confirmPassword}
-                  </small>
-                )}
-              </div>
-            </div>
-
-            <div className="flex col-12 justify-between align-items-center">
-              <div
-                className="text-[var(--primary-color)] text-sm font-bold hover:underline cursor-pointer"
-                onClick={() => navigate("/forgot-password")}
-              >
-                Forgot password ?
-              </div>
-              <div className="submit-btn">
-                <Button
-                  type="submit"
-                  className=" flex items-center justify-center text-xs font-bold"
-                  onClick={handleSubmit}
-                  disabled={!isFormValid() || isLoading}
-                  loading={isLoading}
-                  icon="pi pi-cog pi-spin"
-                >
-                  Change Password
-                </Button>
-              </div>
-            </div>
+          <div className="flex justify-end mt-4">
+            <Button
+              label="Save Changes"
+              icon="pi pi-check"
+              loading={loading}
+              onClick={handleSubmit}
+            />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
