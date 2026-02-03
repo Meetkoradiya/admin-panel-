@@ -7,14 +7,13 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
-import { Skeleton } from "primereact/skeleton"; 
+import { Skeleton } from "primereact/skeleton";
 import { useNavigate } from "react-router-dom";
 
 export default function UnifiedDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  // Simulate a data fetch to show loading effects
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timer);
@@ -27,94 +26,121 @@ export default function UnifiedDashboard() {
   ];
 
   const statusBodyTemplate = (row) => {
-    let severity = row.status === "Delivered" ? "success" : row.status === "Pending" ? "warning" : "info";
-    return <Tag value={row.status} severity={severity} className="text-xs font-semibold" />;
+    const severity =
+      row.status === "Delivered"
+        ? "success"
+        : row.status === "Pending"
+        ? "warning"
+        : "info";
+
+    return <Tag value={row.status} severity={severity} />;
   };
 
   return (
     <Page title="Amrut Water Dashboard">
-      <div className="p-6 space-y-6 bg-slate-50 min-h-screen">
-        {/* KPI Section */}
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12">
-            <Card className="shadow-sm border-none ring-1 ring-slate-200">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800 m-0">Financial Overview</h2>
-                  <p className="text-slate-500 text-sm">Monitor your revenue and sales performance</p>
-                </div>
-                <Button 
-                  label="New Order" 
-                  icon="pi pi-plus" 
-                  className="p-button-primary shadow-sm" 
-                  onClick={() => navigate('/master/orders')} 
-                />
+      <div className="bg-slate-50 min-h-screen p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+
+          {/* Header KPI */}
+          <Card className="shadow-sm border border-slate-200">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-800">
+                  Financial Overview
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Track revenue & performance
+                </p>
               </div>
-              {loading ? <Skeleton width="100%" height="150px" /> : <RealTimeAnalytics />}
-            </Card>
-          </div>
-        </div>
+              <Button
+                label="New Order"
+                icon="pi pi-plus"
+                disabled={loading}
+                onClick={() => navigate("/master/orders")}
+              />
+            </div>
 
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12 lg:col-span-8 space-y-6">
-            <Card className="shadow-sm border-none ring-1 ring-slate-200">
-              <h3 className="text-lg font-bold text-slate-700 mb-4">Sales Analytics</h3>
-              {loading ? <Skeleton width="100%" height="300px" /> : <StatisticsChart />}
-            </Card>
+            {loading ? (
+              <Skeleton height="8rem" />
+            ) : (
+              <RealTimeAnalytics />
+            )}
+          </Card>
 
-            <Card className="shadow-sm border-none ring-1 ring-slate-200">
-              <h3 className="text-lg font-bold text-slate-700 mb-4">Recent Deliveries</h3>
-              {loading ? (
-                <Skeleton width="100%" height="200px" />
-              ) : (
-                <DataTable value={recentOrders} responsiveLayout="scroll" className="p-datatable-sm">
-                  <Column field="id" header="Order ID" headerClassName="bg-slate-50 text-slate-600 font-bold" />
-                  <Column field="customer" header="Customer" headerClassName="bg-slate-50 text-slate-600 font-bold" />
-                  <Column field="amount" header="Amount" headerClassName="bg-slate-50 text-slate-600 font-bold" />
-                  <Column field="status" header="Status" body={statusBodyTemplate} headerClassName="bg-slate-50 text-slate-600 font-bold" />
-                </DataTable>
-              )}
-            </Card>
-          </div>
+          <div className="grid grid-cols-12 gap-6">
+            {/* Left Section */}
+            <div className="col-span-12 lg:col-span-8 space-y-6">
+              <Card className="shadow-sm border border-slate-200">
+                <h3 className="text-lg font-semibold text-slate-700 mb-3">
+                  Sales Analytics
+                </h3>
+                {loading ? <Skeleton height="18rem" /> : <StatisticsChart />}
+              </Card>
 
-          <div className="col-span-12 lg:col-span-4 space-y-6">
-            {/* Live Inventory */}
-            <Card className="shadow-sm border-none ring-1 ring-slate-200">
-               <h3 className="text-lg font-bold text-slate-700 mb-4">Live Inventory</h3>
-               <div className="flex flex-col gap-3">
+              <Card className="shadow-sm border border-slate-200">
+                <h3 className="text-lg font-semibold text-slate-700 mb-3">
+                  Recent Deliveries
+                </h3>
+
                 {loading ? (
-                  <>
-                    <Skeleton height="3.5rem" />
-                    <Skeleton height="3.5rem" />
-                    <Skeleton height="3.5rem" />
-                  </>
+                  <Skeleton height="12rem" />
                 ) : (
-                  <>
-                    <InventoryItem label="20L Water Cans" count={540} color="blue" />
-                    <InventoryItem label="1L Bottles" count={320} color="green" />
-                    <InventoryItem label="Plastic Crates" count={380} color="orange" />
-                    <Button 
-                      label="Stock Management" 
-                      icon="pi pi-box" 
-                      className="p-button-outlined p-button-secondary w-full mt-4" 
-                      onClick={() => navigate('/master/inventory/stock')} 
+                  <DataTable value={recentOrders} className="p-datatable-sm">
+                    <Column field="id" header="Order ID" />
+                    <Column field="customer" header="Customer" />
+                    <Column field="amount" header="Amount" />
+                    <Column
+                      field="status"
+                      header="Status"
+                      body={statusBodyTemplate}
                     />
-                  </>
+                  </DataTable>
                 )}
-              </div>
-            </Card>
+              </Card>
+            </div>
 
-            {/* Quick Tasks */}
-            <Card className="shadow-sm border-none ring-1 ring-slate-200">
-              <h3 className="text-lg font-bold text-slate-700 mb-4">Quick Tasks</h3>
-              <div className="flex flex-col gap-2">
-                <Button label="Manage Drivers" icon="pi pi-truck" className="p-button-text text-left w-full hover:bg-slate-50" onClick={() => navigate('/master/drivers')} />
-                <Button label="View Route Maps" icon="pi pi-map" className="p-button-text text-left w-full hover:bg-slate-50" onClick={() => navigate('/master/routes')} />
-                <Button label="Customer List" icon="pi pi-users" className="p-button-text text-left w-full hover:bg-slate-50" onClick={() => navigate('/master/customers')} />
-                <Button label="billings" icon="pi pi-file-pdf" className="p-button-text text-left w-full hover:bg-slate-50" onClick={() => navigate('/master//billings')} />
+            {/* Right Section */}
+            <div className="col-span-12 lg:col-span-4 space-y-6">
+              <Card className="shadow-sm border border-slate-200">
+                <h3 className="text-lg font-semibold text-slate-700 mb-4">
+                  Live Inventory
+                </h3>
 
-              </div>
-            </Card>
+                {loading ? (
+                  <div className="space-y-3">
+                    <Skeleton height="3.5rem" />
+                    <Skeleton height="3.5rem" />
+                    <Skeleton height="3.5rem" />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <InventoryItem label="20L Water Cans" count={540} variant="blue" />
+                    <InventoryItem label="1L Bottles" count={320} variant="green" />
+                    <InventoryItem label="Plastic Crates" count={380} variant="orange" />
+
+                    <Button
+                      label="Stock Management"
+                      icon="pi pi-box"
+                      className="w-full"
+                      onClick={() => navigate("/master/inventory/stock")}
+                    />
+                  </div>
+                )}
+              </Card>
+
+              <Card className="shadow-sm border border-slate-200">
+                <h3 className="text-lg font-semibold text-slate-700 mb-3">
+                  Quick Actions
+                </h3>
+
+                <div className="flex flex-col gap-2">
+                  <Button label="Manage Drivers" icon="pi pi-truck" text onClick={() => navigate("/master/drivers")} />
+                  <Button label="Routes" icon="pi pi-map" text onClick={() => navigate("/master/routes")} />
+                  <Button label="Customers" icon="pi pi-users" text onClick={() => navigate("/master/customers")} />
+                  <Button label="Billings" icon="pi pi-file-pdf" text onClick={() => navigate("/master/billings")} />
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
@@ -122,9 +148,15 @@ export default function UnifiedDashboard() {
   );
 }
 
-const InventoryItem = ({ label, count, color }) => (
-  <div className={`flex justify-between items-center p-4 rounded-lg bg-${color}-50 border border-${color}-100`}>
-    <span className={`font-semibold text-${color}-700`}>{label}</span>
-    <span className={`text-xl font-black text-${color}-900`}>{count}</span>
+const styles = {
+  blue: "bg-blue-50 border-blue-200 text-blue-800",
+  green: "bg-green-50 border-green-200 text-green-800",
+  orange: "bg-orange-50 border-orange-200 text-orange-800",
+};
+
+const InventoryItem = ({ label, count, variant }) => (
+  <div className={`flex justify-between items-center p-4 rounded-lg border ${styles[variant]}`}>
+    <span className="font-medium">{label}</span>
+    <span className="text-xl font-bold">{count}</span>
   </div>
 );
