@@ -29,7 +29,7 @@ const BillingManagement = () => {
       const doc = new jsPDF("p", "pt", "a4");
 
       // Header
-      doc.setFillColor(34, 190, 219);
+      doc.setFillColor(0, 172, 193); // Teal like your theme
       doc.rect(0, 0, 600, 80, "F");
 
       doc.setFontSize(22);
@@ -62,7 +62,7 @@ const BillingManagement = () => {
         head: [tableColumn],
         body: tableRows,
         theme: "grid",
-        headStyles: { fillColor: [34, 190, 219], textColor: [255, 255, 255] },
+        headStyles: { fillColor: [0, 172, 193], textColor: [255, 255, 255] },
         styles: { fontSize: 10, cellPadding: 8 },
       });
 
@@ -118,14 +118,14 @@ const BillingManagement = () => {
     );
   };
 
-  // Action Button
+  // Action Button (THEME MATCHED)
   const actionTemplate = (rowData) => {
     return (
       <Button
         icon="pi pi-file-pdf"
         rounded
         outlined
-        className="p-button-warning"
+        severity="info"   // matches your teal/blue theme
         onClick={() => exportSingleBill(rowData)}
         tooltip="Download PDF"
       />
@@ -163,7 +163,11 @@ const BillingManagement = () => {
           <Column field="date" header="Date" />
           <Column field="amount" header="Amount" />
           <Column field="status" header="Status" body={statusBodyTemplate} />
-          <Column header="Action" body={actionTemplate} style={{ width: "100px", textAlign: "center" }} />
+          <Column
+            header="Action"
+            body={actionTemplate}
+            style={{ width: "100px", textAlign: "center" }}
+          />
         </DataTable>
       </div>
     </Page>
