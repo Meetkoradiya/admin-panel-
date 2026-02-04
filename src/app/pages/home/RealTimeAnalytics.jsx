@@ -389,10 +389,7 @@ export function RealTimeAnalytics() {
       ];
 
   return (
-    <div className="mb-6">
-      <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white">
-        Daily Statistics
-      </h2>
+      
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
         {cards.map((card, idx) => (
@@ -440,6 +437,5 @@ export function RealTimeAnalytics() {
           </div>
         ))}
       </div>
-    </div>
   );
 }
