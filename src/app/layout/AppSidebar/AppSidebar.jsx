@@ -20,7 +20,7 @@ const AppSidebar = () => {
     {
       label: "Dashboard",
       items: [
-        { label: "Dashboard", Icon: DashboardsIcon, to: "/master/dashboard" },
+        { label: "Dashboard", Icon: DashboardsIcon, to: "/admin/dashboard" },
       ],
     },
     {
@@ -32,7 +32,7 @@ const AppSidebar = () => {
           items: [
             {
               label: "Manage Routes",
-              to: "/master/routes",
+              to: "/admin/routes",
               Icon: ComponentsIcon,
             },
           ],
@@ -43,7 +43,7 @@ const AppSidebar = () => {
           items: [
             {
               label: "Stock",
-              to: "/master/inventory/stock",
+              to: "/admin/inventory/stock",
               Icon: ComponentsIcon,
             },
           ],
@@ -52,14 +52,14 @@ const AppSidebar = () => {
           label: "Drivers",
           Icon: DriverIcon,
           items: [
-            { label: "Manage Drivers", to: "/master/drivers", Icon: ComponentsIcon },
+            { label: "Manage Drivers", to: "/admin/drivers", Icon: ComponentsIcon },
           ],
         },
         {
           label: "Customers",
           Icon: CustomersIcon,
           items: [
-            { label: "Manage Customers", to: "/master/customers", Icon: ComponentsIcon },
+            { label: "Manage Customers", to: "/admin/customers", Icon: ComponentsIcon },
           ],
         },
       ],

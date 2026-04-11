@@ -71,4 +71,49 @@ export const MasterRoutes = [
 // ================= ADMIN ROUTES =================
 export const AdminRoutes = [
   { path: "dashboard", name: "Dashboard", element: <CRMAnalytics /> },
+  { path: "profile", name: "Profile", element: <UserProfile /> },
+  {
+    path: "change-password",
+    name: "Change Password",
+    element: <ChangePassword />,
+  },
+
+  // Operations
+  { path: "routes", name: "Routes", element: <RouteManagement /> },
+  { path: "drivers", name: "Drivers", element: <DriverManagement /> },
+  { path: "customers", name: "Customers", element: <CustomerManagement /> },
+
+  // Inventory
+  { path: "inventory/stock", name: "Stock", element: <Stock /> },
+
+  // Billing & Finance
+  { path: "orders", name: "Orders", element: <OrderManagement /> },
+  { path: "billings", name: "Billings", element: <BillingManagement /> },
 ];
+
+import { Routes, Route, Navigate } from "react-router-dom";
+import HomeLayout from "../layout/HomeLayout/HomeLayout";
+
+export const AppRoutes = () => {
+  return (
+    <Routes>
+
+      {/* Layout */}
+      <Route path="/admin" element={<HomeLayout />}>
+
+        {/* 🔥 MasterRoutes map */}
+        {MasterRoutes.map((route, i) => (
+          <Route
+            key={i}
+            path={route.path}
+            element={route.element}
+          />
+        ))}
+
+        {/* Default */}
+        <Route index element={<Navigate to="dashboard" />} />
+      </Route>
+
+    </Routes>
+  );
+};

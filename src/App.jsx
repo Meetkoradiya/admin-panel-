@@ -15,6 +15,7 @@ import SignUp from "./app/pages/auth/SignUp";
 import CRMAnalytics from "./app/pages/home";
 import AppRoutes from "./app/router";
 
+
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 

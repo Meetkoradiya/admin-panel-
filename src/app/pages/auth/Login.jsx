@@ -6,6 +6,8 @@ import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { InputText } from "primereact/inputtext";
 import { Checkbox } from "primereact/checkbox";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 import { login } from "../../../redux/slice/AuthSlice";
 
 const Login = () => {
@@ -17,9 +19,11 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    username: "admin@gmail.com",
-    password: "admin@123",
+    mobileNumber: "",
+    password: "",
   });
+
+  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,34 +33,53 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.username) newErrors.username = "Username is required";
+    if (!formData.mobileNumber) newErrors.mobileNumber = "Mobile Number is required";
+    else if (!/^\d{10}$/.test(formData.mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number";
+
     if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validateForm()) return;
     setIsLoading(true);
 
-    setTimeout(() => {
-      const response = {
-        data: {
-          data: {
-            masterAdmin: true,
-            role: "MASTER_ADMIN",
-            token: "token",
-            refreshToken: "refresh",
-            email: formData.username,
-          },
-        },
-      };
+    try {
+    
+      const res = await axios.post(`${BASE_URL}/auth/login`, {
+        mobileNumber: formData.mobileNumber,
+        password: formData.password,
+      });
 
+     
+      const dataPayload = res.data?.data || res.data;
+      if (!dataPayload || !dataPayload.accessToken) {
+        throw new Error("Invalid response from server");
+      }
+
+      const token = dataPayload.accessToken;
+      const refreshToken = dataPayload.refreshToken;
+
+      const decoded = jwtDecode(token);
+      const userId = decoded?.userId || decoded?.sub; 
+
+     
+      const userRes = await axios.get(`${BASE_URL}/admin/users?id=${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const userData = userRes.data?.data || userRes.data;
+
+      
       dispatch(
         login({
-          token: response.data.data.token,
-          refreshToken: response.data.data.refreshToken,
-          userData: response.data.data,
+          token,
+          refreshToken,
+          userData: {
+            ...userData,
+            userId,
+          },
         })
       );
 
@@ -67,9 +90,18 @@ const Login = () => {
         life: 2000,
       });
 
-      setTimeout(() => navigate("/master/dashboard"), 1200);
+     
+    } catch(error){ 
+      toast.current.show({
+        severity: "error",
+        summary: "Success",
+        detail: error.response.data.message || "Login Falled",
+        life: 2000,
+      });
+    }
+     finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -77,12 +109,10 @@ const Login = () => {
       <Toast ref={toast} />
 
       <div className="flex w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden bg-white">
-        
-        {/* LEFT SECTION: FORM */}
+
         <div className="w-full lg:w-1/2 flex items-center justify-center px-10 bg-white">
           <div className="w-full max-w-md">
-            
-            {/* UPDATED BRANDING SECTION AS PER SCREENSHOT */}
+
             <div className="flex items-center gap-4 mb-10">
               <div className="w-12 h-12 rounded-xl bg-[#1e293b] flex items-center justify-center text-[#22bedb] text-xl shadow-sm">
                 💧
@@ -100,15 +130,22 @@ const Login = () => {
             </p>
 
             <div className="mb-5">
-              <label className="text-sm font-bold text-gray-500">Username</label>
+              <label className="text-sm font-bold text-gray-500">Mobile Number</label>
               <InputText
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                placeholder="Enter email or username"
-                className={`w-full mt-2 p-4 rounded-xl bg-gray-50 border-slate-200 focus:bg-white transition-all ${errors.username ? "border-red-400" : ""}`}
+                name="mobileNumber"
+                value={formData.mobileNumber}
+                onChange={(e) => {
+                  const val = e.target.value;
+                 
+                  if (/^\d{0,10}$/.test(val)) {
+                    setFormData((p) => ({ ...p, mobileNumber: val }));
+                    setErrors((p) => ({ ...p, mobileNumber: "" }));
+                  }
+                }}
+                placeholder="Enter mobile number"
+                className={`w-full mt-2 p-4 rounded-xl bg-gray-50 border-slate-200 focus:bg-white transition-all ${errors.mobileNumber ? "border-red-400" : ""}`}
               />
-              {errors.username && <small className="text-red-500 font-semibold">{errors.username}</small>}
+              {errors.mobileNumber && <small className="text-red-500 font-semibold">{errors.mobileNumber}</small>}
             </div>
 
             <div className="mb-5">
@@ -150,10 +187,10 @@ const Login = () => {
 
         {/* RIGHT SECTION: IMAGE */}
         <div className="hidden lg:block lg:w-1/2 relative">
-          <img 
-            src="/images/authImage.png" 
-            alt="Auth Background" 
-            className="w-full h-full object-cover" 
+          <img
+            src="/images/authImage.png"
+            alt="Auth Background"
+            className="w-full h-full object-cover"
           />
         </div>
 

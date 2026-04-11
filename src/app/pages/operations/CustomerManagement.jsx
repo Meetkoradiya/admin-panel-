@@ -1,236 +1,226 @@
-import React, { useState, useRef, useEffect } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
-import { Toast } from "primereact/toast";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
+import { Toast } from 'primereact/toast';
+import { Tag } from 'primereact/tag';
 import { Page } from "@/components/shared/Page";
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const CustomerManagement = () => {
-  const toast = useRef(null);
+    let emptyCustomer = {
+        id: null,
+        userId: null,
+        username: '',
+        mobileNumber: '',
+        address: '',
+        deposit: 0,
+        deliveryType: 'DAILY',
+        status: 'ACTIVE'
+    };
 
-  // Load from localStorage
-  const [customers, setCustomers] = useState(() => {
-    const saved = localStorage.getItem("customer_list");
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: 1,
-            name: "John Doe",
-            email: "john@example.com",
-            phone: "9876543210",
-            address: "123 Street, NY",
-          },
-          {
-            id: 2,
-            name: "Jane Smith",
-            email: "jane@example.com",
-            phone: "8877665544",
-            address: "456 Avenue, CA",
-          },
-        ];
-  });
+    const [customers, setCustomers] = useState([]);
+    const [customerDialog, setCustomerDialog] = useState(false);
+    const [customer, setCustomer] = useState(emptyCustomer);
+    const [submitted, setSubmitted] = useState(false);
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const toast = useRef(null);
 
-  const [customerDialog, setCustomerDialog] = useState(false);
-  const [customer, setCustomer] = useState({
-    id: null,
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
+    const token = useSelector((state) => state.auth.token);
+    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
-  // Save to localStorage on change
-  useEffect(() => {
-    localStorage.setItem("customer_list", JSON.stringify(customers));
-  }, [customers]);
+    const statusOptions = [
+        { label: 'Active', value: 'ACTIVE' },
+        { label: 'Inactive', value: 'INACTIVE' },
+        { label: 'Deleted', value: 'DELETE' }
+    ];
 
-  const openNew = () => {
-    setCustomer({
-      id: null,
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-    });
-    setCustomerDialog(true);
-  };
+    const fetchCustomers = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/customers`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (Array.isArray(response.data)) {
+                setCustomers(response.data);
+            } else if (response.data && Array.isArray(response.data.data)) {
+                setCustomers(response.data.data);
+            } else {
+                setCustomers([]);
+            }
+        } catch (error) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch customers' });
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const saveCustomer = () => {
-    if (!customer.name.trim()) return;
+    useEffect(() => {
+        if (token) {
+            fetchCustomers();
+        }
+    }, [token]);
 
-    let _customers = [...customers];
+    const openNew = () => {
+        setCustomer(emptyCustomer);
+        setSubmitted(false);
+        setCustomerDialog(true);
+    };
 
-    if (customer.id) {
-      // Update
-      const index = _customers.findIndex((c) => c.id === customer.id);
-      _customers[index] = customer;
-      toast.current.show({
-        severity: "success",
-        summary: "Updated",
-        detail: "Customer Updated",
-        life: 3000,
-      });
-    } else {
-      // Create
-      const newCustomer = {
-        ...customer,
-        id: Math.floor(Math.random() * 100000),
-      };
-      _customers.push(newCustomer);
-      toast.current.show({
-        severity: "success",
-        summary: "Created",
-        detail: "Customer Added",
-        life: 3000,
-      });
-    }
+    const hideDialog = () => {
+        setSubmitted(false);
+        setCustomerDialog(false);
+    };
 
-    setCustomers(_customers);
-    setCustomerDialog(false);
-  };
+    const saveCustomer = async () => {
+        setSubmitted(true);
+        if (customer.username.trim() && customer.mobileNumber.trim() && customer.mobileNumber.length === 10) {
+            try {
+                const payload = {
+                    username: customer.username,
+                    mobileNumber: customer.mobileNumber,
+                    address: customer.address || '',
+                    deposit: Number(customer.deposit) || 0,
+                    deliveryType: customer.deliveryType || 'DAILY',
+                    status: customer.status || 'ACTIVE',
+                };
 
-  const deleteCustomer = (id) => {
-    const _customers = customers.filter((c) => c.id !== id);
-    setCustomers(_customers);
-    toast.current.show({
-      severity: "warn",
-      summary: "Deleted",
-      detail: "Customer Removed",
-      life: 3000,
-    });
-  };
+                const updateId = customer.id || customer.userId;
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <div className="flex gap-2 justify-center">
-        <Button
-          icon="pi pi-pencil"
-          rounded
-          outlined
-          className="p-button-info"
-          onClick={() => {
-            setCustomer({ ...rowData });
-            setCustomerDialog(true);
-          }}
-        />
-        <Button
-          icon="pi pi-trash"
-          rounded
-          outlined
-          className="p-button-danger"
-          onClick={() => deleteCustomer(rowData.id)}
-        />
-      </div>
+                if (updateId) {
+                    await axios.put(`${BASE_URL}/admin/customers/${updateId}`, payload, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Customer Updated Successfully', life: 3000 });
+                } else {
+                    await axios.post(`${BASE_URL}/admin/register-customer`, payload, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Customer Added Successfully', life: 3000 });
+                }
+                setCustomerDialog(false);
+                setCustomer(emptyCustomer);
+                fetchCustomers();
+            } catch (error) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save customer', life: 3000 });
+            }
+        }
+    };
+
+    const deleteCustomer = async (rowData) => {
+        try {
+            const deleteId = rowData.id || rowData.userId;
+            await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.current.show({ severity: 'success', summary: 'Success', detail: 'Customer Deleted Successfully', life: 3000 });
+            fetchCustomers();
+        } catch (error) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete customer' });
+        }
+    };
+
+    const statusBodyTemplate = (rowData) => {
+        const severityMap = { ACTIVE: 'success', INACTIVE: 'danger', DELETE: 'danger' };
+        return <Tag value={rowData.status || 'ACTIVE'} severity={severityMap[rowData.status || 'ACTIVE']} className="px-3 py-1 text-xs uppercase" rounded />;
+    };
+
+    const actionBodyTemplate = (rowData) => (
+        <div className="flex justify-center gap-2">
+            <Button icon="pi pi-pencil" rounded text tooltip="Edit" tooltipOptions={{position:'top'}} className="text-cyan-600 hover:bg-cyan-50" onClick={() => { setCustomer({ ...rowData }); setCustomerDialog(true); }} />
+            <Button icon="pi pi-trash" rounded text tooltip="Delete" tooltipOptions={{position:'top'}} className="text-rose-500 hover:bg-rose-50" onClick={() => deleteCustomer(rowData)} />
+        </div>
     );
-  };
 
-  return (
-    <Page title="Customer Management">
-      <Toast ref={toast} />
-
-      <div className="bg-white rounded-xl shadow border border-slate-200 p-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-slate-800">
-            Manage Customers
-          </h2>
-          <Button
-            label="Add New"
-            icon="pi pi-plus"
-            className="p-button-info"
-            onClick={openNew}
-          />
+    const header = (
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-white border-b border-slate-100">
+            <div>
+                <h2 className="text-xl font-bold text-slate-800 m-0">Customer Management</h2>
+                <p className="text-sm text-slate-500 mt-1">Total {Array.isArray(customers) ? customers.length : 0} customers registered</p>
+            </div>
+            <div className="flex items-center gap-3">
+                <span className="p-input-icon-left w-full md:w-auto">
+                    <i className="pi pi-search text-slate-400" />
+                    <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." className="p-inputtext-sm border-slate-200 rounded-lg w-full" />
+                </span>
+                <Button label="New Customer" icon="pi pi-plus" className="bg-cyan-600 border-none shadow-sm hover:bg-cyan-700 px-4 rounded-lg" onClick={openNew} />
+            </div>
         </div>
+    );
 
-        {/* Table */}
-        <DataTable
-          value={customers}
-          paginator
-          rows={5}
-          responsiveLayout="scroll"
-          className="p-datatable-sm"
-        >
-          <Column
-            header="#"
-            body={(rowData, options) => options.rowIndex + 1}
-            style={{ width: "60px" }}
-          />
-          <Column field="name" header="Name" sortable />
-          <Column field="email" header="Email" sortable />
-          <Column field="phone" header="Phone" />
-          <Column field="address" header="Address" />
-          <Column
-            header="Actions"
-            body={actionBodyTemplate}
-            style={{ width: "150px", textAlign: "center" }}
-          />
-        </DataTable>
-      </div>
-
-      {/* Dialog */}
-      <Dialog
-        visible={customerDialog}
-        style={{ width: "450px" }}
-        header="Customer Details"
-        modal
-        onHide={() => setCustomerDialog(false)}
-      >
-        <div className="p-fluid">
-          <div className="field mb-3">
-            <label className="font-semibold">Name</label>
-            <InputText
-              value={customer.name}
-              onChange={(e) =>
-                setCustomer({ ...customer, name: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="field mb-3">
-            <label className="font-semibold">Email</label>
-            <InputText
-              value={customer.email}
-              onChange={(e) =>
-                setCustomer({ ...customer, email: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="field mb-3">
-            <label className="font-semibold">Phone</label>
-            <InputText
-              value={customer.phone}
-              onChange={(e) =>
-                setCustomer({ ...customer, phone: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="field mb-3">
-            <label className="font-semibold">Address</label>
-            <InputText
-              value={customer.address}
-              onChange={(e) =>
-                setCustomer({ ...customer, address: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 mt-4">
-            <Button
-              label="Cancel"
-              text
-              onClick={() => setCustomerDialog(false)}
-            />
-            <Button label="Save" icon="pi pi-check" onClick={saveCustomer} />
-          </div>
+    const dialogFooter = (
+        <div className="flex gap-2 p-3 bg-slate-50 rounded-b-2xl border-t border-slate-100">
+            <Button label="Cancel" icon="pi pi-times" text onClick={hideDialog} className="text-slate-500" />
+            <Button label="Save Details" icon="pi pi-check" className="bg-cyan-600 border-none px-6" onClick={saveCustomer} />
         </div>
-      </Dialog>
-    </Page>
-  );
+    );
+
+    return (
+        <Page title="Customers">
+            <div className="p-4 bg-slate-50/50 min-h-screen">
+                <Toast ref={toast} />
+                <div className="max-w-7xl mx-auto">
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <DataTable 
+                            value={Array.isArray(customers) ? customers : []} 
+                            header={header} 
+                            paginator 
+                            rows={8} 
+                            loading={loading}
+                            globalFilter={globalFilter}
+                            className="p-datatable-sm"
+                            emptyMessage="No customers found."
+                        >
+                            <Column field="username" header="Full Name" sortable className="font-semibold text-slate-700 py-4 px-4"></Column>
+                            <Column field="mobileNumber" header="Mobile No" className="text-slate-600"></Column>
+                            <Column field="address" header="Address" className="text-slate-600"></Column>
+                            <Column field="status" header="Status" body={statusBodyTemplate} sortable></Column>
+                            <Column header="Actions" body={actionBodyTemplate} className="w-32"></Column>
+                        </DataTable>
+                    </div>
+                </div>
+
+                <Dialog 
+                    visible={customerDialog} 
+                    style={{ width: '400px' }} 
+                    header={<div className="text-lg font-bold text-slate-800">{(customer.id || customer.userId) ? 'Edit Customer' : 'Add New Customer'}</div>} 
+                    modal 
+                    className="p-fluid rounded-2xl" 
+                    footer={dialogFooter} 
+                    onHide={hideDialog}
+                >
+                    <div className="flex flex-col gap-5 pt-2">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">Full Name</label>
+                            <InputText value={customer.username || ''} onChange={(e) => setCustomer({...customer, username: e.target.value})} className={`p-3 border-slate-200 rounded-lg ${submitted && !customer.username ? 'p-invalid' : ''}`} placeholder="Enter customer's name" />
+                            {submitted && !customer.username && <small className="p-error">Name is required.</small>}
+                        </div>
+                        
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">Mobile Number</label>
+                            <InputText value={customer.mobileNumber || ''} onChange={(e) => setCustomer({...customer, mobileNumber: e.target.value})} maxLength={10} className={`p-3 border-slate-200 rounded-lg ${submitted && (!customer.mobileNumber || customer.mobileNumber.length !== 10) ? 'p-invalid' : ''}`} placeholder="10-digit number" />
+                            {submitted && (!customer.mobileNumber || customer.mobileNumber.length !== 10) && <small className="p-error">Valid 10-digit mobile is required.</small>}
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">Address</label>
+                            <InputText value={customer.address || ''} onChange={(e) => setCustomer({...customer, address: e.target.value})} className="p-3 border-slate-200 rounded-lg" placeholder="Address..." />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">Status</label>
+                            <Dropdown value={customer.status || 'ACTIVE'} options={statusOptions} onChange={(e) => setCustomer({...customer, status: e.value})} className="border-slate-200 rounded-lg h-12 flex items-center" />
+                        </div>
+                    </div>
+                </Dialog>
+            </div>
+        </Page>
+    );
 };
 
 export default CustomerManagement;

@@ -8,13 +8,16 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 import { Page } from "@/components/shared/Page";
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const DriverManagement = () => {
     let emptyDriver = {
         id: null,
-        name: '',
-        mobile: '',
-        licenseNo: '',
+        username: '',
+        mobileNumber: '',
+        vehicleNumber: '',
+        vehicleName: '',
         status: 'ACTIVE'
     };
 
@@ -23,22 +26,43 @@ const DriverManagement = () => {
     const [driver, setDriver] = useState(emptyDriver);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
+    const [loading, setLoading] = useState(false);
     const toast = useRef(null);
+
+    const token = useSelector((state) => state.auth.token);
+    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
     const statusOptions = [
         { label: 'Active', value: 'ACTIVE' },
-        { label: 'On Leave', value: 'ON_LEAVE' },
-        { label: 'Inactive', value: 'INACTIVE' }
+        { label: 'Inactive', value: 'INACTIVE' },
+        { label: 'Deleted', value: 'DELETE' } // Some users use ON_LEAVE also, mapping it down
     ];
 
+    const fetchDrivers = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/drivers`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (Array.isArray(response.data)) {
+                setDrivers(response.data);
+            } else if (response.data && Array.isArray(response.data.data)) {
+                setDrivers(response.data.data);
+            } else {
+                setDrivers([]);
+            }
+        } catch (error) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch drivers' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        // Sample Data
-        setDrivers([
-            { id: 1, name: 'Jay bhai', mobile: '9876543210', licenseNo: 'GJ03-2022001', status: 'ACTIVE' },
-            { id: 2, name: 'heet bhai ', mobile: '9123456780', licenseNo: 'GJ10-2021055', status: 'ON_LEAVE' },
-            { id: 3, name: 'Meet', mobile: '9988776655', licenseNo: 'GJ10-2020112', status: 'INACTIVE' }
-        ]);
-    }, []);
+        if (token) {
+            fetchDrivers();
+        }
+    }, [token]);
 
     const openNew = () => {
         setDriver(emptyDriver);
@@ -51,42 +75,66 @@ const DriverManagement = () => {
         setDriverDialog(false);
     };
 
-    const saveDriver = () => {
+    const saveDriver = async () => {
         setSubmitted(true);
-        if (driver.name.trim() && driver.mobile.trim()) {
-            let _drivers = [...drivers];
-            if (driver.id) {
-                const index = _drivers.findIndex(d => d.id === driver.id);
-                _drivers[index] = driver;
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Driver Updated Successfully', life: 3000 });
-            } else {
-                driver.id = Math.floor(Math.random() * 1000);
-                _drivers.push(driver);
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Driver Added Successfully', life: 3000 });
+        if (driver.username.trim() && driver.mobileNumber.trim() && driver.mobileNumber.length === 10) {
+            try {
+                const payload = {
+                    username: driver.username,
+                    mobileNumber: driver.mobileNumber,
+                    vehicleNumber: driver.vehicleNumber || 'N/A',
+                    vehicleName: driver.vehicleName || 'N/A'
+                };
+
+                if (driver.id) {
+                    await axios.put(`${BASE_URL}/admin/drivers/${driver.id}`, payload, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Driver Updated Successfully', life: 3000 });
+                } else {
+                    await axios.post(`${BASE_URL}/admin/register-driver`, payload, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Driver Added Successfully', life: 3000 });
+                }
+                setDriverDialog(false);
+                setDriver(emptyDriver);
+                fetchDrivers();
+            } catch (error) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save driver', life: 3000 });
             }
-            setDrivers(_drivers);
-            setDriverDialog(false);
-            setDriver(emptyDriver);
+        }
+    };
+
+    const deleteDriver = async (rowData) => {
+        try {
+            await axios.delete(`${BASE_URL}/admin/users/${rowData.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.current.show({ severity: 'success', summary: 'Success', detail: 'Driver Deleted Successfully', life: 3000 });
+            fetchDrivers();
+        } catch (error) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete driver' });
         }
     };
 
     const statusBodyTemplate = (rowData) => {
-        const severityMap = { ACTIVE: 'success', ON_LEAVE: 'warning', INACTIVE: 'danger' };
-        return <Tag value={rowData.status} severity={severityMap[rowData.status]} className="px-3 py-1 text-xs uppercase" rounded />;
+        const severityMap = { ACTIVE: 'success', ON_LEAVE: 'warning', INACTIVE: 'danger', DELETE: 'danger' };
+        return <Tag value={rowData.status || 'ACTIVE'} severity={severityMap[rowData.status || 'ACTIVE']} className="px-3 py-1 text-xs uppercase" rounded />;
     };
 
     const actionBodyTemplate = (rowData) => (
         <div className="flex justify-center gap-2">
-            <Button icon="pi pi-pencil" rounded text className="text-cyan-600 hover:bg-cyan-50" onClick={() => { setDriver({ ...rowData }); setDriverDialog(true); }} />
-            <Button icon="pi pi-trash" rounded text className="text-rose-500 hover:bg-rose-50" />
+            <Button icon="pi pi-pencil" rounded text tooltip="Edit" tooltipOptions={{position:'top'}} className="text-cyan-600 hover:bg-cyan-50" onClick={() => { setDriver({ ...rowData }); setDriverDialog(true); }} />
+            <Button icon="pi pi-trash" rounded text tooltip="Delete" tooltipOptions={{position:'top'}} className="text-rose-500 hover:bg-rose-50" onClick={() => deleteDriver(rowData)} />
         </div>
     );
 
     const header = (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-white border-b border-slate-100">
             <div>
-                <h2 className="text-xl font-bold text-slate-800 m-0">Driver Management</h2>
-                <p className="text-sm text-slate-500 mt-1">Total {drivers.length} drivers registered</p>
+                <h2 className="text-2xlfont-bold text-slate-800 m-0">Driver Management</h2>
+                <p className="text-sm text-slate-500 mt-1">Total {Array.isArray(drivers) ? drivers.length : 0} drivers registered</p>
             </div>
             <div className="flex items-center gap-3">
                 <span className="p-input-icon-left w-full md:w-auto">
@@ -112,17 +160,19 @@ const DriverManagement = () => {
                 <div className="max-w-7xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <DataTable 
-                            value={drivers} 
+                            value={Array.isArray(drivers) ? drivers : []} 
                             header={header} 
                             paginator 
                             rows={8} 
+                            loading={loading}
                             globalFilter={globalFilter}
                             className="p-datatable-sm"
                             emptyMessage="No drivers found."
                         >
-                            <Column field="name" header="Full Name" sortable className="font-semibold text-slate-700 py-4 px-4"></Column>
-                            <Column field="mobile" header="Mobile No" className="text-slate-600"></Column>
-                            <Column field="licenseNo" header="License No" className="text-slate-600"></Column>
+                            <Column field="username" header="Full Name" sortable className="font-semibold text-slate-700 py-4 px-4"></Column>
+                            <Column field="mobileNumber" header="Mobile No" className="text-slate-600"></Column>
+                            <Column field="vehicleName" header="Vehicle Name" className="text-slate-600"></Column>
+                            <Column field="vehicleNumber" header="Vehicle Number" className="text-slate-600"></Column>
                             <Column field="status" header="Status" body={statusBodyTemplate} sortable></Column>
                             <Column header="Actions" body={actionBodyTemplate} className="w-32"></Column>
                         </DataTable>
@@ -141,24 +191,29 @@ const DriverManagement = () => {
                     <div className="flex flex-col gap-5 pt-2">
                         <div className="flex flex-col gap-2">
                             <label className="text-sm font-semibold text-slate-700">Full Name</label>
-                            <InputText value={driver.name} onChange={(e) => setDriver({...driver, name: e.target.value})} className={`p-3 border-slate-200 rounded-lg ${submitted && !driver.name ? 'p-invalid' : ''}`} placeholder="Enter driver's name" />
-                            {submitted && !driver.name && <small className="p-error">Name is required.</small>}
+                            <InputText value={driver.username || ''} onChange={(e) => setDriver({...driver, username: e.target.value})} className={`p-3 border-slate-200 rounded-lg ${submitted && !driver.username ? 'p-invalid' : ''}`} placeholder="Enter driver's name" />
+                            {submitted && !driver.username && <small className="p-error">Name is required.</small>}
                         </div>
                         
                         <div className="flex flex-col gap-2">
                             <label className="text-sm font-semibold text-slate-700">Mobile Number</label>
-                            <InputText value={driver.mobile} onChange={(e) => setDriver({...driver, mobile: e.target.value})} className={`p-3 border-slate-200 rounded-lg ${submitted && !driver.mobile ? 'p-invalid' : ''}`} placeholder="10-digit number" />
-                            {submitted && !driver.mobile && <small className="p-error">Mobile is required.</small>}
+                            <InputText value={driver.mobileNumber || ''} onChange={(e) => setDriver({...driver, mobileNumber: e.target.value})} maxLength={10} className={`p-3 border-slate-200 rounded-lg ${submitted && (!driver.mobileNumber || driver.mobileNumber.length !== 10) ? 'p-invalid' : ''}`} placeholder="10-digit number" />
+                            {submitted && (!driver.mobileNumber || driver.mobileNumber.length !== 10) && <small className="p-error">Valid 10-digit mobile is required.</small>}
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-slate-700">License Number</label>
-                            <InputText value={driver.licenseNo} onChange={(e) => setDriver({...driver, licenseNo: e.target.value})} className="p-3 border-slate-200 rounded-lg" placeholder="License plate or ID" />
+                            <label className="text-sm font-semibold text-slate-700">Vehicle Name</label>
+                            <InputText value={driver.vehicleName || ''} onChange={(e) => setDriver({...driver, vehicleName: e.target.value})} className="p-3 border-slate-200 rounded-lg" placeholder="e.g. Tata Ace" />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">Vehicle Number</label>
+                            <InputText value={driver.vehicleNumber || ''} onChange={(e) => setDriver({...driver, vehicleNumber: e.target.value})} className="p-3 border-slate-200 rounded-lg" placeholder="e.g. GJ 01 XX 1234" />
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <label className="text-sm font-semibold text-slate-700">Status</label>
-                            <Dropdown value={driver.status} options={statusOptions} onChange={(e) => setDriver({...driver, status: e.value})} className="border-slate-200 rounded-lg h-12 flex items-center" />
+                            <Dropdown value={driver.status || 'ACTIVE'} options={statusOptions} onChange={(e) => setDriver({...driver, status: e.value})} className="border-slate-200 rounded-lg h-12 flex items-center" />
                         </div>
                     </div>
                 </Dialog>

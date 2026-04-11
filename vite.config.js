@@ -17,5 +17,12 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3002,
     open: true,
+    proxy: {
+      '/api': {
+        target: 'http://13.203.201.132:9092/mineralWater/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
 });
