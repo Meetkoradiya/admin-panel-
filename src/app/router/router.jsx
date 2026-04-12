@@ -15,26 +15,24 @@ const ChangePassword = lazy(() =>
   import("@/app/pages/Profile/ChangePassword/ChangePassword")
 );
 
-// Operations
-const RouteManagement = lazy(() =>
-  import("@/app/pages/operations/RouteManagement")
-);
-const DriverManagement = lazy(() =>
-  import("@/app/pages/operations/DriverManagement")
-);
-const CustomerManagement = lazy(() =>
-  import("@/app/pages/operations/CustomerManagement")
-);
+// Admin Operations & Entities
+const RouteList = lazy(() => import("@/app/pages/admin/routes/routeList"));
+const RouteCreate = lazy(() => import("@/app/pages/admin/routes/routeCreate"));
 
-// Inventory
-const Stock = lazy(() =>
-  import("@/app/pages/operations/inventory/Stock")
-);
+const DriverList = lazy(() => import("@/app/pages/admin/drivers/driverList"));
+const DriverCreate = lazy(() => import("@/app/pages/admin/drivers/driverCreate"));
 
-// Billing
-const OrderManagement = lazy(() =>
-  import("@/app/pages/billing/OrderManagement")
-);
+const CustomerList = lazy(() => import("@/app/pages/admin/customers/customerList"));
+const CustomerCreate = lazy(() => import("@/app/pages/admin/customers/customerCreate"));
+const CustomerDetail = lazy(() => import("@/app/pages/admin/customers/customerDetail"));
+
+// Admin Inventory & Products
+const InventoryList = lazy(() => import("@/app/pages/admin/inventory/inventoryList"));
+const ProductList = lazy(() => import("@/app/pages/admin/product/product"));
+
+// Admin Orders
+const OrderList = lazy(() => import("@/app/pages/admin/orders/orderList"));
+
 const BillingManagement = lazy(() =>
   import("../pages/billing/BillingManagement")
 );
@@ -56,15 +54,22 @@ export const MasterRoutes = [
   },
 
   // Operations
-  { path: "routes", name: "Routes", element: <RouteManagement /> },
-  { path: "drivers", name: "Drivers", element: <DriverManagement /> },
-  { path: "customers", name: "Customers", element: <CustomerManagement /> },
+  { path: "routes", name: "Routes", element: <RouteList /> },
+  { path: "routes/add", name: "Add Route", element: <RouteCreate /> },
+  { path: "routes/edit/:id", name: "Edit Route", element: <RouteCreate /> },
+  { path: "drivers", name: "Drivers", element: <DriverList /> },
+  { path: "drivers/add", name: "Add Driver", element: <DriverCreate /> },
+  { path: "drivers/edit/:id", name: "Edit Driver", element: <DriverCreate /> },
+  { path: "customers", name: "Customers", element: <CustomerList /> },
+  { path: "customers/add", name: "Add Customer", element: <CustomerCreate /> },
+  { path: "customers/edit/:id", name: "Edit Customer", element: <CustomerCreate /> },
 
   // Inventory
-  { path: "inventory/stock", name: "Stock", element: <Stock /> },
+  { path: "inventory/stock", name: "Stock", element: <InventoryList /> },
+  { path: "products", name: "Products", element: <ProductList /> },
 
   // Billing & Finance
-  { path: "orders", name: "Orders", element: <OrderManagement /> },
+  { path: "orders", name: "Orders", element: <OrderList /> },
   { path: "billings", name: "Billings", element: <BillingManagement /> },
 ];
 
@@ -79,41 +84,22 @@ export const AdminRoutes = [
   },
 
   // Operations
-  { path: "routes", name: "Routes", element: <RouteManagement /> },
-  { path: "drivers", name: "Drivers", element: <DriverManagement /> },
-  { path: "customers", name: "Customers", element: <CustomerManagement /> },
+  { path: "routes", name: "Routes", element: <RouteList /> },
+  { path: "routes/add", name: "Add Route", element: <RouteCreate /> },
+  { path: "routes/edit/:id", name: "Edit Route", element: <RouteCreate /> },
+  { path: "drivers", name: "Drivers", element: <DriverList /> },
+  { path: "drivers/add", name: "Add Driver", element: <DriverCreate /> },
+  { path: "drivers/edit/:id", name: "Edit Driver", element: <DriverCreate /> },
+  { path: "customers", name: "Customers", element: <CustomerList /> },
+  { path: "customers/add", name: "Add Customer", element: <CustomerCreate /> },
+  { path: "customers/edit/:id", name: "Edit Customer", element: <CustomerCreate /> },
 
   // Inventory
-  { path: "inventory/stock", name: "Stock", element: <Stock /> },
+  { path: "inventory/stock", name: "Stock", element: <InventoryList /> },
+  { path: "products", name: "Products", element: <ProductList /> },
 
   // Billing & Finance
-  { path: "orders", name: "Orders", element: <OrderManagement /> },
+  { path: "orders", name: "Orders", element: <OrderList /> },
   { path: "billings", name: "Billings", element: <BillingManagement /> },
 ];
-
-import { Routes, Route, Navigate } from "react-router-dom";
-import HomeLayout from "../layout/HomeLayout/HomeLayout";
-
-export const AppRoutes = () => {
-  return (
-    <Routes>
-
-      {/* Layout */}
-      <Route path="/admin" element={<HomeLayout />}>
-
-        {/* 🔥 MasterRoutes map */}
-        {MasterRoutes.map((route, i) => (
-          <Route
-            key={i}
-            path={route.path}
-            element={route.element}
-          />
-        ))}
-
-        {/* Default */}
-        <Route index element={<Navigate to="dashboard" />} />
-      </Route>
-
-    </Routes>
-  );
-};
+

@@ -1,100 +1,106 @@
-import "./AppSidebar.scss";
-import { useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { MenuProvider } from "../../context/menucontext";
-import AppMenuitem from "../../context/AppMenuitem";
 
-import DashboardsIcon from "../../../assets/dualicons/dashboards.svg?react";
-import OrdersIcon from "../../../assets/dualicons/bag.svg?react";
-import BillingIcon from "../../../assets/dualicons/ticket.svg?react";
-import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
-import RouteIcon from "../../../assets/dualicons/routes.svg?react";
-import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
-import CustomersIcon from "../../../assets/dualicons/group.svg?react"; // Using group icon for customers
-import Logo from "../../../assets/appLogo.svg?react";
+// imports
+import AppMenuitem from "@/app/context/AppMenuitem";
+import AppMenuIcon from "@/app/context/AppMenuIcons";
+import { MenuProvider } from "@/app/context/menucontext";
+import { LayoutContext } from "@/app/context/layoutcontent";
+import { menuModel } from "./modals";
+import { APP_NAME } from "@/constants/app.constant";
+import "./AppSidebar.scss";
 
-const AppSidebar = () => {
+const AdminSidebar = () => {
   const navigate = useNavigate();
+  const { layoutState } = useContext(LayoutContext);
 
-  const [menu] = useState([
-    {
-      label: "Dashboard",
-      items: [
-        { label: "Dashboard", Icon: DashboardsIcon, to: "/admin/dashboard" },
-      ],
-    },
-    {
-      label: "Operations",
-      items: [
-        {
-          label: "Routes",
-          Icon: RouteIcon,
-          items: [
-            {
-              label: "Manage Routes",
-              to: "/admin/routes",
-              Icon: ComponentsIcon,
-            },
-          ],
-        },
-        {
-          label: "Inventory",
-          Icon: ComponentsIcon,
-          items: [
-            {
-              label: "Stock",
-              to: "/admin/inventory/stock",
-              Icon: ComponentsIcon,
-            },
-          ],
-        },
-        {
-          label: "Drivers",
-          Icon: DriverIcon,
-          items: [
-            { label: "Manage Drivers", to: "/admin/drivers", Icon: ComponentsIcon },
-          ],
-        },
-        {
-          label: "Customers",
-          Icon: CustomersIcon,
-          items: [
-            { label: "Manage Customers", to: "/admin/customers", Icon: ComponentsIcon },
-          ],
-        },
-      ],
-    },
-    {
-      label: "Billing & Finance",
-      items: [
-        { label: "Orders", Icon: OrdersIcon, to: "/master/orders" },
-        { label: "Billings", Icon: BillingIcon, to: "/master/billings" },
-      ],
-    },
-  ]);
+  const isCollapsed = layoutState.staticMenuDesktopInactive;
+
+  const handleLogoClick = () => navigate("/");
 
   return (
     <MenuProvider>
-      <div className="sidebar">
+      <aside className="sidebar">
         <div
-          className="sidebar-header-image flex cursor-pointer"
-          onClick={() => navigate("/master/dashboard")}
+          className="side-nav-header flex cursor-pointer"
+          onClick={handleLogoClick}
         >
-          <Logo className="h-12 w-12" />
-          <div className="ml-2">
-            <div className="text-xl font-bold">Amrut Water</div>
-            <div className="text-xs">Smart Management</div>
-          </div>
+          {!isCollapsed ? (
+            <div className="flex items-center gap-1 px-6 mt-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-droplets h-10 w-10 text-[var(--primary-color)]"
+                aria-hidden="true"
+              >
+                <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path>
+                <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"></path>
+              </svg>
+              <div className="flex flex-col whitespace-nowrap ml-2">
+                <span className="text-xl font-bold text-slate-800 tracking-tight">
+                  {APP_NAME}
+                </span>
+                <span className="text-[0.65rem] font-bold text-indigo-500 uppercase tracking-wider">
+                  Smart Management
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="px-4 mt-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-droplets h-10 w-10 text-indigo-600"
+                aria-hidden="true"
+              >
+                <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path>
+                <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"></path>
+              </svg>
+            </div>
+          )}
         </div>
 
-        <ul className="layout-menu">
-          {menu.map((item, i) => (
-            <AppMenuitem item={item} root index={i} key={item.label} />
-          ))}
-        </ul>
-      </div>
+        <div className="sidebar-section mt-6">
+          {!isCollapsed ? (
+            <ul className="layout-menu">
+              {menuModel.map((item, index) =>
+                !item.seperator ? (
+                  <AppMenuitem
+                    key={item.label}
+                    item={item}
+                    index={index}
+                    root
+                  />
+                ) : (
+                  <li key={index} className="menu-separator border-b border-slate-200 my-4" />
+                ),
+              )}
+            </ul>
+          ) : (
+            <ul className="icon-menu">
+              {menuModel.map((item, index) => (
+                <AppMenuIcon key={item.label} item={item} index={index} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </aside>
     </MenuProvider>
   );
 };
 
-export default AppSidebar;
+export default AdminSidebar;

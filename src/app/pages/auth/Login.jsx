@@ -46,10 +46,9 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-    
       const res = await axios.post(`${BASE_URL}/auth/login`, {
-        mobileNumber: formData.mobileNumber,
-        password: formData.password,
+        mobileNumber: formData.mobileNumber.trim(),
+        password: formData.password.trim(),
       });
 
      
@@ -64,18 +63,24 @@ const Login = () => {
       const decoded = jwtDecode(token);
       const userId = decoded?.userId || decoded?.sub; 
 
-     
-      const userRes = await axios.get(`${BASE_URL}/admin/users?id=${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      let userData = dataPayload.user;
+      if (!userData) {
+        // Fallback if user is not in the login response
+        const userRes = await axios.get(`${BASE_URL}/admin/users?id=${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        userData = userRes.data?.data || userRes.data;
+        if (Array.isArray(userData) && userData.length > 0) {
+          userData = userData[0];
+        }
+      }
+      const time = decoded?.exp ? decoded.exp * 1000 : 0;
 
-      const userData = userRes.data?.data || userRes.data;
-
-      
       dispatch(
         login({
           token,
           refreshToken,
+          time,
           userData: {
             ...userData,
             userId,
@@ -90,13 +95,22 @@ const Login = () => {
         life: 2000,
       });
 
+      if (userData.role === "MASTER_ADMIN") {
+        navigate("/master/dashboard", { replace: true });
+      } else if (userData.role === "ADMIN") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+
      
-    } catch(error){ 
-      toast.current.show({
+    } catch (error) { 
+      const errorMessage = error.response?.data?.message || "Login Failed (Network Error or Invalid Credentials)";
+      toast.current?.show({
         severity: "error",
-        summary: "Success",
-        detail: error.response.data.message || "Login Falled",
-        life: 2000,
+        summary: "Error",
+        detail: errorMessage,
+        life: 5000,
       });
     }
      finally {

@@ -10,11 +10,7 @@ const PublicRoute = () => {
     const { role, masterAdmin } = userData;
 
     if (role === "MASTER_ADMIN") {
-        if (masterAdmin === true || masterAdmin === "true") {
       return <Navigate to="/master/dashboard" replace />;
-        } else {
-          return <Outlet />;
-        }
     }
 
     if (role === "ADMIN") {
@@ -22,10 +18,12 @@ const PublicRoute = () => {
     }
 
     if (role === "DRIVER") {
-      return <Navigate to="/login" replace />;
+      // Not allowed in admin app, should probably show error or logout, but avoid infinite loop
+      return <Navigate to="/" replace />;
     }
 
-    return <Navigate to="/login" replace />;
+    // Default fallback to prevent infinite loop on /login
+    return <Outlet />;
   }
 
   return <Outlet />;
