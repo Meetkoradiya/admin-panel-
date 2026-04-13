@@ -73,7 +73,6 @@ export const MasterRoutes = [
   { path: "billings", name: "Billings", element: <BillingManagement /> },
 ];
 
-// ================= ADMIN ROUTES =================
 export const AdminRoutes = [
   { path: "dashboard", name: "Dashboard", element: <CRMAnalytics /> },
   { path: "profile", name: "Profile", element: <UserProfile /> },
