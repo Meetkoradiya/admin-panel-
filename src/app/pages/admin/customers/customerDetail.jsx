@@ -57,10 +57,22 @@ const CustomerDetail = () => {
     const fetchCustomerOrders = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BASE_URL}/orders/customer/${id}`, {
+        const res = await axios.get(`${BASE_URL}/orders/customer/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        setOrders(response.data.data || response.data || []);
+        
+        let dataArray = [];
+        if (Array.isArray(res.data)) {
+          dataArray = res.data;
+        } else if (res.data?.data) {
+          if (Array.isArray(res.data.data)) dataArray = res.data.data;
+          else if (Array.isArray(res.data.data.content)) dataArray = res.data.data.content;
+          else if (typeof res.data.data === 'object') {
+            const possibleArray = Object.values(res.data.data).find(Array.isArray);
+            if (possibleArray) dataArray = possibleArray;
+          }
+        }
+        setOrders(dataArray);
       } catch {
         toast.error("Failed to fetch orders");
       } finally {
