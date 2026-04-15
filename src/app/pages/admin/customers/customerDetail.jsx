@@ -147,7 +147,7 @@ const CustomerDetail = () => {
             <div className="form-container vertical flex w-full flex-col justify-between">
               <div className="w-full">
                 <div className="flex flex-col gap-4 xl:flex-row">
-                  <div className="min-w-[330px] 2xl:min-w-[400px]">
+                  <div className="min-w-330px 2xl:min-w-400px">
                     <div className="card card-border w-full">
                       {loading ? (
                         <>

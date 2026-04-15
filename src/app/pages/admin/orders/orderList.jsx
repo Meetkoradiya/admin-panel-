@@ -33,7 +33,7 @@ const OrderList = () => {
 
   const blankRows = Array.from({ length: 15 }, (_, i) => ({ id: `skeleton-${i}` }));
 
-  // --- API INTEGRATION: FETCH ORDERS ---
+ 
   const fetchOrders = async () => {
     try {
       setLoading(true);

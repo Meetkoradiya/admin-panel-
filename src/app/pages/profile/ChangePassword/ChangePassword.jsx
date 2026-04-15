@@ -3,10 +3,11 @@ import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "primereact/toast";
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
-import { logout } from "../../../../redux/slice/AuthSlice";
+import { logout, login } from "../../../../redux/slice/AuthSlice";
 
 const ChangePassword = () => {
   const toast = useRef(null);
@@ -15,6 +16,7 @@ const ChangePassword = () => {
 
   const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
   const token = useSelector((state) => state.auth.token);
+  const auth = useSelector((state) => state.auth);
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -50,17 +52,28 @@ const ChangePassword = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validate()) return;
 
+    confirmDialog({
+      message: 'Are you sure you want to change your password?',
+      header: 'Confirm Password Change',
+      icon: 'pi pi-exclamation-triangle',
+      acceptClassName: 'p-button-danger',
+      accept: () => performChange()
+    });
+  };
+
+  const performChange = async () => {
     try {
       setLoading(true);
 
       await axios.post(
-        `${BASE_URL}/users/change-password`,
+        `${BASE_URL}/admin/change-password`,
         {
           oldPassword: form.currentPassword,
           newPassword: form.newPassword,
+          confirmPassword: form.confirmPassword,
         },
         {
           headers: {
@@ -68,6 +81,37 @@ const ChangePassword = () => {
           },
         }
       );
+
+      try {
+        const res = await axios.post(`${BASE_URL}/auth/login`, {
+          mobileNumber: auth.userData?.mobileNumber,
+          password: form.newPassword,
+        });
+        const dataPayload = res.data?.data || res.data;
+        if (dataPayload && dataPayload.accessToken) {
+          const newToken = dataPayload.accessToken;
+          const newRefreshToken = dataPayload.refreshToken;
+          
+          let newTime = 0;
+          try {
+            const decoded = JSON.parse(atob(newToken.split('.')[1]));
+            newTime = decoded?.exp ? decoded.exp * 1000 : 0;
+          } catch (e) {
+            console.error("Failed to decode token", e);
+          }
+
+          dispatch(
+            login({
+              token: newToken,
+              refreshToken: newRefreshToken,
+              time: newTime,
+              userData: auth.userData, 
+            })
+          );
+        }
+      } catch (autoErr) {
+        console.error("Auto login failed", autoErr);
+      }
 
       toast.current.show({
         severity: "success",
@@ -110,6 +154,7 @@ const ChangePassword = () => {
   return (
     <div className="p-4 md:p-6">
       <Toast ref={toast} />
+      <ConfirmDialog />
 
       <div className="card max-w-2xl mx-auto">
         <div className="mb-6">

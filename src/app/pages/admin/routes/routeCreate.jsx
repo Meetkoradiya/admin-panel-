@@ -95,7 +95,7 @@ const AddRoute = () => {
             <div className="bg-slate-50 flex flex-col justify-between h-full min-h-[calc(100vh-120px)] relative">
                 <Toast ref={toast} />
                 
-                <div className="p-4 md:p-6 mb-16 flex-grow">
+                <div className="p-4 md:p-6 mb-16 ">
                     <h2 className="text-2xl font-bold text-slate-800 mb-6">{id ? "Edit Route" : "Create Route"}</h2>
                     
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 w-full">

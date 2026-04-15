@@ -18,16 +18,19 @@ export const User = () => {
   const [profile, setProfile] = useState("/images/avatar.jpg");
 
   const fetchProfilePicture = useCallback(() => {
-    if (!userId) return;
+  if (!userId) return;
 
-    axios
-      .get(`${BASE_URL}/users/profile-picture/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: "blob",
-      })
-      .then(() => setProfile("/images/User.webp"))
-      .catch(() => setProfile("/images/User.webp"));
-  }, [BASE_URL, userId, token]);
+  axios
+    .get(`${BASE_URL}/users/profile-picture/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      responseType: "blob",
+    })
+    .then((res) => {
+      const imageUrl = URL.createObjectURL(res.data); // 👈 IMPORTANT
+      setProfile(imageUrl);
+    })
+    .catch(() => setProfile("/images/User.webp"));
+}, [BASE_URL, userId, token]);
 
   useEffect(() => {
     fetchProfilePicture();
@@ -93,7 +96,7 @@ export const User = () => {
               className="p-link layout-topbar-button"
               onClick={() => {
                 op.current.hide();
-                navigate("/master/profile");
+                navigate("/admin/profile");
               }}
             >
               <i className="pi pi-user mr-2"></i>
@@ -104,7 +107,7 @@ export const User = () => {
               type="button"
               className="p-link layout-topbar-button"
               onClick={() => {
-              navigate("/master/change-password");
+              navigate("/admin/change-password");
               op.current.hide();
               }}
             >

@@ -11,10 +11,12 @@ import { FileUpload } from "primereact/fileupload";
 import { InputSwitch } from "primereact/inputswitch";
 import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
+import { login as loginAction } from "../../../../redux/slice/AuthSlice";
 
 const UserProfile = () => {
   const toast = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
 
   // States
@@ -63,6 +65,80 @@ const UserProfile = () => {
   const handleSecurityChange = (e) => {
     const { name, value } = e.target;
     setSecurityData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+  const token = auth.token;
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      if (activeTab === "profile") {
+        await axios.put(`${BASE_URL}/admin/update-profile`, {
+          username: formData.username,
+          mobileNumber: formData.mobileNumber,
+          email: formData.email,
+          profileImageUrl: profile || ""
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Profile updated successfully' });
+      } else if (activeTab === "security") {
+        if (securityData.newPassword !== securityData.confirmPassword) {
+          toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Passwords do not match' });
+          setIsLoading(false);
+          return;
+        }
+        await axios.post(`${BASE_URL}/admin/change-password`, {
+          oldPassword: securityData.currentPassword,
+          newPassword: securityData.newPassword,
+          confirmPassword: securityData.confirmPassword
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        // Auto-login logic to refresh token and prevent 401 redirection
+        try {
+          const res = await axios.post(`${BASE_URL}/auth/login`, {
+            mobileNumber: auth.userData?.mobileNumber,
+            password: securityData.newPassword,
+          });
+          const dataPayload = res.data?.data || res.data;
+          if (dataPayload && dataPayload.accessToken) {
+            const newToken = dataPayload.accessToken;
+            const newRefreshToken = dataPayload.refreshToken;
+            
+            let newTime = 0;
+            try {
+              const decoded = JSON.parse(atob(newToken.split('.')[1]));
+              newTime = decoded?.exp ? decoded.exp * 1000 : 0;
+            } catch (e) {
+              console.error("Failed to decode token", e);
+            }
+
+            dispatch(
+              loginAction({
+                token: newToken,
+                refreshToken: newRefreshToken,
+                time: newTime,
+                userData: auth.userData, 
+              })
+            );
+          }
+        } catch (autoErr) {
+          console.error("Auto login failed after password change:", autoErr);
+        }
+
+        toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Password changed successfully' });
+        setSecurityData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      } else if (activeTab === "notification") {
+        toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Notification preferences saved local' });
+      }
+    } catch (error) {
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || 'Failed to save changes' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -196,7 +272,7 @@ const UserProfile = () => {
               )}
 
               <div className="flex justify-end mt-12 pt-6 border-t border-gray-100">
-                <Button label="Save Changes" loading={isLoading} className="bg-blue-600 border-none px-10 py-3 rounded-xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700" />
+                <Button label="Save Changes" onClick={handleSave} loading={isLoading} className="bg-blue-600 border-none px-10 py-3 rounded-xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700" />
               </div>
 
             </div>

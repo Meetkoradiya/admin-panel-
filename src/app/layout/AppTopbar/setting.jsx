@@ -24,7 +24,7 @@ export const Setting = () => {
             className="flex items-center gap-3 p-2 rounded-lg border"
             onClick={() => {
               op.current.hide();
-              navigate("/master/change-password");
+              navigate("/admin/change-password");
             }}
           >
             <i className="pi pi-key"></i>
@@ -35,7 +35,7 @@ export const Setting = () => {
             className="flex items-center gap-3 p-2 rounded-lg border"
             onClick={() => {
               op.current.hide();
-              navigate("/master/profile");
+              navigate("/admin/profile");
             }}
           >
             <i className="pi pi-user"></i>
