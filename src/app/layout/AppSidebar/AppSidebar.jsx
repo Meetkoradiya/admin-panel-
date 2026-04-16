@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // imports
 import AppMenuitem from "@/app/context/AppMenuitem";
@@ -7,12 +8,16 @@ import AppMenuIcon from "@/app/context/AppMenuIcons";
 import { MenuProvider } from "@/app/context/menucontext";
 import { LayoutContext } from "@/app/context/layoutcontent";
 import { menuModel } from "./modals";
+import { masterMenuModel } from "./masterModals";
 import { APP_NAME } from "@/constants/app.constant";
 import "./AppSidebar.scss";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const { layoutState } = useContext(LayoutContext);
+  const user = useSelector((state) => state.auth.userData);
+  
+  const currentMenuModel = user?.role === "MASTER_ADMIN" ? masterMenuModel : menuModel;
 
   const isCollapsed = layoutState.staticMenuDesktopInactive;
 
@@ -77,7 +82,7 @@ const AdminSidebar = () => {
         <div className="sidebar-section mt-6">
           {!isCollapsed ? (
             <ul className="layout-menu">
-              {menuModel.map((item, index) =>
+              {currentMenuModel.map((item, index) =>
                 !item.seperator ? (
                   <AppMenuitem
                     key={item.label}
@@ -92,7 +97,7 @@ const AdminSidebar = () => {
             </ul>
           ) : (
             <ul className="icon-menu">
-              {menuModel.map((item, index) => (
+              {currentMenuModel.map((item, index) => (
                 <AppMenuIcon key={item.label} item={item} index={index} />
               ))}
             </ul>

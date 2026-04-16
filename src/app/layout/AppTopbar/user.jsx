@@ -63,7 +63,8 @@ export const User = () => {
             type="button"
             onClick={() => {
               op.current.hide();
-              navigate("/master/profile");
+              const profilePath = user?.role === "MASTER_ADMIN" ? "/master/profile" : "/admin/profile";
+              navigate(profilePath);
             }}
             className="cursor-pointer"
           >
@@ -96,7 +97,8 @@ export const User = () => {
               className="p-link layout-topbar-button"
               onClick={() => {
                 op.current.hide();
-                navigate("/admin/profile");
+                const path = user?.role === "MASTER_ADMIN" ? "/master/profile" : "/admin/profile";
+                navigate(path);
               }}
             >
               <i className="pi pi-user mr-2"></i>
@@ -107,8 +109,9 @@ export const User = () => {
               type="button"
               className="p-link layout-topbar-button"
               onClick={() => {
-              navigate("/admin/change-password");
-              op.current.hide();
+                const path = user?.role === "MASTER_ADMIN" ? "/master/change-password" : "/admin/change-password";
+                navigate(path);
+                op.current.hide();
               }}
             >
               <i className="pi pi-cog mr-2"></i>

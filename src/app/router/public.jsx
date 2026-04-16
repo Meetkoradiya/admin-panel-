@@ -9,7 +9,7 @@ const PublicRoute = () => {
   if (isAuthenticated && userData) {
     const { role, masterAdmin } = userData;
 
-    if (role === "MASTER_ADMIN") {
+    if (role === "MASTER_ADMIN" || masterAdmin) {
       return <Navigate to="/master/dashboard" replace />;
     }
 

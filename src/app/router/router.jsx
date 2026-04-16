@@ -6,6 +6,7 @@ const SignUp = lazy(() => import("../pages/auth/SignUp"));
 
 // Dashboard / Home
 const CRMAnalytics = lazy(() => import("@/app/pages/home"));
+const MasterDashboard = lazy(() => import("@/app/pages/master/MasterDashboard"));
 
 // Profile
 const UserProfile = lazy(() =>
@@ -14,6 +15,12 @@ const UserProfile = lazy(() =>
 const ChangePassword = lazy(() =>
   import("@/app/pages/Profile/ChangePassword/ChangePassword")
 );
+
+// Master Admin Management System
+const AdminList = lazy(() => import("@/app/pages/master/adminManagement/adminList"));
+const SubscriptionList = lazy(() => import("@/app/pages/master/subscriptions/subscriptionList"));
+const DeviceList = lazy(() => import("@/app/pages/master/devices/deviceList"));
+const SupportList = lazy(() => import("@/app/pages/master/support/supportList"));
 
 // Admin Operations & Entities
 const RouteList = lazy(() => import("@/app/pages/admin/routes/routeList"));
@@ -45,13 +52,19 @@ export const PublicRoutes = [
 
 // ================= MASTER ROUTES =================
 export const MasterRoutes = [
-  { path: "dashboard", name: "Dashboard", element: <CRMAnalytics /> },
+  { path: "dashboard", name: "Dashboard", element: <MasterDashboard /> },
   { path: "profile", name: "Profile", element: <UserProfile /> },
   {
     path: "change-password",
     name: "Change Password",
     element: <ChangePassword />,
   },
+
+  // Management System
+  { path: "admins", name: "Admin Management", element: <AdminList /> },
+  { path: "subscriptions", name: "Subscriptions", element: <SubscriptionList /> },
+  { path: "devices", name: "Device Verification", element: <DeviceList /> },
+  { path: "support", name: "Contact Support", element: <SupportList /> },
 
   // Operations
   { path: "routes", name: "Routes", element: <RouteList /> },

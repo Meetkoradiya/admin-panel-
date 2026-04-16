@@ -11,6 +11,10 @@ const ProtectedRoute = ({ allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(userData?.role)) {
+    // If we require MASTER_ADMIN and the user has a native masterAdmin flag, let them pass
+    if (allowedRoles.includes("MASTER_ADMIN") && userData?.masterAdmin) {
+        return <Outlet />;
+    }
     return <Navigate to="/unauthorized" replace />;
   }
 
