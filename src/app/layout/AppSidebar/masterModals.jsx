@@ -2,6 +2,7 @@ import DashboardsIcon from "../../../assets/dualicons/dashboards.svg?react";
 import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
 import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
 import OrderIcon from "../../../assets/dualicons/bag.svg?react";
+import UserScanIcon from "../../../assets/dualicons/userscan.svg?react";
 
 export const masterMenuModel = [
   {
@@ -11,27 +12,38 @@ export const masterMenuModel = [
     ],
   },
   {
-    label: "Management",
+    label: "MANAGEMENT",
     items: [
       {
-        label: "Admin Management",
+        label: "Outlets",
+        Icon: ComponentsIcon,
+        items: [
+          { label: "Create Outlets", to: "/master/outlets/add" },
+          { label: "Outlet list", to: "/master/outlets" },
+        ],
+      },
+      {
+        label: "Admins",
         Icon: DriverIcon,
-        to: "/master/admins",
+        items: [
+          { label: "Create Admin", to: "/master/admins/add" },
+          { label: "Admin list", to: "/master/admins" },
+        ],
+      },
+      {
+        label: "Device Verification",
+        Icon: UserScanIcon,
+        to: "/master/devices",
+      },
+      {
+        label: "Contact Supports",
+        Icon: ComponentsIcon,
+        to: "/master/support",
       },
       {
         label: "Subscriptions",
         Icon: OrderIcon,
         to: "/master/subscriptions",
-      },
-      {
-        label: "Device Verification",
-        Icon: ComponentsIcon,
-        to: "/master/devices",
-      },
-      {
-        label: "Contact Support",
-        Icon: ComponentsIcon,
-        to: "/master/support",
       },
     ],
   },

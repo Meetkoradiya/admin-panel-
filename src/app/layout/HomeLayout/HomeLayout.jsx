@@ -134,11 +134,6 @@ function HomeLayout() {
 
   return (
     <div className={containerClass}>
-      {islogout && (
-        <div className="logout-overlay">
-          <div className="spinner" />
-        </div>
-      )}
       <div ref={sidebarRef} className="layout-sidebar">
         <AppSidebar />
       </div>
@@ -149,6 +144,7 @@ function HomeLayout() {
 
           <Outlet />
         </div>
+
         <footer className="layout-footer-text">
           {/* <p>
 						All rights reserved &#169;

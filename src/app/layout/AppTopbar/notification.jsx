@@ -1,166 +1,153 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Badge } from "primereact/badge";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { Toast } from "primereact/toast";
+import useApi from "@/hooks/useApi";
 
 export const Notification = () => {
-  const op = useRef(null);
-  const toast = useRef(null);
+    const op = useRef(null);
+    const toast = useRef(null);
 
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+    const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
 
-  const token = useSelector((state) => state.auth.token);
-  const userId = useSelector((state) => state.auth.userData?.id || state.auth.userData?.userId);
-  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+    const userId = useSelector((state) => state.auth.userData?.id || state.auth.userData?.userId);
+    const { apiGet, apiPut } = useApi();
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/notifications/list`, {
-        params: { userId },
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.data && response.data.data) {
-        setNotifications(response.data.data);
-      } else if (Array.isArray(response.data)) {
-        setNotifications(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    }
-  };
+    const fetchNotifications = useCallback(async () => {
+        if (!userId) return;
+        try {
+            const data = await apiGet('/notifications/list', { params: { userId } });
+            setNotifications(Array.isArray(data) ? data : (data?.data || []));
+        } catch (error) {
+            console.error("Error fetching notifications:", error);
+        }
+    }, [userId, apiGet]);
 
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/notifications/unread-count`, {
-        params: { userId },
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.data && response.data.data !== undefined) {
-        setUnreadCount(response.data.data);
-      } else if (response.data !== undefined) {
-        setUnreadCount(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching unread count:", error);
-    }
-  };
+    const fetchUnreadCount = useCallback(async () => {
+        if (!userId) return;
+        try {
+            const data = await apiGet('/notifications/unread-count', { params: { userId } });
+            setUnreadCount(typeof data === 'number' ? data : (data?.data || 0));
+        } catch (error) {
+            console.error("Error fetching unread count:", error);
+        }
+    }, [userId, apiGet]);
 
-  useEffect(() => {
-    if (userId && token) {
-      fetchNotifications();
-      fetchUnreadCount();
+    useEffect(() => {
+        if (userId) {
+            fetchNotifications();
+            fetchUnreadCount();
 
-      const interval = setInterval(() => {
-        fetchNotifications();
-        fetchUnreadCount();
-      }, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [userId, token]);
+            const interval = setInterval(() => {
+                fetchNotifications();
+                fetchUnreadCount();
+            }, 30000);
+            return () => clearInterval(interval);
+        }
+    }, [userId, fetchNotifications, fetchUnreadCount]);
 
-  const markAsRead = async (notificationId) => {
-    try {
-      await axios.put(`${BASE_URL}/notifications/read/${notificationId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchNotifications();
-      fetchUnreadCount();
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Could not mark as read' });
-    }
-  };
+    const markAsRead = async (notificationId) => {
+        try {
+            await apiPut(`/notifications/read/${notificationId}`, {});
+            fetchNotifications();
+            fetchUnreadCount();
+        } catch (error) {
+            console.error("Error marking notification as read:", error);
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Could not mark as read' });
+        }
+    };
 
-  const markAllAsRead = async () => {
-    try {
-      await axios.put(`${BASE_URL}/notifications/read-all`, null, {
-        params: { userId },
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchNotifications();
-      fetchUnreadCount();
-      toast.current?.show({ severity: 'success', summary: 'Success', detail: 'All notifications marked as read', life: 2000 });
-    } catch (error) {
-      console.error("Error marking all as read:", error);
-      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Could not mark all as read' });
-    }
-  };
+    const markAllAsRead = async () => {
+        if (!userId) return;
+        try {
+            await apiPut(`/notifications/read-all`, null, { params: { userId } });
+            fetchNotifications();
+            fetchUnreadCount();
+            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'All notifications marked as read', life: 2000 });
+        } catch (error) {
+            console.error("Error marking all as read:", error);
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Could not mark all as read' });
+        }
+    };
 
-  const formatTime = (timeStr) => {
-    if (!timeStr) return "";
-    try {
-      const date = new Date(timeStr);
-      return date.toLocaleString();
-    } catch (e) {
-      return timeStr;
-    }
-  };
+    const formatTime = (timeStr) => {
+        if (!timeStr) return "";
+        try {
+            const date = new Date(timeStr);
+            return date.toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
+        } catch (e) {
+            return timeStr;
+        }
+    };
 
-  return (
-    <>
-      <Toast ref={toast} />
-      <button
-        type="button"
-        className="p-link layout-topbar-button relative"
-        onClick={(e) => op.current.toggle(e)}
-      >
-        <i className="pi pi-bell"></i>
-        {unreadCount > 0 && (
-          <Badge value={unreadCount > 99 ? '99+' : unreadCount} severity="danger" className="ml-1" />
-        )}
-      </button>
+    return (
+        <>
+            <Toast ref={toast} />
+            <button
+                type="button"
+                className="p-link layout-topbar-button relative rounded-xl hover:bg-slate-100 transition-all p-2"
+                onClick={(e) => op.current.toggle(e)}
+            >
+                <i className="pi pi-bell text-slate-600"></i>
+                {unreadCount > 0 && (
+                    <Badge value={unreadCount > 99 ? '99+' : unreadCount} severity="danger" className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 scale-75" />
+                )}
+            </button>
 
-      <OverlayPanel ref={op} dismissable className="mt-4">
-        <div className="w-80 rounded-xl">
-          <div className="flex items-center justify-between mb-3 border-b pb-2 border-gray-100">
-            <h4 className="font-semibold text-base">Notifications</h4>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">Recent</span>
-              {unreadCount > 0 && (
-                <button
-                  type="button"
-                  onClick={markAllAsRead}
-                  className="text-xs text-blue-600 hover:text-blue-800 transition"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  Mark all as read
-                </button>
-              )}
-            </div>
-          </div>
+            <OverlayPanel ref={op} dismissable className="mt-4 shadow-2xl border-none overflow-hidden rounded-3xl">
+                <div className="w-80 overflow-hidden">
+                    <div className="flex items-center justify-between p-4 bg-slate-50 border-b border-gray-100">
+                        <h4 className="font-bold text-slate-800 m-0">Notifications</h4>
+                        {unreadCount > 0 && (
+                            <button
+                                type="button"
+                                onClick={markAllAsRead}
+                                className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-transparent border-none cursor-pointer"
+                            >
+                                Mark all read
+                            </button>
+                        )}
+                    </div>
 
-          <div className="flex flex-col gap-2 max-h-80 overflow-y-auto pr-1">
-            {notifications.length === 0 ? (
-              <p className="text-sm text-gray-500 text-center py-4">
-                No notifications
-              </p>
-            ) : (
-              notifications.map((n) => (
-                <div
-                  key={n.id}
-                  onClick={() => !n.isRead && markAsRead(n.id)}
-                  className={`flex flex-col p-3 rounded-lg border transition ${
-                    n.isRead 
-                      ? "bg-white border-gray-100 opacity-70 hover:bg-gray-50" 
-                      : "bg-blue-50 border-blue-100 hover:bg-blue-100 cursor-pointer"
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-2">
-                    <span className="text-sm font-medium">{n.message || n.text}</span>
-                    {!n.isRead && (
-                      <span className="w-2 h-2 rounded-full bg-blue-600 mt-1 "></span>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-500 mt-1">{formatTime(n.createdAt || n.timestamp || n.time)}</span>
+                    <div className="flex flex-col max-h-96 overflow-y-auto bg-white">
+                        {notifications.length === 0 ? (
+                            <div className="text-center py-12 px-6">
+                                <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-300 mx-auto mb-4 border border-slate-100">
+                                    <i className="pi pi-bell text-2xl" />
+                                </div>
+                                <p className="text-slate-400 font-medium m-0">No notifications yet</p>
+                                <p className="text-slate-300 text-xs mt-1">We&apos;ll alert you when something important happens</p>
+                            </div>
+                        ) : (
+                            notifications.map((n) => (
+                                <div
+                                    key={n.id}
+                                    onClick={() => !n.isRead && markAsRead(n.id)}
+                                    className={`flex flex-col p-4 border-b border-slate-50 transition-all ${
+                                        n.isRead 
+                                            ? "bg-white opacity-60 hover:bg-slate-50" 
+                                            : "bg-blue-50/50 hover:bg-blue-50 cursor-pointer"
+                                    }`}
+                                >
+                                    <div className="flex justify-between items-start gap-3">
+                                        <span className={`text-sm ${!n.isRead ? "font-bold text-slate-800" : "text-slate-600"}`}>
+                                            {n.message || n.text}
+                                        </span>
+                                        {!n.isRead && (
+                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0 mt-1 shadow-sm shadow-blue-200"></span>
+                                        )}
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">
+                                        {formatTime(n.createdAt || n.timestamp || n.time)}
+                                    </span>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      </OverlayPanel>
-    </>
-  );
+            </OverlayPanel>
+        </>
+    );
 };

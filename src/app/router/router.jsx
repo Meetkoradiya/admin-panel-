@@ -17,7 +17,10 @@ const ChangePassword = lazy(() =>
 );
 
 // Master Admin Management System
-const AdminList = lazy(() => import("@/app/pages/master/adminManagement/adminList"));
+const AdminList = lazy(() => import("@/app/pages/master/admins/adminList"));
+const AdminCreate = lazy(() => import("@/app/pages/master/admins/adminCreate"));
+const OutletList = lazy(() => import("@/app/pages/master/outlets/outletList"));
+const OutletCreate = lazy(() => import("@/app/pages/master/outlets/outletCreate"));
 const SubscriptionList = lazy(() => import("@/app/pages/master/subscriptions/subscriptionList"));
 const DeviceList = lazy(() => import("@/app/pages/master/devices/deviceList"));
 const SupportList = lazy(() => import("@/app/pages/master/support/supportList"));
@@ -62,6 +65,11 @@ export const MasterRoutes = [
 
   // Management System
   { path: "admins", name: "Admin Management", element: <AdminList /> },
+  { path: "admins/add", name: "Add Admin", element: <AdminCreate /> },
+  { path: "admins/edit/:id", name: "Edit Admin", element: <AdminCreate /> },
+  { path: "outlets", name: "Outlet Management", element: <OutletList /> },
+  { path: "outlets/add", name: "Add Outlet", element: <OutletCreate /> },
+  { path: "outlets/edit/:id", name: "Edit Outlet", element: <OutletCreate /> },
   { path: "subscriptions", name: "Subscriptions", element: <SubscriptionList /> },
   { path: "devices", name: "Device Verification", element: <DeviceList /> },
   { path: "support", name: "Contact Support", element: <SupportList /> },
