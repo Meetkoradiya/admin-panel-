@@ -136,7 +136,7 @@ export const Notification = () => {
                                             {n.message || n.text}
                                         </span>
                                         {!n.isRead && (
-                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0 mt-1 shadow-sm shadow-blue-200"></span>
+                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-0 mt-1 shadow-sm shadow-blue-200"></span>
                                         )}
                                     </div>
                                     <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">
