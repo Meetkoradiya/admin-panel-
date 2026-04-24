@@ -3,6 +3,8 @@ import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
 import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
 import OrderIcon from "../../../assets/dualicons/bag.svg?react";
 import UserScanIcon from "../../../assets/dualicons/userscan.svg?react";
+import MessageIcon from "../../../assets/dualicons/alarm.svg?react";
+
 
 export const masterMenuModel = [
   {
@@ -34,11 +36,6 @@ export const masterMenuModel = [
         label: "Device Verification",
         Icon: UserScanIcon,
         to: "/master/devices",
-      },
-      {
-        label: "Contact Supports",
-        Icon: ComponentsIcon,
-        to: "/master/support",
       },
       {
         label: "Subscriptions",

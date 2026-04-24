@@ -8,9 +8,12 @@ import { Tag } from 'primereact/tag';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import { Page } from "@/components/shared/Page";
+import { useSelector } from 'react-redux';
+import { selectUserData } from '@/redux/slice/AuthSlice';
 import useApi from '@/hooks/useApi';
 
 const SupportList = () => {
+    const user = useSelector(selectUserData);
     const [complaints, setComplaints] = useState([]);
     const [globalFilter, setGlobalFilter] = useState('');
     const [loading, setLoading] = useState(false);
@@ -21,25 +24,32 @@ const SupportList = () => {
     const toast = useRef(null);
     const { apiGet, apiPut } = useApi();
 
+
     const statusOptions = [
         { label: 'Pending', value: 'PENDING' },
         { label: 'In Progress', value: 'IN_PROGRESS' },
         { label: 'Resolved', value: 'RESOLVED' },
-        { label: 'Closed', value: 'CLOSED' }
+        { label: 'Rejected', value: 'REJECTED' }
     ];
 
     const fetchComplaints = async () => {
         setLoading(true);
         try {
             const data = await apiGet('/customer/admin/complaints');
-            setComplaints(Array.isArray(data) ? data : []);
+            const complaintsList = Array.isArray(data) ? data : (data?.data || data?.content || []);
+            setComplaints(Array.isArray(complaintsList) ? complaintsList : []);
         } catch (error) {
-            console.error('Fetch Support Error:', error);
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch complaints' });
-        } finally {
-            setLoading(false);
+            console.error("Error fetching complaints:", error);
+            setComplaints([]);
+            toast.current?.show({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Could not load complaints' 
+            });
         }
+        setLoading(false);
     };
+
 
     useEffect(() => {
         fetchComplaints();
@@ -49,9 +59,8 @@ const SupportList = () => {
         if (!newStatus || !selectedComplaint) return;
         setUpdating(true);
         try {
-            await apiPut(`/customer/admin/complaints/update-status/${selectedComplaint.id}`, {
-                status: newStatus
-            });
+            const complaintId = selectedComplaint.id || selectedComplaint._id;
+            await apiPut(`/customer/admin/complaints/${complaintId}/status?status=${newStatus}`, {});
             toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Complaint status changed' });
             setShowDialog(false);
             fetchComplaints();
@@ -74,7 +83,7 @@ const SupportList = () => {
             PENDING: { severity: 'warning', label: 'Pending' },
             IN_PROGRESS: { severity: 'info', label: 'In Progress' },
             RESOLVED: { severity: 'success', label: 'Resolved' },
-            CLOSED: { severity: 'secondary', label: 'Closed' }
+            REJECTED: { severity: 'danger', label: 'Rejected' }
         };
         const cfg = map[status] || map.PENDING;
         return (
@@ -106,8 +115,8 @@ const SupportList = () => {
 
     const complainerTemplate = (row) => (
         <div className="flex flex-col">
-            <span className="font-bold text-slate-800 text-sm">{row.complainerName || row.customerName || 'Customer'}</span>
-            <span className="text-xs text-slate-400 font-medium">{row.complainerMobile || row.mobileNumber || '—'}</span>
+            <span className="font-bold text-slate-800 text-sm">{row.complainerName || 'Customer'}</span>
+            <span className="text-xs text-slate-400 font-medium">{row.customerMobileNumber || '—'}</span>
         </div>
     );
 
@@ -162,6 +171,8 @@ const SupportList = () => {
         <Page title="Contact Support">
             <div className="p-4 md:p-8 bg-[#f8fafc] min-h-screen">
                 <Toast ref={toast} />
+
+
 
                 {/* Stats */}
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">

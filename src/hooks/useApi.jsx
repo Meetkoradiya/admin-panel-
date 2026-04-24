@@ -1,8 +1,10 @@
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/slice/AuthSlice';
 import { useMemo } from 'react';
 
 const useApi = () => {
+    const dispatch = useDispatch();
     const token = useSelector((state) => state.auth.token);
     const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
@@ -20,22 +22,43 @@ const useApi = () => {
 
         client.interceptors.response.use(
             (response) => {
-                // Return just the data object for easier component consumption
+                // For blob responses (images/files), return the blob data directly
+                if (response.config?.responseType === 'blob') {
+                    return response.data;
+                }
+                // For JSON responses, return just the data object for easier consumption
                 return response.data;
             },
-            (error) => Promise.reject(error)
+            (error) => {
+                const isSilent = error.config?.silent === true;
+                const status = error.response?.status;
+                const hasToken = !!error.config?.headers?.Authorization;
+
+                if (status === 401) {
+                    if (!isSilent) {
+                        console.warn(`401 Unauthorized: ${error.config.url}`);
+                    }
+                } else if (status === 403) {
+                    if (!isSilent) {
+                        console.error(`Status 403 (Forbidden): ${error.config.url}`);
+                        console.warn("User role has insufficient permissions for this resource.");
+                    }
+                }
+                return Promise.reject(error);
+            }
         );
 
         return client;
     }, [BASE_URL, token]);
 
     // Expose standard axios methods wrapped to use our instance
-    const apiGet = (url, config = {}) => apiClient.get(url, config);
-    const apiPost = (url, data = {}, config = {}) => apiClient.post(url, data, config);
-    const apiPut = (url, data = {}, config = {}) => apiClient.put(url, data, config);
-    const apiDelete = (url, config = {}) => apiClient.delete(url, config);
-
-    return { apiGet, apiPost, apiPut, apiDelete, apiClient };
+    return useMemo(() => ({
+        apiGet: (url, config = {}) => apiClient.get(url, config),
+        apiPost: (url, data = {}, config = {}) => apiClient.post(url, data, config),
+        apiPut: (url, data = {}, config = {}) => apiClient.put(url, data, config),
+        apiDelete: (url, config = {}) => apiClient.delete(url, config),
+        apiClient
+    }), [apiClient]);
 };
 
 export default useApi;

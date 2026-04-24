@@ -22,7 +22,8 @@ const AdminList = () => {
         setLoading(true);
         try {
             const data = await apiGet('/admin/admins');
-            setAdmins(Array.isArray(data) ? data : []);
+            const adminList = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+            setAdmins(adminList);
         } catch (error) {
             console.error('Fetch Admins Error:', error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch administrators' });
@@ -44,7 +45,8 @@ const AdminList = () => {
             accept: async () => {
                 try {
                     const deleteId = rowData.id || rowData._id;
-                    await apiDelete(`/admin/admins/${deleteId}`);
+                    // Swagger: DELETE /admin/users/{id} for soft delete
+                    await apiDelete(`/admin/users/${deleteId}`);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: `${rowData.username} removed successfully` });
                     fetchAdmins();
                 } catch (error) {

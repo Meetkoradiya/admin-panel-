@@ -21,7 +21,8 @@ const DeviceList = () => {
         setLoading(true);
         try {
             const data = await apiGet('/auth/master/device-approvals');
-            setDevices(Array.isArray(data) ? data : []);
+            const deviceList = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+            setDevices(deviceList);
         } catch (error) {
             console.error('Fetch Devices Error:', error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch device approvals' });
@@ -58,7 +59,7 @@ const DeviceList = () => {
             accept: async () => {
                 setActionLoading(prev => ({ ...prev, [deviceId]: 'rejecting' }));
                 try {
-                    await apiDelete(`/auth/master/approve-device/${deviceId}`);
+                    await apiDelete(`/auth/master/reject-device/${deviceId}`);
                     toast.current?.show({ severity: 'warn', summary: 'Rejected', detail: 'Device request rejected' });
                     fetchDevices();
                 } catch (error) {

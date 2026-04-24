@@ -8,7 +8,7 @@ const AutoRefreshToken = () => {
 	const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 	const token = useSelector((state) => state.auth.token);
 	const refreshToken = useSelector((state) => state.auth.refreshToken);
-	const expiryTime = useSelector((state) => state.auth.userData?.time);
+	const expiryTime = useSelector((state) => state.auth.time);
 	const refreshScheduled = useRef(false);
 	const timerRef = useRef(null);
 
@@ -50,7 +50,7 @@ const AutoRefreshToken = () => {
 		  refreshScheduled.current = false;
 		} catch (error) {
 		  console.error("Token refresh failed", error);
-		  dispatch(logout());
+		  // dispatch(logout());
 		}
 	}, [BASE_URL, dispatch, refreshToken, token]);
 

@@ -5,7 +5,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import { Provider } from "react-redux";
-import { store } from "./redux/Store.jsx";
+import { store, persistor } from "./redux/Store.jsx";
+import { PersistGate } from "redux-persist/integration/react";
 import { LayoutProvider } from "./app/context/layoutcontent.jsx";
 
 import "primereact/resources/themes/lara-light-cyan/theme.css";
@@ -14,10 +15,12 @@ import "primeicons/primeicons.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <LayoutProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </LayoutProvider>
+    <PersistGate loading={null} persistor={persistor}>
+      <LayoutProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </LayoutProvider>
+    </PersistGate>
   </Provider>,
 );

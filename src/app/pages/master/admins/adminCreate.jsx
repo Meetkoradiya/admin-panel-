@@ -4,6 +4,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
+import { Dropdown } from 'primereact/dropdown';
 import { Page } from "@/components/shared/Page";
 import { ImageUploader } from "@/components/shared/ImageUploader";
 import useApi from '@/hooks/useApi';
@@ -16,16 +17,27 @@ const AdminCreate = () => {
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const isEditMode = Boolean(id);
-    const { apiPost, apiPut } = useApi();
+    const { apiPost, apiPut, apiGet } = useApi();
+
+    const [outlets, setOutlets] = useState([]);
 
     const [admin, setAdmin] = useState({
         username: '',
         mobileNumber: '',
         email: '',
         password: '',
-        waterPlanId: '',
-        profileImage: null,
+        outletId: null,
     });
+
+    // Fetch outlets for dropdown
+    useEffect(() => {
+        apiGet('/master/outlets')
+            .then(data => {
+                const list = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+                setOutlets(list.map(o => ({ label: o.name || 'Unnamed Outlet', value: o.id })));
+            })
+            .catch(() => {});
+    }, []);
 
     // Pre-fill form in edit mode
     useEffect(() => {
@@ -36,8 +48,7 @@ const AdminCreate = () => {
                 mobileNumber: existingAdmin.mobileNumber || '',
                 email: existingAdmin.email || '',
                 password: '',
-                waterPlanId: existingAdmin.waterPlanId || '',
-                profileImage: null,
+                outletId: null,
             });
         }
     }, [id, location.state, isEditMode]);
@@ -55,7 +66,7 @@ const AdminCreate = () => {
         setLoading(true);
         try {
             if (isEditMode) {
-                // Update admin
+                // Update admin profile
                 const updatePayload = {
                     username: admin.username,
                     mobileNumber: admin.mobileNumber,
@@ -64,14 +75,14 @@ const AdminCreate = () => {
                 await apiPut('/admin/update-profile', updatePayload);
                 toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully', life: 3000 });
             } else {
-                // Create admin
+                // Create admin — AdminRegisterRequest: { mobileNumber, username, email, password, outletId }
                 const createPayload = {
                     username: admin.username,
                     mobileNumber: admin.mobileNumber,
                     email: admin.email,
                     password: admin.password,
                 };
-                if (admin.waterPlanId) createPayload.waterPlanId = Number(admin.waterPlanId);
+                if (admin.outletId) createPayload.outletId = Number(admin.outletId);
 
                 await apiPost('/admin/register-admin', createPayload);
                 toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Created Successfully', life: 3000 });
@@ -206,13 +217,15 @@ const AdminCreate = () => {
                                     </div>
                                 )}
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Asset Plan Mapping</label>
-                                    <InputText
-                                        keyfilter="int"
-                                        value={admin.waterPlanId}
-                                        onChange={(e) => setAdmin({ ...admin, waterPlanId: e.target.value })}
-                                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm transition-all outline-none font-medium text-slate-700"
-                                        placeholder="Plan identifier"
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Assign Outlet</label>
+                                    <Dropdown
+                                        value={admin.outletId}
+                                        options={outlets}
+                                        onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
+                                        placeholder="Select outlet..."
+                                        className="w-full border border-slate-200 rounded-2xl bg-slate-50 text-sm"
+                                        emptyMessage="No outlets found"
+                                        showClear
                                     />
                                 </div>
                             </div>

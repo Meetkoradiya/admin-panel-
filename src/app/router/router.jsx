@@ -10,10 +10,10 @@ const MasterDashboard = lazy(() => import("@/app/pages/master/MasterDashboard"))
 
 // Profile
 const UserProfile = lazy(() =>
-  import("@/app/pages/Profile/UserProfile/UserProfile")
+  import("@/app/pages/profile/UserProfile/UserProfile")
 );
 const ChangePassword = lazy(() =>
-  import("@/app/pages/Profile/ChangePassword/ChangePassword")
+  import("@/app/pages/profile/ChangePassword/ChangePassword")
 );
 
 // Master Admin Management System
@@ -23,7 +23,7 @@ const OutletList = lazy(() => import("@/app/pages/master/outlets/outletList"));
 const OutletCreate = lazy(() => import("@/app/pages/master/outlets/outletCreate"));
 const SubscriptionList = lazy(() => import("@/app/pages/master/subscriptions/subscriptionList"));
 const DeviceList = lazy(() => import("@/app/pages/master/devices/deviceList"));
-const SupportList = lazy(() => import("@/app/pages/master/support/supportList"));
+
 
 // Admin Operations & Entities
 const RouteList = lazy(() => import("@/app/pages/admin/routes/routeList"));
@@ -72,7 +72,7 @@ export const MasterRoutes = [
   { path: "outlets/edit/:id", name: "Edit Outlet", element: <OutletCreate /> },
   { path: "subscriptions", name: "Subscriptions", element: <SubscriptionList /> },
   { path: "devices", name: "Device Verification", element: <DeviceList /> },
-  { path: "support", name: "Contact Support", element: <SupportList /> },
+
 
   // Operations
   { path: "routes", name: "Routes", element: <RouteList /> },
@@ -117,6 +117,7 @@ export const AdminRoutes = [
   // Inventory
   { path: "inventory/stock", name: "Stock", element: <InventoryList /> },
   { path: "products", name: "Products", element: <ProductList /> },
+
 
   // Billing & Finance
   { path: "orders", name: "Orders", element: <OrderList /> },

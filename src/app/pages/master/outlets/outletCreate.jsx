@@ -16,45 +16,55 @@ const OutletCreate = () => {
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const isEditMode = Boolean(id);
-    const { apiPost, apiPut } = useApi();
+    const { apiPost, apiPut, apiGet } = useApi();
 
     const [outlet, setOutlet] = useState({
-        outletName: '',
+        name: '',
         address: '',
-        mobileNumber: '',
-        email: '',
-        password: '',
+        isActive: true,
     });
 
     useEffect(() => {
-        const existing = location.state?.outlet;
-        if (isEditMode && existing) {
-            setOutlet({
-                outletName: existing.outletName || '',
-                address: existing.address || '',
-                mobileNumber: existing.mobileNumber || '',
-                email: existing.email || '',
-                password: '',
-            });
+        if (isEditMode) {
+            const existing = location.state?.outlet;
+            if (existing) {
+                setOutlet({
+                    name: existing.name || '',
+                    address: existing.address || '',
+                    isActive: existing.isActive !== false,
+                });
+            } else {
+                // Fetch from API if no state (e.g. page refresh)
+                apiGet(`/master/outlets/${id}`)
+                    .then(data => {
+                        const o = data?.id ? data : (data?.data || {});
+                        setOutlet({ name: o.name || '', address: o.address || '', isActive: o.isActive !== false });
+                    })
+                    .catch(() => navigate('/master/outlets'));
+            }
         }
-    }, [id, location.state, isEditMode]);
+    }, [id, isEditMode]);
 
     const handleSave = async () => {
         setSubmitted(true);
-        if (!outlet.outletName || !outlet.address || !outlet.mobileNumber) {
-            toast.current?.show({ severity: 'warn', summary: 'Validation', detail: 'Please fill all required fields' });
+        if (!outlet.name.trim() || !outlet.address.trim()) {
+            toast.current?.show({ severity: 'warn', summary: 'Validation', detail: 'Outlet name and address are required' });
             return;
         }
 
         setLoading(true);
         try {
-            // Using admin registration endpoint as outlets are likely special admin types
-            const payload = { ...outlet };
+            const payload = {
+                name: outlet.name,
+                address: outlet.address,
+                isActive: outlet.isActive,
+            };
+
             if (isEditMode) {
-                await apiPut('/admin/update-profile', payload);
+                await apiPut(`/master/outlets/${id}`, payload);
                 toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet updated successfully' });
             } else {
-                await apiPost('/admin/register-admin', payload);
+                await apiPost('/master/outlets', payload);
                 toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet registered successfully' });
             }
             setTimeout(() => navigate('/master/outlets'), 1200);
@@ -104,19 +114,20 @@ const OutletCreate = () => {
                             
                             <div className="space-y-6">
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Official Outlet Name</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Official Outlet Name <span className="text-rose-500">*</span></label>
                                     <InputText 
-                                        value={outlet.outletName} 
-                                        onChange={(e) => setOutlet({...outlet, outletName: e.target.value})}
+                                        value={outlet.name} 
+                                        onChange={(e) => setOutlet({...outlet, name: e.target.value})}
                                         className={classNames("w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all text-sm font-bold", {
-                                            'border-rose-400 bg-rose-50/50': submitted && !outlet.outletName
+                                            'border-rose-400 bg-rose-50/50': submitted && !outlet.name
                                         })}
                                         placeholder="e.g. Amrut Water Station 1"
                                     />
+                                    {submitted && !outlet.name && <small className="text-rose-500 font-semibold mt-1 block">Outlet name is required.</small>}
                                 </div>
 
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Physical Address</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Physical Address <span className="text-rose-500">*</span></label>
                                     <InputText 
                                         value={outlet.address} 
                                         onChange={(e) => setOutlet({...outlet, address: e.target.value})}
@@ -125,30 +136,7 @@ const OutletCreate = () => {
                                         })}
                                         placeholder="Full street address, city, and state"
                                     />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Contact Mobile</label>
-                                        <InputText 
-                                            value={outlet.mobileNumber} 
-                                            onChange={(e) => setOutlet({...outlet, mobileNumber: e.target.value})}
-                                            className={classNames("w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-bold", {
-                                                'border-rose-400 bg-rose-50/50': submitted && !outlet.mobileNumber
-                                            })}
-                                            placeholder="10-digit primary"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Access Key</label>
-                                        <InputText 
-                                            type="password"
-                                            value={outlet.password} 
-                                            onChange={(e) => setOutlet({...outlet, password: e.target.value})}
-                                            className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-bold"
-                                            placeholder="••••••••"
-                                        />
-                                    </div>
+                                    {submitted && !outlet.address && <small className="text-rose-500 font-semibold mt-1 block">Address is required.</small>}
                                 </div>
                             </div>
 

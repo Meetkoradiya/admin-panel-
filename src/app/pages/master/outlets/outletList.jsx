@@ -20,11 +20,8 @@ const OutletList = () => {
     const fetchOutlets = async () => {
         setLoading(true);
         try {
-            // Attempting to fetch from admin/admins as a fallback if specific outlets endpoint is not yet ready
-            const data = await apiGet('/admin/admins');
-            // Mocking some data if the API returns empty for demonstration in this overhaul phase
-            const mockOutlets = Array.isArray(data) ? data.filter(u => u.outletName) : [];
-            setOutlets(mockOutlets.length > 0 ? mockOutlets : (Array.isArray(data) ? data : []));
+            const data = await apiGet('/master/outlets');
+            setOutlets(Array.isArray(data) ? data : (data?.data ? data.data : []));
         } catch (error) {
             console.error('Fetch Outlets Error:', error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch outlet locations' });
@@ -37,13 +34,13 @@ const OutletList = () => {
 
     const handleDelete = (rowData) => {
         confirmDialog({
-            message: `Decommission outlet "${rowData.outletName || rowData.username}"?`,
+            message: `Decommission outlet "${rowData.name}"?`,
             header: 'Confirm Decommissioning',
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'p-button-danger rounded-xl',
             accept: async () => {
                 try {
-                    await apiDelete(`/admin/admins/${rowData.id || rowData._id}`);
+                    await apiDelete(`/master/outlets/${rowData.id}`);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet decommissioned' });
                     fetchOutlets();
                 } catch (error) {
@@ -55,18 +52,18 @@ const OutletList = () => {
 
     const outletNameTemplate = (rowData) => (
         <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-200 shrink-0">
+            <div className="w-12 h-12 rounded-2xl from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-200 shrink-0">
                 <i className="pi pi-building text-lg" />
             </div>
             <div className="flex flex-col">
-                <p className="font-bold text-slate-800 text-sm">{rowData.outletName || rowData.username || 'Main Branch'}</p>
-                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px]">{rowData.address || 'Location pending update'}</p>
+                <p className="font-bold text-slate-800 text-sm">{rowData.name || 'Unnamed Outlet'}</p>
+                <p className="text-xs text-slate-400 font-medium truncate max-w-200px">{rowData.address || 'Address not set'}</p>
             </div>
         </div>
     );
 
     const statusTemplate = (rowData) => {
-        const isActive = rowData.status === 'ACTIVE' || rowData.status === true;
+        const isActive = rowData.isActive === true;
         return (
             <Tag 
                 value={isActive ? 'OPERATIONAL' : 'OFFLINE'} 
@@ -78,7 +75,7 @@ const OutletList = () => {
 
     const actionTemplate = (rowData) => (
         <div className="flex gap-2 justify-center">
-            <Button icon="pi pi-external-link" rounded text className="text-blue-500 hover:bg-blue-50 w-10 h-10 rounded-xl" onClick={() => navigate(`/master/outlets/edit/${rowData.id}`)} />
+            <Button icon="pi pi-external-link" rounded text className="text-blue-500 hover:bg-blue-50 w-10 h-10 rounded-xl" onClick={() => navigate(`/master/outlets/edit/${rowData.id}`, { state: { outlet: rowData } })} />
             <Button icon="pi pi-trash" rounded text className="text-rose-500 hover:bg-rose-50 w-10 h-10 rounded-xl" onClick={() => handleDelete(rowData)} />
         </div>
     );
@@ -130,8 +127,8 @@ const OutletList = () => {
                         stripedRows
                         className="p-datatable-sm"
                     >
-                        <Column header="Outlet Details" body={outletNameTemplate} sortField="outletName" sortable />
-                        <Column field="mobileNumber" header="Contact" className="text-slate-600 font-bold text-sm" />
+                        <Column header="Outlet Details" body={outletNameTemplate} sortField="name" sortable />
+                        <Column field="address" header="Address" className="text-slate-500 text-sm" />
                         <Column header="Status" body={statusTemplate} style={{ width: '10rem', textAlign: 'center' }} />
                         <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} />
                     </DataTable>

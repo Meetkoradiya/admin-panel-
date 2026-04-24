@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { logout } from "../../../redux/slice/AuthSlice";
-import useApi from "@/hooks/useApi";
+import useApi from "../../../hooks/useApi";
 
 export const User = () => {
     const navigate = useNavigate();
@@ -12,23 +12,17 @@ export const User = () => {
 
     const user = useSelector((state) => state.auth.userData);
     const userId = user?.userId || user?.id;
-
-    const [profile, setProfile] = useState("/images/avatar.jpg");
+    const token = useSelector((state) => state.auth.token);
     const { apiGet } = useApi();
+    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
-    const fetchProfilePicture = useCallback(async () => {
-        if (!userId) return;
+    const [profile, setProfile] = useState("/images/User.webp");
 
-        try {
-            // useApi will handle baseURL, token injection, and blob responseType automatically
-            const blob = await apiGet(`/users/profile-picture/${userId}`);
-            const imageUrl = URL.createObjectURL(blob);
-            setProfile(imageUrl);
-        } catch (error) {
-            console.error("Profile picture fetch failed", error);
-            setProfile("/images/User.webp");
+    const fetchProfilePicture = useCallback(() => {
+        if (user?.profileImageUrl) {
+            setProfile(user.profileImageUrl);
         }
-    }, [userId, apiGet]);
+    }, [user?.profileImageUrl]);
 
     useEffect(() => {
         fetchProfilePicture();
@@ -67,7 +61,7 @@ export const User = () => {
                         className="cursor-pointer text-left w-full border-none bg-transparent p-0"
                     >
                         <div className="flex items-center gap-2">
-                            <div className="rounded-full bg-blue-100 overflow-hidden size-12 flex-shrink-0">
+                            <div className="rounded-full bg-blue-100 overflow-hidden size-12 ">
                                 <img
                                     src={profile || "/images/User.webp"}
                                     alt=""

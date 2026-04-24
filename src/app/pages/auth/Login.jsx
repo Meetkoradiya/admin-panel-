@@ -43,70 +43,90 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!validateForm()) return;
+    setIsLoading(true);
     try {
-      // Map 7600804920 to 9712705145 strictly for the backend to succeed authentication and provide a real JWT to prevent dashboard 401 errors.
-      const apiMobileNumber = formData.mobileNumber.trim() === "7600804920" ? "9712705145" : formData.mobileNumber.trim();
-      
-      const res = await axios.post(`${BASE_URL}/auth/login`, {
-        mobileNumber: apiMobileNumber,
-        password: formData.password.trim(),
-      });
+      const enteredMobile = formData.mobileNumber.trim();
+      const password = formData.password.trim();
 
-      const dataPayload = res.data?.data || res.data;
-      if (!dataPayload || !dataPayload.accessToken) {
-        throw new Error("Invalid response from server");
+      // Step 1: Try /auth/master-admin-login first.
+      // This endpoint is for master admin and returns a JWT with MASTER_ADMIN role.
+      // Master admin credentials: 7600804920 / Admin@1234
+      let res;
+      let usedMasterEndpoint = false;
+      try {
+        res = await axios.post(`${BASE_URL}/auth/master-admin-login`, {
+          mobileNumber: enteredMobile,
+          password,
+        });
+        usedMasterEndpoint = true;
+      } catch (masterErr) {
+        const status = masterErr.response?.status;
+        // Credential mismatch (not master admin) → fallback to regular admin login
+        if ([400, 401, 403, 404].includes(status)) {
+          res = await axios.post(`${BASE_URL}/auth/login`, {
+            mobileNumber: enteredMobile,
+            password,
+          });
+        } else {
+          throw masterErr;
+        }
       }
 
-      const token = dataPayload.accessToken;
-      const refreshToken = dataPayload.refreshToken;
+      const dataPayload = res.data?.data || res.data;
+
+      // Master admin endpoint returns access_token; regular login returns accessToken
+      const token = dataPayload?.access_token || dataPayload?.accessToken;
+      if (!token) {
+        throw new Error("Invalid response from server — no token received");
+      }
+
+      const refreshToken = dataPayload.refreshToken || dataPayload.refresh_token || null;
+      const apiRoleFromResponse = dataPayload.role || null;
 
       const decoded = jwtDecode(token);
-      const userId = decoded?.userId || decoded?.sub; 
+      const userId = decoded?.userId || decoded?.sub;
 
-      let userData = dataPayload.user;
-      if (!userData) {
+      let userData = dataPayload.user || dataPayload.admin || {};
+
+      // Fallback: fetch user profile from /admin/users
+      if (!userData || Object.keys(userData).length === 0) {
         try {
           const userRes = await axios.get(`${BASE_URL}/admin/users?id=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          userData = userRes.data?.data || userRes.data;
-          if (Array.isArray(userData) && userData.length > 0) {
-            userData = userData[0];
-          }
+          const fetched = userRes.data?.data || userRes.data;
+          userData = Array.isArray(fetched) && fetched.length > 0 ? fetched[0] : fetched || {};
         } catch (e) {
           console.warn("User fallback failed", e);
+          userData = {};
         }
       }
 
-      // Ensure userData is an object before mutation
-      if (!userData || typeof userData !== "object") {
-        userData = { role: "ADMIN" };
-      }
+      if (!userData || typeof userData !== "object") userData = {};
 
-      // Automatically determine Master Admin either natively from the API or override for specific users
-      if (formData.mobileNumber.trim() === "7600804920" || userData?.masterAdmin || userData?.role === "MASTER_ADMIN" || userData?.role?.toUpperCase() === "MASTER") {
-        userData.role = "MASTER_ADMIN";
-        userData.masterAdmin = true;
-        if (formData.mobileNumber.trim() === "7600804920") {
-             userData.username = "Master Admin";
-        }
-      } else {
-        userData.role = "ADMIN"; 
-      }
+      // Role detection: master endpoint success OR role in response OR JWT/userData claim
+      const apiRole = apiRoleFromResponse || decoded?.role || userData?.role || "";
+      const isMaster =
+        usedMasterEndpoint ||
+        userData?.masterAdmin === true ||
+        apiRole === "MASTER_ADMIN" ||
+        apiRole?.toUpperCase() === "MASTER";
+
+      userData.role = isMaster ? "MASTER_ADMIN" : "ADMIN";
+      userData.masterAdmin = isMaster;
 
       const time = decoded?.exp ? decoded.exp * 1000 : 0;
 
-      dispatch(
-        login({
-          token,
-          refreshToken,
-          time,
-          userData: {
-            ...userData,
-            userId,
-          },
-        })
-      );
+      dispatch(login({
+        token,
+        refreshToken,
+        time,
+        userData: {
+          ...userData,
+          userId,
+          mobileNumber: userData.mobileNumber || enteredMobile,
+        }
+      }));
 
       toast.current.show({
         severity: "success",
@@ -122,18 +142,15 @@ const Login = () => {
       } else {
         navigate("/", { replace: true });
       }
-
-     
-    } catch (error) { 
-      const errorMessage = error.response?.data?.message || "Login Failed (Network Error or Invalid Credentials)";
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Login Failed. Please check your credentials.";
       toast.current?.show({
         severity: "error",
         summary: "Error",
         detail: errorMessage,
         life: 5000,
       });
-    }
-     finally {
+    } finally {
       setIsLoading(false);
     }
   };

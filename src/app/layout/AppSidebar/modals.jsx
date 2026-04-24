@@ -50,14 +50,6 @@ export const menuModel = [
         to: "/admin/products",
         Icon: ComponentsIcon,
       },
-      {
-        label: "Complaints",
-        Icon: ComponentsIcon,
-        items: [
-          { label: "Manage Complaints", to: "/admin/complaints", Icon: ComponentsIcon },
-          { label: "Analytics", to: "/admin/complaints/analytics", Icon: ComponentsIcon },
-        ],
-      },
     ],
   },
   {

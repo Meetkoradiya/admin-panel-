@@ -11,10 +11,7 @@ const MasterDashboard = () => {
   const [stats, setStats] = useState({
     totalAdmins: '—',
     activeAdmins: '—',
-    totalPlans: '—',
     pendingDevices: '—',
-    totalComplaints: '—',
-    openComplaints: '—',
   });
   const [loadingStats, setLoadingStats] = useState(true);
 
@@ -22,26 +19,30 @@ const MasterDashboard = () => {
     const fetchStats = async () => {
       setLoadingStats(true);
       try {
-        const [adminsRes, plansRes, devicesRes, complaintsRes] = await Promise.allSettled([
-          apiGet('/admin/admins'),
-          apiGet('/master/water-plans'),
-          apiGet('/auth/master/device-approvals'),
-          apiGet('/customer/admin/complaints'),
+        const adminPromise = apiGet('/admin/admins');
+        const devicesPromise = apiGet('/auth/master/device-approvals');
+        
+        const [adminsRes, devicesRes] = await Promise.allSettled([
+          adminPromise,
+          devicesPromise,
         ]);
 
-        const admins = adminsRes.status === 'fulfilled' ? adminsRes.value : [];
-        const plans = plansRes.status === 'fulfilled' ? plansRes.value : [];
-        const devices = devicesRes.status === 'fulfilled' ? devicesRes.value : [];
-        const complaints = complaintsRes.status === 'fulfilled' ? complaintsRes.value : [];
+        // Normalize: API may return array directly or wrapped in { data: [...] }
+        const normalize = (res) => {
+          if (res.status !== 'fulfilled') return [];
+          const v = res.value;
+          return Array.isArray(v) ? v : (Array.isArray(v?.data) ? v.data : []);
+        };
 
-        setStats({
-          totalAdmins: Array.isArray(admins) ? admins.length : '—',
-          activeAdmins: Array.isArray(admins) ? admins.filter(a => a.status === 'ACTIVE').length : '—',
-          totalPlans: Array.isArray(plans) ? plans.length : '—',
-          pendingDevices: Array.isArray(devices) ? devices.filter(d => (d.status || d.approvalStatus || 'PENDING') === 'PENDING').length : '—',
-          totalComplaints: Array.isArray(complaints) ? complaints.length : '—',
-          openComplaints: Array.isArray(complaints) ? complaints.filter(c => c.status === 'PENDING' || c.status === 'IN_PROGRESS').length : '—',
-        });
+        const admins = normalize(adminsRes);
+        const devices = normalize(devicesRes);
+
+        setStats(prev => ({
+          ...prev,
+          totalAdmins: admins.length,
+          activeAdmins: admins.filter(a => a.status === 'ACTIVE').length,
+          pendingDevices: devices.filter(d => (d.status || d.approvalStatus || 'PENDING') === 'PENDING').length,
+        }));
       } catch (e) {
         console.error('Dashboard stats error:', e);
       } finally {
@@ -49,21 +50,18 @@ const MasterDashboard = () => {
       }
     };
     fetchStats();
-  }, []);
+  }, [apiGet]);
 
   const quickCards = [
     { title: "Create Admin", desc: "Register a new administrator", icon: "pi pi-user-plus", gradient: "from-blue-500 to-blue-600", shadow: "shadow-blue-200", url: "/master/admins/add" },
     { title: "Admin List", desc: "View & manage all admins", icon: "pi pi-users", gradient: "from-indigo-500 to-indigo-600", shadow: "shadow-indigo-200", url: "/master/admins" },
     { title: "Subscriptions", desc: "Manage water plans", icon: "pi pi-calendar", gradient: "from-violet-500 to-violet-600", shadow: "shadow-violet-200", url: "/master/subscriptions" },
     { title: "Device Verification", desc: "Approve device requests", icon: "pi pi-mobile", gradient: "from-cyan-500 to-cyan-600", shadow: "shadow-cyan-200", url: "/master/devices" },
-    { title: "Contact Support", desc: "Handle customer complaints", icon: "pi pi-envelope", gradient: "from-sky-500 to-sky-600", shadow: "shadow-sky-200", url: "/master/support" },
   ];
 
   const statCards = [
     { label: 'Total Admins', value: stats.totalAdmins, sub: `${stats.activeAdmins} active`, icon: 'pi pi-users', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { label: 'Water Plans', value: stats.totalPlans, sub: 'Subscription plans', icon: 'pi pi-calendar', color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100' },
     { label: 'Pending Devices', value: stats.pendingDevices, sub: 'Awaiting approval', icon: 'pi pi-mobile', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { label: 'Open Complaints', value: stats.openComplaints, sub: `of ${stats.totalComplaints} total`, icon: 'pi pi-envelope', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
   ];
 
   const now = new Date();
