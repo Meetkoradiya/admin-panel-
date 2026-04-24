@@ -51,17 +51,12 @@ const AppTopbar = forwardRef((props, ref) => {
           <i className="pi pi-align-left" />
         </button>
 
-        <div className="hidden md:block lg:block">
-          <div className="p-inputgroup h-8 flex-1">
-            <InputText placeholder="Search ..." className="h-8 text-sm" />
-            <Button icon="pi pi-search" className="p-button-primary" />
-          </div>
-        </div>
+        <button type="button" className="p-link layout-topbar-button ml-2">
+          <i className="pi pi-search" />
+        </button>
       </div>
 
       <div className="layout-menus">
-        <Setting />
-        <Instruction />
         <Notification />
         <User />
       </div>

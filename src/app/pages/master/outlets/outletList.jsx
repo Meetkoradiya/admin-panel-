@@ -80,57 +80,60 @@ const OutletList = () => {
         </div>
     );
 
-    const header = (
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 p-2">
-            <div className="flex flex-col gap-1">
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3">
-                    <span className="w-1.5 h-8 bg-indigo-600 rounded-full block"></span>
-                    Outlet Directory
-                </h2>
-                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest ml-4">Amrut Water Distribution Nodes</p>
-            </div>
-            <div className="flex items-center gap-4 w-full lg:w-auto">
-                <span className="p-input-icon-left flex-1 lg:flex-none relative">
-                    <i className="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                    <InputText
-                        type="search"
-                        onInput={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Search hubs..."
-                        className="p-inputtext-sm pl-11 border-slate-200 rounded-xl w-full lg:w-80 bg-slate-50/50 focus:bg-white transition-all outline-none text-sm font-medium"
-                    />
-                </span>
-                <Button
-                    label="Deploy New"
-                    icon="pi pi-map-marker"
-                    className="bg-indigo-600 border-none px-6 py-3 rounded-xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all text-white whitespace-nowrap text-xs uppercase tracking-widest"
-                    onClick={() => navigate('/master/outlets/add')}
-                />
-            </div>
-        </div>
-    );
 
     return (
-        <Page title="Outlets">
-            <div className="bg-[#f8fafc] min-h-[calc(100vh-5rem)] p-2 md:p-4">
+        <Page title="Outlet list">
+            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6">
                 <Toast ref={toast} />
                 <ConfirmDialog />
 
-                <div className="bg-white rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    {/* Table Header */}
+                    <div className="px-8 py-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <h2 className="text-xl font-bold text-slate-800">Outlet list</h2>
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <i className="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-sm" />
+                                <InputText
+                                    type="search"
+                                    onInput={(e) => setGlobalFilter(e.target.value)}
+                                    placeholder="Quick Search..."
+                                    className="pl-11 pr-4 py-2.5 border-slate-200 rounded-xl w-full md:w-80 bg-white text-sm font-medium focus:border-blue-400 focus:ring-0 transition-all outline-none"
+                                />
+                            </div>
+                            <Button
+                                label="New Outlet"
+                                className="bg-[#3b82f6] border-none px-6 py-2.5 rounded-xl font-bold text-white shadow-sm hover:bg-blue-600 transition-all text-sm"
+                                onClick={() => navigate('/master/outlets/add')}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Table */}
                     <DataTable
                         value={outlets}
-                        header={header}
                         paginator
                         rows={10}
                         loading={loading}
                         globalFilter={globalFilter}
-                        responsiveLayout="stack"
-                        stripedRows
-                        className="p-datatable-sm"
+                        className="p-datatable-minimal"
+                        responsiveLayout="scroll"
+                        emptyMessage={
+                            <div className="text-center py-20 text-slate-400 font-medium">
+                                No outlet locations found
+                            </div>
+                        }
+                        dataKey="id"
+                        rowHover
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        rowsPerPageOptions={[10, 20, 50]}
                     >
-                        <Column header="Outlet Details" body={outletNameTemplate} sortField="name" sortable />
-                        <Column field="address" header="Address" className="text-slate-500 text-sm" />
-                        <Column header="Status" body={statusTemplate} style={{ width: '10rem', textAlign: 'center' }} />
-                        <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} />
+                        <Column field="no" header="No." body={(_, opts) => <span className="text-slate-600 font-medium text-sm ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                        <Column header="Outlet Name" body={outletNameTemplate} sortField="name" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column field="address" header="Address" className="text-slate-600 font-medium text-sm" headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Status" body={statusTemplate} sortField="isActive" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                     </DataTable>
                 </div>
             </div>

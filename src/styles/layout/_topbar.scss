@@ -7,11 +7,11 @@
 
 .layout-topbar {
   position: fixed;
-  height: 4rem;
+  height: 3.5rem;
   z-index: 997;
   top: 0;
   right: 0; /* Extend to the right edge */
-  left: 290px; /* Offset the sidebar width */
+  left: 260px;
   width: auto; /* Let it take available width */
   padding: 0 1rem;
   background-color: #fff;

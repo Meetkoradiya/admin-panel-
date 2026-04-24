@@ -105,148 +105,118 @@ const AdminCreate = () => {
         'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700',
         { 'border-red-400 bg-red-50/50': submitted && !admin[fieldName] }
     );
-
     return (
         <Page title={isEditMode ? 'Edit Admin' : 'Create Admin'}>
-            <div className="bg-[#f8fafc] flex flex-col min-h-[calc(100vh-5rem)] relative p-2 md:p-6 lg:p-8">
+            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6">
                 <Toast ref={toast} />
+                
+                <h2 className="text-xl font-bold text-slate-800 mb-6">{isEditMode ? 'Edit Admin' : 'Create Admin'}</h2>
 
-                <div className="w-full">
-                    {/* Header */}
-                    <div className="flex items-center gap-5 mb-8">
-                        <Button
-                            icon="pi pi-arrow-left"
-                            className="p-button-text p-button-rounded text-slate-600 hover:bg-white w-12 h-12 shadow-xl shadow-slate-200/50 border border-slate-100 bg-white transition-all hover:-translate-x-1"
-                            onClick={() => navigate(-1)}
-                        />
-                        <div>
-                            <div className="flex items-center gap-1.5 mb-1">
-                                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Amrut Water System</span>
-                            </div>
-                            <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
-                                {isEditMode ? 'Modify Personnel' : 'Onboard Administrator'}
-                            </h2>
-                        </div>
-                    </div>
-
-                    {/* Unified Form Card */}
-                    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-6 md:p-8 lg:p-10 transition-all relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full -mr-32 -mt-32 blur-3xl z-0"></div>
-                        
-                        <div className="relative z-10">
-                            {/* Section 1: Identity */}
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                                    <i className="pi pi-user text-xl" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-black text-slate-800 tracking-tight">Core Identity</h3>
-                                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Primary identification details</p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left Column: Form Sections */}
+                    <div className="lg:col-span-2 flex flex-col gap-8">
+                        {/* Overview Card */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                            <h3 className="text-base font-bold text-slate-800 mb-8 border-b border-slate-50 pb-4">Overview</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
-                                        Full System Name <span className="text-rose-500">*</span>
-                                    </label>
+                                    <label className="text-sm font-bold text-slate-500">Full Name</label>
                                     <InputText
                                         value={admin.username}
                                         onChange={(e) => setAdmin({ ...admin, username: e.target.value })}
-                                        className={fieldClass('username')}
-                                        placeholder="e.g. Amrut Admin"
+                                        className={classNames('p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm', { 'border-rose-400': submitted && !admin.username })}
                                     />
-                                    {submitted && !admin.username && <small className="text-rose-500 mt-1 block font-bold text-[10px] ml-1 uppercase tracking-tighter">Field is mandatory</small>}
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
-                                        Mobile Number <span className="text-rose-500">*</span>
-                                    </label>
+                                    <label className="text-sm font-bold text-slate-500">Mobile Number</label>
                                     <InputText
                                         value={admin.mobileNumber}
                                         maxLength={10}
-                                        keyfilter="int"
                                         onChange={(e) => setAdmin({ ...admin, mobileNumber: e.target.value })}
-                                        className={classNames('w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm transition-all outline-none font-medium', {
-                                            'border-rose-400 bg-rose-50/50': submitted && (!admin.mobileNumber || admin.mobileNumber.length !== 10)
-                                        })}
-                                        placeholder="10-digit mobile"
+                                        className={classNames('p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm', { 'border-rose-400': submitted && (!admin.mobileNumber || admin.mobileNumber.length !== 10) })}
                                     />
-                                    {submitted && (!admin.mobileNumber || admin.mobileNumber.length !== 10) &&
-                                        <small className="text-rose-500 mt-1 block font-bold text-[10px] ml-1 uppercase tracking-tighter">Invalid format</small>}
                                 </div>
                                 <div className="flex flex-col gap-2 md:col-span-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Official Email</label>
+                                    <label className="text-sm font-bold text-slate-500">Email</label>
                                     <InputText
                                         value={admin.email}
                                         onChange={(e) => setAdmin({ ...admin, email: e.target.value })}
-                                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm transition-all outline-none font-medium"
-                                        placeholder="admin@amrutwater.in"
+                                        className="p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm"
                                     />
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Section 2: Security */}
-                            <div className="flex items-center gap-4 mb-8 mt-12 pt-8 border-t border-slate-50">
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
-                                    <i className="pi pi-lock text-xl" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-black text-slate-800 tracking-tight">Access Configuration</h3>
-                                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Security & infrastructure permissions</p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                                {!isEditMode && (
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
-                                            Master Password <span className="text-rose-500">*</span>
-                                        </label>
-                                        <InputText
-                                            type="password"
-                                            value={admin.password}
-                                            onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
-                                            className={classNames('w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm transition-all outline-none font-medium', {
-                                                'border-rose-400 bg-rose-50/50': submitted && !admin.password
-                                            })}
-                                            placeholder="••••••••"
-                                        />
-                                        {submitted && !admin.password && <small className="text-rose-500 mt-1 block font-bold text-[10px] ml-1 uppercase tracking-tighter">Key required</small>}
-                                    </div>
-                                )}
+                        {/* Additional Information Card */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                            <h3 className="text-base font-bold text-slate-800 mb-8 border-b border-slate-50 pb-4">Additional Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Assign Outlet</label>
-                                    <Dropdown
-                                        value={admin.outletId}
-                                        options={outlets}
-                                        onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
-                                        placeholder="Select outlet..."
-                                        className="w-full border border-slate-200 rounded-2xl bg-slate-50 text-sm"
-                                        emptyMessage="No outlets found"
-                                        showClear
+                                    <label className="text-sm font-bold text-slate-500">City</label>
+                                    <InputText
+                                        className="p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm"
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-bold text-slate-500">Postal Code</label>
+                                    <InputText
+                                        className="p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm"
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-2 md:col-span-2">
+                                    <label className="text-sm font-bold text-slate-500">Address</label>
+                                    <InputText
+                                        className="p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm"
                                     />
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            {/* Actions */}
-                            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-                                <Button
-                                    label={isEditMode ? 'Authorize Changes' : 'Grant Full System Access'}
-                                    icon={isEditMode ? 'pi pi-shield' : 'pi pi-bolt'}
-                                    className="w-full sm:w-auto flex-1 bg-blue-600 border-none hover:bg-blue-700 transition-all text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-blue-100"
-                                    onClick={handleSave}
-                                    loading={loading}
-                                />
-                                <Button
-                                    label="Discard Changes"
-                                    icon="pi pi-times"
-                                    className="w-full sm:w-auto p-button-text p-button-secondary py-5 rounded-2xl font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-slate-600"
-                                    onClick={() => navigate(-1)}
+                    {/* Right Column: Image & Personal */}
+                    <div className="flex flex-col gap-8">
+                        {/* Image Card */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                            <h3 className="text-base font-bold text-slate-800 mb-6">Image</h3>
+                            <div className="bg-slate-50 rounded-2xl p-10 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 min-h-[240px]">
+                                <i className="pi pi-image text-4xl text-slate-200 mb-4" />
+                                <Button label="Upload Image" className="bg-[#3b82f6] border-none text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm" />
+                            </div>
+                        </div>
+
+                        {/* Personal Card */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                            <h3 className="text-base font-bold text-slate-800 mb-6">Personal</h3>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-500">Password</label>
+                                <InputText
+                                    type="password"
+                                    value={admin.password}
+                                    onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
+                                    className={classNames('p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm', { 'border-rose-400': submitted && !admin.password })}
+                                    placeholder="••••••••"
                                 />
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Fixed Footer */}
+                <div className="fixed bottom-0 left-[260px] right-0 bg-white border-t border-slate-100 p-4 z-50">
+                    <div className="flex justify-end gap-4 px-8">
+                        <Button
+                            label="Discard"
+                            icon="pi pi-trash"
+                            className="p-button-outlined border-rose-400 text-rose-500 hover:bg-rose-50 px-8 py-2.5 rounded-xl font-bold transition-all text-sm"
+                            onClick={() => navigate('/master/admins')}
+                            disabled={loading}
+                        />
+                        <Button
+                            label={isEditMode ? "Update" : "Create"}
+                            className="bg-[#3b82f6] border-none text-white px-10 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 transition-all text-sm"
+                            onClick={handleSave}
+                            loading={loading}
+                        />
                     </div>
                 </div>
             </div>

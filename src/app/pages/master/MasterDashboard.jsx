@@ -68,73 +68,63 @@ const MasterDashboard = () => {
   const greeting = now.getHours() < 12 ? 'Good Morning' : now.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
 
   return (
-    <div className="bg-[#f8fafc] min-h-[calc(100vh-5rem)]">
-
-      {/* Hero Welcome Banner */}
-      <div className="bg-linear-to-br from-slate-800 via-slate-900 to-blue-900 rounded-3xl p-7 mb-6 shadow-2xl shadow-slate-400/30 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 80% 20%, #3b82f6 0%, transparent 60%)', pointerEvents: 'none'}} />
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div className="bg-slate-50 min-h-[calc(100vh-3.5rem)] p-6">
+      {/* HEADER */}
+      <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 mb-8 shadow-sm hover:shadow-md transition-all border border-white/50">
+        <div className="flex justify-between items-center flex-wrap gap-4">
           <div>
-            <p className="text-blue-300 font-semibold text-sm mb-1">💧 {greeting}</p>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              Amrut Water
+            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
+              {greeting}, {user?.username?.split(' ')[0] || 'Admin'} 👋
             </h1>
-            <p className="text-slate-400 mt-2 text-sm max-w-md">
-              Your central command center for the Amrut Water Management System. Monitor, control, and manage everything from here.
-            </p>
+            <p className="text-slate-500 font-medium mt-1">Here&apos;s a quick overview of your water management system.</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-2xl">
-              💧
-            </div>
-            <div className="text-right">
-              <p className="text-white font-bold text-sm">Amrut Water</p>
-              <p className="text-slate-400 text-xs">Master Admin Panel</p>
-              <p className="text-blue-300 text-xs mt-1">{now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-            </div>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => navigate('/master/admins/add')}
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all flex items-center gap-2"
+            >
+              <i className="pi pi-plus" />
+              New Admin
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Live Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {/* STATS GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((s) => (
-          <div key={s.label} className={`bg-white rounded-2xl shadow-sm p-5 border ${s.border} hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-default`}>
-            <div className="flex items-start justify-between mb-3">
-              <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center ${s.color} border ${s.border}`}>
-                <i className={`${s.icon} text-base`} />
-              </div>
+          <div key={s.label} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-50 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
+            <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-4 group-hover:scale-110 transition-transform`}>
+              <i className={`${s.icon} text-xl`} />
             </div>
-            <p className={`text-3xl font-black ${s.color} ${loadingStats ? 'animate-pulse' : ''}`}>
-              {loadingStats ? '—' : s.value}
-            </p>
-            <p className="text-slate-600 font-semibold text-sm mt-0.5">{s.label}</p>
-            <p className="text-slate-400 text-xs mt-0.5">{s.sub}</p>
+            <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{s.label}</p>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-3xl font-extrabold text-slate-800">{loadingStats ? '—' : s.value}</h2>
+              <p className="text-slate-400 text-xs font-medium">{s.sub}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Quick Access Grid */}
-      <div className="mb-3">
-        <h2 className="text-lg font-extrabold text-slate-800 mb-1">Quick Access</h2>
-        <p className="text-slate-400 text-sm">Navigate to any management module</p>
+      {/* QUICK ACTIONS */}
+      <div className="mb-6 px-2">
+        <h2 className="text-xl font-bold text-slate-800">System Quick Actions</h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickCards.map((card) => (
           <div
             key={card.url}
-            className={`bg-linear-to-br ${card.gradient} rounded-2xl p-5 flex flex-col items-center justify-center text-white shadow-lg ${card.shadow} hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer group`}
+            className="bg-white rounded-3xl p-6 border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group flex flex-col items-start"
             onClick={() => navigate(card.url)}
           >
-            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all">
-              <i className={`${card.icon} text-2xl`} />
+            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
+              <i className={`${card.icon} text-lg`} />
             </div>
-            <h3 className="text-sm font-extrabold text-center leading-tight">{card.title}</h3>
-            <p className="text-white/70 text-xs text-center mt-1">{card.desc}</p>
+            <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>
+            <p className="text-slate-400 text-sm font-medium">{card.desc}</p>
           </div>
         ))}
       </div>
-
     </div>
   );
 };

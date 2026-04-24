@@ -165,70 +165,81 @@ const SupportList = () => {
             <Button label="Cancel" icon="pi pi-times" className="p-button-outlined border-slate-200 text-slate-600 px-6 py-2 rounded-xl font-bold transition-all" onClick={() => setShowDialog(false)} disabled={updating} />
             <Button label="Update Status" icon="pi pi-check" className="bg-blue-600 border-none text-white px-8 py-2 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onClick={handleStatusUpdate} loading={updating} />
         </div>
-    );
-
-    return (
-        <Page title="Contact Support">
-            <div className="p-4 md:p-8 bg-[#f8fafc] min-h-screen">
+    );    return (
+        <Page title="Support list">
+            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6">
                 <Toast ref={toast} />
 
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-10">
+                    <h2 className="text-xl font-bold text-slate-800">Support list</h2>
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <i className="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-sm" />
+                            <InputText
+                                type="search"
+                                onInput={(e) => setGlobalFilter(e.target.value)}
+                                placeholder="Quick Search..."
+                                className="pl-11 pr-4 py-2.5 border-slate-200 rounded-xl w-full md:w-80 bg-white text-sm font-medium focus:border-blue-400 focus:ring-0 transition-all outline-none"
+                            />
+                        </div>
+                        <Button
+                            icon="pi pi-refresh"
+                            className="w-10 h-10 rounded-xl bg-white border-slate-100 text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
+                            onClick={fetchComplaints}
+                            loading={loading}
+                        />
+                    </div>
+                </div>
 
-
-                {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
+                {/* Stats Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {[
-                        { label: 'Total Tickets', value: complaints.length, icon: 'pi pi-envelope', color: 'from-sky-500 to-sky-600', shadow: 'shadow-sky-200/60' },
-                        { label: 'Pending', value: pendingCount, icon: 'pi pi-clock', color: 'from-amber-500 to-orange-500', shadow: 'shadow-amber-200/60' },
-                        { label: 'In Progress', value: inProgressCount, icon: 'pi pi-spin pi-spinner', color: 'from-blue-500 to-blue-600', shadow: 'shadow-blue-200/60' },
-                        { label: 'Resolved', value: resolvedCount, icon: 'pi pi-check-circle', color: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-200/60' },
+                        { label: 'Total Tickets', value: complaints.length, icon: 'pi pi-envelope', bg: 'bg-blue-50', color: 'text-blue-600' },
+                        { label: 'Pending', value: pendingCount, icon: 'pi pi-clock', bg: 'bg-amber-50', color: 'text-amber-600' },
+                        { label: 'In Progress', value: inProgressCount, icon: 'pi pi-spin pi-spinner', bg: 'bg-indigo-50', color: 'text-indigo-600' },
+                        { label: 'Resolved', value: resolvedCount, icon: 'pi pi-check-circle', bg: 'bg-emerald-50', color: 'text-emerald-600' },
                     ].map((s) => (
-                        <div key={s.label} className={`bg-linear-to-br ${s.color} rounded-3xl p-6 text-white shadow-xl ${s.shadow} relative overflow-hidden group transition-all duration-300`}>
-                             <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                                <i className={`${s.icon} text-7xl`} />
+                        <div key={s.label} className="bg-white rounded-2xl shadow-sm p-6 border border-slate-100 flex items-center gap-5">
+                            <div className={`w-14 h-14 rounded-xl ${s.bg} flex items-center justify-center ${s.color}`}>
+                                <i className={`${s.icon} text-xl`} />
                             </div>
-                            <div className="flex items-center justify-between relative z-10">
-                                <div>
-                                    <p className="text-white/70 text-[10px] font-black uppercase tracking-widest">{s.label}</p>
-                                    <p className="text-3xl font-black mt-1 tracking-tight">{loading ? '—' : s.value}</p>
-                                </div>
-                                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center border border-white/20">
-                                    <i className={`${s.icon} text-lg`} />
-                                </div>
+                            <div>
+                                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{s.label}</p>
+                                <p className="text-2xl font-bold text-slate-800">{loading ? '—' : s.value}</p>
                             </div>
                         </div>
                     ))}
                 </div>
 
                 {/* Table */}
-                <div className="bg-white rounded-4xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <DataTable
                         value={complaints}
-                        header={header}
-                        paginator rows={10}
-                        rowsPerPageOptions={[10, 25, 50]}
+                        paginator
+                        rows={10}
                         loading={loading}
                         globalFilter={globalFilter}
-                        className="p-datatable-sm"
-                        stripedRows rowHover
-                        dataKey="id"
+                        className="p-datatable-minimal"
+                        responsiveLayout="scroll"
                         emptyMessage={
-                            <div className="text-center py-16">
-                                <i className="pi pi-envelope text-4xl text-slate-200 mb-4 block" />
-                                <p className="text-slate-400 font-bold">No support tickets found</p>
-                                <p className="text-slate-300 text-xs mt-1">Everything is running smoothly</p>
+                            <div className="text-center py-20 text-slate-400 font-medium">
+                                No support tickets found
                             </div>
                         }
+                        dataKey="id"
+                        rowHover
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first}–{last} of {totalRecords} tickets"
-                        paginatorClassName="border-t border-slate-50 px-4 py-3"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        rowsPerPageOptions={[10, 20, 50]}
                     >
-                        <Column header="#" body={(_, o) => <span className="text-slate-400 font-black text-[10px]">{o.rowIndex + 1}</span>} style={{ width: '3.5rem' }} />
-                        <Column header="Complainer" body={complainerTemplate} sortField="complainerName" sortable />
-                        <Column header="Type" body={typeTemplate} sortField="complaintType" sortable style={{ width: '8rem' }} />
-                        <Column field="description" header="Description" className="text-slate-500 text-sm font-medium" style={{ maxWidth: '280px' }} body={(row) => <p className="truncate text-sm text-slate-500 font-medium">{row.description || '—'}</p>} />
-                        <Column header="Date" body={dateTemplate} sortField="createdAt" sortable style={{ width: '10rem' }} />
-                        <Column header="Status" body={statusTemplate} style={{ textAlign: 'center', width: '9rem' }} sortField="status" sortable />
-                        <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} />
+                        <Column field="no" header="No." body={(_, opts) => <span className="text-slate-600 font-medium text-sm ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                        <Column header="Complainer" body={complainerTemplate} sortField="complainerName" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Type" body={typeTemplate} sortField="complaintType" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column field="description" header="Description" className="text-slate-600 font-medium text-sm" body={(row) => <p className="truncate max-w-[280px]">{row.description || '—'}</p>} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Date" body={dateTemplate} sortField="createdAt" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Status" body={statusTemplate} sortField="status" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                     </DataTable>
                 </div>
 

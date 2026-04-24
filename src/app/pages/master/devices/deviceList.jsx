@@ -145,102 +145,80 @@ const DeviceList = () => {
     const pendingCount = devices.filter(d => (d.status || d.approvalStatus || 'PENDING') === 'PENDING').length;
     const approvedCount = devices.filter(d => (d.status || d.approvalStatus) === 'APPROVED').length;
 
-    const header = (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-2">
-            <div>
-                <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Device Verification</h2>
-                <p className="text-slate-400 text-sm mt-0.5">Review and approve device login requests from customers</p>
-            </div>
-            <div className="flex items-center gap-3 w-full md:w-auto">
-                <span className="p-input-icon-left flex-1 md:flex-none">
-                    <i className="pi pi-search text-slate-400" />
-                    <InputText
-                        type="search"
-                        onInput={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Search devices..."
-                        className="p-inputtext-sm border-slate-200 rounded-xl w-full md:w-56 bg-slate-50"
-                    />
-                </span>
-                <Button
-                    icon="pi pi-refresh"
-                    className="w-10 h-10 rounded-xl bg-slate-100 border-none text-slate-600 hover:bg-slate-200 transition-all"
-                    onClick={fetchDevices}
-                    loading={loading}
-                    tooltip="Refresh"
-                />
-            </div>
-        </div>
-    );
-
     return (
-        <Page title="Device Verification">
-            <div className="bg-[#f8fafc] min-h-[calc(100vh-5rem)]">
+        <Page title="Device list">
+            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6">
                 <Toast ref={toast} />
                 <ConfirmDialog />
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                {/* Stats Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                     {[
-                        { label: 'Total Devices', value: devices.length, icon: 'pi pi-mobile', color: 'from-cyan-500 to-cyan-600', shadow: 'shadow-cyan-200' },
-                        { label: 'Pending Approval', value: pendingCount, icon: 'pi pi-clock', color: 'from-amber-500 to-orange-500', shadow: 'shadow-amber-200' },
-                        { label: 'Approved', value: approvedCount, icon: 'pi pi-check-circle', color: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-200' },
+                        { label: 'Total Devices', value: devices.length, icon: 'pi pi-mobile', bg: 'bg-blue-50', color: 'text-blue-600' },
+                        { label: 'Pending Approval', value: pendingCount, icon: 'pi pi-clock', bg: 'bg-amber-50', color: 'text-amber-600' },
+                        { label: 'Approved', value: approvedCount, icon: 'pi pi-check-circle', bg: 'bg-emerald-50', color: 'text-emerald-600' },
                     ].map((s) => (
-                        <div key={s.label} className={`bg-linear-to-br ${s.color} rounded-2xl p-5 text-white shadow-lg ${s.shadow}`}>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">{s.label}</p>
-                                    <p className="text-3xl font-black mt-1">{loading ? '—' : s.value}</p>
-                                </div>
-                                <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                                    <i className={`${s.icon} text-xl`} />
-                                </div>
+                        <div key={s.label} className="bg-white rounded-2xl shadow-sm p-6 border border-slate-100 flex items-center gap-5">
+                            <div className={`w-14 h-14 rounded-xl ${s.bg} flex items-center justify-center ${s.color}`}>
+                                <i className={`${s.icon} text-xl`} />
+                            </div>
+                            <div>
+                                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{s.label}</p>
+                                <p className="text-2xl font-bold text-slate-800">{loading ? '—' : s.value}</p>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Alert for pending */}
-                {pendingCount > 0 && !loading && (
-                    <div className="mb-5 bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                            <i className="pi pi-exclamation-triangle text-lg" />
-                        </div>
-                        <div>
-                            <p className="font-bold text-amber-800 text-sm">{pendingCount} device{pendingCount > 1 ? 's' : ''} awaiting approval</p>
-                            <p className="text-amber-600 text-xs">Review and approve or reject device access requests below</p>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    {/* Table Header */}
+                    <div className="px-8 py-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <h2 className="text-xl font-bold text-slate-800">Device Verification</h2>
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <i className="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-sm" />
+                                <InputText
+                                    type="search"
+                                    onInput={(e) => setGlobalFilter(e.target.value)}
+                                    placeholder="Quick Search..."
+                                    className="pl-11 pr-4 py-2.5 border-slate-200 rounded-xl w-full md:w-80 bg-white text-sm font-medium focus:border-blue-400 focus:ring-0 transition-all outline-none"
+                                />
+                            </div>
+                            <Button
+                                label="Refresh"
+                                className="bg-[#3b82f6] border-none px-6 py-2.5 rounded-xl font-bold text-white shadow-sm hover:bg-blue-600 transition-all text-sm"
+                                onClick={fetchDevices}
+                                loading={loading}
+                            />
                         </div>
                     </div>
-                )}
 
-                {/* Table */}
-                <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                    {/* Table */}
                     <DataTable
                         value={devices}
-                        header={header}
-                        paginator rows={10}
-                        rowsPerPageOptions={[10, 25, 50]}
+                        paginator
+                        rows={10}
                         loading={loading}
                         globalFilter={globalFilter}
-                        className="p-datatable-sm"
-                        stripedRows rowHover
-                        dataKey="id"
+                        className="p-datatable-minimal"
+                        responsiveLayout="scroll"
                         emptyMessage={
-                            <div className="text-center py-12">
-                                <i className="pi pi-mobile text-4xl text-slate-300 mb-3 block" />
-                                <p className="text-slate-400 font-medium">No device approvals pending</p>
-                                <p className="text-slate-300 text-sm mt-1">All device requests have been processed</p>
+                            <div className="text-center py-20 text-slate-400 font-medium">
+                                No device requests found
                             </div>
                         }
+                        dataKey="id"
+                        rowHover
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first}–{last} of {totalRecords} devices"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        rowsPerPageOptions={[10, 20, 50]}
                     >
-                        <Column header="#" body={(_, o) => <span className="text-slate-400 font-bold text-xs">{o.rowIndex + 1}</span>} style={{ width: '3rem' }} />
-                        <Column header="Device" body={deviceTemplate} sortField="deviceName" sortable />
-                        <Column field="mobileNumber" header="Mobile" className="text-slate-600 font-medium text-sm" />
-                        <Column field="fcmToken" header="FCM Token" className="text-xs font-mono text-slate-400" style={{ maxWidth: '140px' }} body={(row) => <span className="truncate block" style={{maxWidth:'120px'}}>{row.fcmToken || '—'}</span>} />
-                        <Column header="Requested" body={dateTemplate} sortField="createdAt" sortable />
-                        <Column header="Status" body={statusTemplate} style={{ textAlign: 'center' }} />
-                        <Column header="Actions" body={actionTemplate} style={{ width: '180px', textAlign: 'center' }} />
+                        <Column field="no" header="No." body={(_, opts) => <span className="text-slate-600 font-medium text-sm ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                        <Column header="Device" body={deviceTemplate} sortField="deviceName" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column field="mobileNumber" header="Mobile Number" className="text-slate-600 font-medium text-sm" headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Requested" body={dateTemplate} sortField="createdAt" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Status" body={statusTemplate} sortField="status" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Actions" body={actionTemplate} style={{ width: '18rem', textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                     </DataTable>
                 </div>
             </div>

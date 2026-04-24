@@ -125,92 +125,62 @@ const SubscriptionList = () => {
         </span>
     );
 
-    const header = (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-2">
-            <div>
-                <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Admin Subscriptions</h2>
-                <p className="text-slate-400 text-sm mt-0.5">All registered admins and their outlet assignments</p>
-            </div>
-            <div className="flex items-center gap-3 w-full md:w-auto">
-                <span className="p-input-icon-left flex-1 md:flex-none relative">
-                    <i className="pi pi-search text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <InputText
-                        type="search"
-                        onInput={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Search admins..."
-                        className="p-inputtext-sm pl-10 border-slate-200 rounded-xl w-full md:w-64 bg-slate-50 outline-none"
-                    />
-                </span>
-                <Button
-                    icon="pi pi-refresh"
-                    className="w-10 h-10 rounded-xl bg-slate-100 border-none text-slate-600 hover:bg-slate-200 transition-all"
-                    onClick={fetchAdmins}
-                    loading={loading}
-                    tooltip="Refresh"
-                />
-            </div>
-        </div>
-    );
-
-    const totalAdmins = admins.length;
-    const activeAdmins = admins.filter(a => a.status === 'ACTIVE').length;
-    const withOutlet = admins.filter(a => a.outletName).length;
 
     return (
-        <Page title="Admin Subscriptions">
-            <div className="bg-[#f8fafc] min-h-[calc(100vh-5rem)]">
+        <Page title="Subscription list">
+            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6">
                 <Toast ref={toast} />
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    {[
-                        { label: 'Total Admins', value: totalAdmins, icon: 'pi pi-users', color: 'from-blue-500 to-blue-600', shadow: 'shadow-blue-200' },
-                        { label: 'Active Admins', value: activeAdmins, icon: 'pi pi-check-circle', color: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-200' },
-                        { label: 'Outlet Assigned', value: withOutlet, icon: 'pi pi-building', color: 'from-violet-500 to-violet-600', shadow: 'shadow-violet-200' },
-                    ].map((s) => (
-                        <div key={s.label} className={`bg-gradient-to-br ${s.color} rounded-2xl p-5 text-white shadow-lg ${s.shadow}`}>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">{s.label}</p>
-                                    <p className="text-3xl font-black mt-1">{loading ? '—' : s.value}</p>
-                                </div>
-                                <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                                    <i className={`${s.icon} text-xl`} />
-                                </div>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    {/* Table Header */}
+                    <div className="px-8 py-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <h2 className="text-xl font-bold text-slate-800">Subscription list</h2>
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <i className="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-sm" />
+                                <InputText
+                                    type="search"
+                                    onInput={(e) => setGlobalFilter(e.target.value)}
+                                    placeholder="Quick Search..."
+                                    className="pl-11 pr-4 py-2.5 border-slate-200 rounded-xl w-full md:w-80 bg-white text-sm font-medium focus:border-blue-400 focus:ring-0 transition-all outline-none"
+                                />
                             </div>
+                            <Button
+                                label="Refresh"
+                                className="bg-[#3b82f6] border-none px-6 py-2.5 rounded-xl font-bold text-white shadow-sm hover:bg-blue-600 transition-all text-sm"
+                                onClick={fetchAdmins}
+                                loading={loading}
+                            />
                         </div>
-                    ))}
-                </div>
+                    </div>
 
-                {/* Table */}
-                <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                    {/* Table */}
                     <DataTable
                         value={admins}
-                        header={header}
-                        paginator rows={10}
-                        rowsPerPageOptions={[10, 25, 50]}
+                        paginator
+                        rows={10}
                         loading={loading}
                         globalFilter={globalFilter}
-                        className="p-datatable-sm"
-                        stripedRows rowHover
-                        dataKey="id"
+                        className="p-datatable-minimal"
+                        responsiveLayout="scroll"
                         emptyMessage={
-                            <div className="text-center py-12">
-                                <i className="pi pi-users text-4xl text-slate-300 mb-3 block" />
-                                <p className="text-slate-400 font-medium">No admins registered yet</p>
-                                <p className="text-slate-300 text-sm mt-1">Add an admin from the Admin Management page</p>
+                            <div className="text-center py-20 text-slate-400 font-medium">
+                                No admin subscriptions found
                             </div>
                         }
+                        dataKey="id"
+                        rowHover
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first}–{last} of {totalRecords} admins"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        rowsPerPageOptions={[10, 20, 50]}
                     >
-                        <Column header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '3rem' }} />
-                        <Column header="Administrator" body={nameTemplate} sortField="username" sortable />
-                        <Column header="Mobile" body={mobileTemplate} sortField="mobileNumber" sortable style={{ width: '10rem' }} />
-                        <Column header="Outlet" body={outletTemplate} sortField="outletName" sortable />
-                        <Column header="Role" body={roleTemplate} sortField="role" sortable style={{ textAlign: 'center', width: '9rem' }} />
-                        <Column header="Joined" body={joinedTemplate} sortField="createdAt" sortable style={{ width: '9rem' }} />
-                        <Column header="Status" body={statusTemplate} sortField="status" sortable style={{ textAlign: 'center', width: '8rem' }} />
+                        <Column field="no" header="No." body={(_, opts) => <span className="text-slate-600 font-medium text-sm ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                        <Column header="Administrator" body={nameTemplate} sortField="username" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Mobile" body={mobileTemplate} sortField="mobileNumber" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Outlet" body={outletTemplate} sortField="outletName" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Role" body={roleTemplate} sortField="role" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Joined" body={joinedTemplate} sortField="createdAt" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column header="Status" body={statusTemplate} sortField="status" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                     </DataTable>
                 </div>
             </div>

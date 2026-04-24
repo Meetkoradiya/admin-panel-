@@ -76,86 +76,60 @@ const OutletCreate = () => {
     };
 
     return (
-        <Page title={isEditMode ? 'Edit Outlet' : 'Register Outlet'}>
-            <div className="bg-[#f8fafc] flex flex-col min-h-[calc(100vh-5rem)] p-2 md:p-6 lg:p-8">
+        <Page title="Create Outlet">
+            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6 pb-32">
                 <Toast ref={toast} />
+                
+                <h2 className="text-xl font-bold text-slate-800 mb-6">Create Outlet</h2>
 
-                <div className="w-full">
-                    <div className="flex items-center gap-5 mb-8">
-                        <Button
-                            icon="pi pi-arrow-left"
-                            className="p-button-text p-button-rounded text-slate-600 hover:bg-white w-12 h-12 shadow-xl shadow-slate-200/50 border border-slate-100 bg-white transition-all shadow-sm hover:-translate-x-1"
-                            onClick={() => navigate(-1)}
-                        />
-                        <div>
-                            <div className="flex items-center gap-1.5 mb-1">
-                                <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Network Expansion</span>
+                <div>
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                        <h3 className="text-base font-bold text-slate-800 mb-6">Overview</h3>
+                        
+                        <div className="grid grid-cols-1 gap-8">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-500">Outlet Name</label>
+                                <InputText
+                                    value={outlet.name}
+                                    onChange={(e) => setOutlet({...outlet, name: e.target.value})}
+                                    placeholder="Enter outlet name"
+                                    className={classNames("p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm", {
+                                        'border-rose-400': submitted && !outlet.name
+                                    })}
+                                />
                             </div>
-                            <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
-                                {isEditMode ? 'Modify Outlet' : 'Deploy New Outlet'}
-                            </h2>
+
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-500">Address</label>
+                                <InputText
+                                    value={outlet.address}
+                                    onChange={(e) => setOutlet({...outlet, address: e.target.value})}
+                                    placeholder="Enter permanent address"
+                                    className={classNames("p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm", {
+                                        'border-rose-400': submitted && !outlet.address
+                                    })}
+                                />
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-6 md:p-8 lg:p-10 transition-all relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full -mr-32 -mt-32 blur-3xl -z-0"></div>
-
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
-                                    <i className="pi pi-building text-xl" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-black text-slate-800 tracking-tight">Branch Identity</h3>
-                                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Core location Details</p>
-                                </div>
-                            </div>
-                            
-                            <div className="space-y-6">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Official Outlet Name <span className="text-rose-500">*</span></label>
-                                    <InputText 
-                                        value={outlet.name} 
-                                        onChange={(e) => setOutlet({...outlet, name: e.target.value})}
-                                        className={classNames("w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all text-sm font-bold", {
-                                            'border-rose-400 bg-rose-50/50': submitted && !outlet.name
-                                        })}
-                                        placeholder="e.g. Amrut Water Station 1"
-                                    />
-                                    {submitted && !outlet.name && <small className="text-rose-500 font-semibold mt-1 block">Outlet name is required.</small>}
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Physical Address <span className="text-rose-500">*</span></label>
-                                    <InputText 
-                                        value={outlet.address} 
-                                        onChange={(e) => setOutlet({...outlet, address: e.target.value})}
-                                        className={classNames("w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all text-sm font-bold", {
-                                            'border-rose-400 bg-rose-50/50': submitted && !outlet.address
-                                        })}
-                                        placeholder="Full street address, city, and state"
-                                    />
-                                    {submitted && !outlet.address && <small className="text-rose-500 font-semibold mt-1 block">Address is required.</small>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row items-center gap-4 mt-12 pt-4">
-                                <Button
-                                    label={isEditMode ? 'Update Outlet' : 'Deploy Branch'}
-                                    icon={isEditMode ? 'pi pi-refresh' : 'pi pi-cloud-upload'}
-                                    className="w-full sm:w-auto flex-1 bg-indigo-600 border-none py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-100/50"
-                                    onClick={handleSave}
-                                    loading={loading}
-                                />
-                                <Button
-                                    label="Cancel Deployment"
-                                    icon="pi pi-times"
-                                    className="w-full sm:w-auto p-button-text p-button-secondary py-5 rounded-2xl font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-slate-600"
-                                    onClick={() => navigate(-1)}
-                                />
-                            </div>
-                        </div>
+                {/* Fixed Footer */}
+                <div className="fixed bottom-0 left-[260px] right-0 bg-white border-t border-slate-100 p-4 z-50">
+                    <div className="flex justify-end gap-4 px-8">
+                        <Button
+                            label="Discard"
+                            icon="pi pi-trash"
+                            className="p-button-outlined border-rose-400 text-rose-500 hover:bg-rose-50 px-8 py-2.5 rounded-xl font-bold transition-all text-sm"
+                            onClick={() => navigate('/master/outlets')}
+                            disabled={loading}
+                        />
+                        <Button
+                            label={isEditMode ? "Update" : "Create"}
+                            className="bg-[#3b82f6] border-none text-white px-10 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 transition-all text-sm"
+                            onClick={handleSave}
+                            loading={loading}
+                        />
                     </div>
                 </div>
             </div>

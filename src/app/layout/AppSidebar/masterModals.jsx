@@ -8,7 +8,7 @@ import MessageIcon from "../../../assets/dualicons/alarm.svg?react";
 
 export const masterMenuModel = [
   {
-    label: "Overview",
+    label: "DASHBOARD",
     items: [
       { label: "Dashboard", Icon: DashboardsIcon, to: "/master/dashboard" },
     ],
