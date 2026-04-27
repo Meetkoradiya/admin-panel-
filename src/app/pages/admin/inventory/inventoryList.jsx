@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { classNames } from 'primereact/utils';
@@ -21,9 +22,11 @@ const InventoryList = () => {
     const [stockDialog, setStockDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [editStock, setEditStock] = useState({
+        id: null,
         productId: null,
-        quantity: '',
-        type: 'CREDIT'
+        available: 0,
+        damaged: 0,
+        empty: 0
     });
 
     const token = useSelector((state) => state.auth.token);
@@ -73,57 +76,71 @@ const InventoryList = () => {
         });
     }, [stocks, products]);
 
-    const openAdjustment = (rowData = null) => {
+    const openEdit = (rowData = null) => {
         setEditStock({
+            id: rowData ? (rowData.id || rowData._id) : null,
             productId: rowData ? rowData.productId : null,
-            quantity: '',
-            type: 'CREDIT'
+            available: rowData ? (rowData.available || rowData.quantity || rowData.qty || 0) : 0,
+            damaged: rowData ? (rowData.damaged || 0) : 0,
+            empty: rowData ? (rowData.empty || 0) : 0
         });
         setSubmitted(false);
         setStockDialog(true);
     };
 
-    const saveAdjustment = async () => {
+    const saveStock = async () => {
         setSubmitted(true);
-        if (editStock.productId && editStock.quantity && Number(editStock.quantity) > 0) {
+        if (editStock.productId) {
             try {
                 const payload = {
                     productId: editStock.productId,
-                    quantity: Number(editStock.quantity),
-                    type: editStock.type
+                    available: Number(editStock.available || 0),
+                    damaged: Number(editStock.damaged || 0),
+                    empty: Number(editStock.empty || 0),
+                    quantity: Number(editStock.available || 0) // Fallback for backend
                 };
-                await axios.post(`${BASE_URL}/admin/inventory`, payload, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Stock adjusted successfully' });
+
+                if (editStock.id) {
+                    await axios.put(`${BASE_URL}/admin/inventory/${editStock.id}`, payload, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Stock updated successfully' });
+                } else {
+                    await axios.post(`${BASE_URL}/admin/inventory`, payload, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current?.show({ severity: 'Success', summary: 'Created', detail: 'Stock record created' });
+                }
                 setStockDialog(false);
                 fetchStocks();
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to adjust stock' });
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save stock' });
             }
         }
     };
 
-    const stockStatusTemplate = (rowData) => {
-        const qty = rowData.quantity || rowData.qty || 0;
-        let severity = 'success';
-        let label = 'In Stock';
+    const productBodyTemplate = (rowData) => (
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 font-black text-xs border border-amber-100">
+                <i className="pi pi-box text-lg" />
+            </div>
+            <div className="flex flex-col">
+                <span className="font-bold text-slate-800 text-sm">{rowData.resolvedProductName}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">PID: {rowData.productId || '—'}</span>
+            </div>
+        </div>
+    );
 
-        if (qty <= 0) { severity = 'danger'; label = 'Out of Stock'; }
-        else if (qty < 10) { severity = 'warning'; label = 'Low Stock'; }
-
-        return <Tag value={label} severity={severity} rounded className="px-3 py-1 font-bold text-[10px] uppercase tracking-widest" />;
-    };
 
     const actionBodyTemplate = (rowData) => (
         <div className="flex gap-2 justify-center">
             <Button
-                icon="pi pi-plus-circle"
+                icon="pi pi-pencil"
                 rounded text
-                tooltip="Adjust Inventory"
+                tooltip="Edit Stock"
                 tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-emerald-500"
-                onClick={() => openAdjustment(rowData)}
+                className="btn-icon text-sky-500"
+                onClick={() => openEdit(rowData)}
             />
         </div>
     );
@@ -132,20 +149,27 @@ const InventoryList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Stock Management"
-                subtitle="Track and adjust real-time product availability"
+                title="Inventory Control"
+                subtitle="Monitor and manage real-time product stock levels"
                 data={enrichedStocks}
                 loading={loading}
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
-                onAdd={() => openAdjustment()}
-                addLabel="Adjust Stock"
+                onAdd={() => openEdit()}
+                addLabel="Add Stock"
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column field="resolvedProductName" header="Product Definition" body={(row) => <span className="font-bold text-slate-700">{row.resolvedProductName}</span>} sortable />
-                <Column field="quantity" header="Current Units" body={(row) => <span className="font-black text-slate-900">{row.quantity || row.qty || 0}</span>} sortable />
-                <Column header="Status" body={stockStatusTemplate} style={{ width: '10rem', textAlign: 'center' }} />
-                <Column header="Quick Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
+                <Column header="Commodity Details" body={productBodyTemplate} sortField="resolvedProductName" />
+                <Column field="available" header="Available" body={(row) => <span className="font-black text-emerald-600">{row.available || row.quantity || row.qty || 0}</span>} />
+                <Column field="damaged" header="Damaged" body={(row) => <span className="font-black text-rose-600">{row.damaged || 0}</span>} />
+                <Column field="empty" header="Empty" body={(row) => <span className="font-black text-slate-500">{row.empty || 0}</span>} />
+                <Column header="Total" body={(row) => {
+                    const avail = Number(row.available || row.quantity || row.qty || 0);
+                    const dam = Number(row.damaged || 0);
+                    const emp = Number(row.empty || 0);
+                    return <span className="font-black text-slate-900">{avail + dam + emp}</span>;
+                }} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
             </ListLayout>
 
             <Dialog
@@ -156,46 +180,58 @@ const InventoryList = () => {
                 className="p-fluid rounded-3xl overflow-hidden shadow-2xl"
                 onHide={() => setStockDialog(false)}
             >
-                <div className="flex flex-col gap-6 pt-4">
+                <div className="flex flex-col gap-5 pt-4">
                     <div className="field">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Select Product</label>
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Commodity Type</label>
                         <Dropdown
                             value={editStock.productId}
                             options={products.map(p => ({ label: p.name, value: p.id }))}
                             onChange={(e) => setEditStock({ ...editStock, productId: e.value })}
-                            placeholder="Pick a commodity"
-                            className={classNames('w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner', { 'border-rose-400': submitted && !editStock.productId })}
+                            placeholder="Select Product"
+                            disabled={!!editStock.id}
+                            className={classNames('w-full rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 focus:ring-4 focus:ring-blue-50 transition-all shadow-inner', { 'border-rose-400 bg-rose-50/50': submitted && !editStock.productId })}
                         />
                     </div>
 
-                    <div className="field">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Adjustment Type</label>
-                        <Dropdown
-                            value={editStock.type}
-                            options={[
-                                { label: 'Add Stock (Credit)', value: 'CREDIT' },
-                                { label: 'Remove Stock (Debit)', value: 'DEBIT' }
-                            ]}
-                            onChange={(e) => setEditStock({ ...editStock, type: e.value })}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                        <div className="field">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Available Units</label>
+                            <InputNumber
+                                value={editStock.available}
+                                onValueChange={(e) => setEditStock({ ...editStock, available: e.value })}
+                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
+                                className="w-full"
+                                placeholder="0"
+                            />
+                        </div>
 
-                    <div className="field">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Quantity Change</label>
-                        <InputText
-                            type="number"
-                            value={editStock.quantity}
-                            onChange={(e) => setEditStock({ ...editStock, quantity: e.target.value })}
-                            placeholder="Enter units"
-                            className={classNames('w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner', { 'border-rose-400': submitted && (!editStock.quantity || Number(editStock.quantity) <= 0) })}
-                        />
+                        <div className="field">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Damaged Units</label>
+                            <InputNumber
+                                value={editStock.damaged}
+                                onValueChange={(e) => setEditStock({ ...editStock, damaged: e.value })}
+                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
+                                className="w-full"
+                                placeholder="0"
+                            />
+                        </div>
+
+                        <div className="field">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Empty Bottles</label>
+                            <InputNumber
+                                value={editStock.empty}
+                                onValueChange={(e) => setEditStock({ ...editStock, empty: e.value })}
+                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
+                                className="w-full"
+                                placeholder="0"
+                            />
+                        </div>
                     </div>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-10 pt-6 border-t border-slate-50">
                     <Button label="Cancel" icon="pi pi-times" onClick={() => setStockDialog(false)} className="p-button-text text-slate-400 hover:bg-slate-50 rounded-xl px-5 font-bold transition-all text-sm" />
-                    <Button label="Execute Adjustment" icon="pi pi-check" onClick={saveAdjustment} className="bg-[#3b82f6] border-none text-white rounded-xl px-8 py-3 font-black shadow-lg hover:shadow-xl transition-all text-sm" />
+                    <Button label="Save Inventory" icon="pi pi-check" onClick={saveStock} className="bg-[#3b82f6] border-none text-white rounded-xl px-8 py-3 font-black shadow-lg hover:shadow-xl transition-all text-sm" />
                 </div>
             </Dialog>
         </div>
