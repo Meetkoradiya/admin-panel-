@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
@@ -19,9 +19,15 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    mobileNumber: "",
+    mobileNumber: localStorage.getItem("rememberedMobile") || "",
     password: "",
   });
+
+  useEffect(() => {
+    if (localStorage.getItem("rememberedMobile")) {
+      setRememberMe(true);
+    }
+  }, []);
 
   const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
@@ -54,6 +60,7 @@ const Login = () => {
       let res;
       let usedMasterEndpoint = false;
       try {
+        // We attempt master login first. If it fails with 403/401, it's likely a regular admin.
         res = await axios.post(`${BASE_URL}/auth/master-admin-login`, {
           mobileNumber: enteredMobile,
           password,
@@ -61,8 +68,8 @@ const Login = () => {
         usedMasterEndpoint = true;
       } catch (masterErr) {
         const status = masterErr.response?.status;
-        // Credential mismatch (not master admin) → fallback to regular admin login
         if ([400, 401, 403, 404].includes(status)) {
+          // Fallback to regular admin login silently
           res = await axios.post(`${BASE_URL}/auth/login`, {
             mobileNumber: enteredMobile,
             password,
@@ -114,6 +121,12 @@ const Login = () => {
 
       userData.role = isMaster ? "MASTER_ADMIN" : "ADMIN";
       userData.masterAdmin = isMaster;
+
+      if (rememberMe) {
+        localStorage.setItem("rememberedMobile", enteredMobile);
+      } else {
+        localStorage.removeItem("rememberedMobile");
+      }
 
       const time = decoded?.exp ? decoded.exp * 1000 : 0;
 
@@ -187,10 +200,21 @@ const Login = () => {
                 value={formData.mobileNumber}
                 onChange={(e) => {
                   const val = e.target.value;
-                 
-                  if (/^\d{0,10}$/.test(val)) {
-                    setFormData((p) => ({ ...p, mobileNumber: val }));
-                    setErrors((p) => ({ ...p, mobileNumber: "" }));
+                  // Allow only numbers
+                  if (/^\d*$/.test(val)) {
+                    if (val.length <= 10) {
+                      setFormData((p) => ({ ...p, mobileNumber: val }));
+                      setErrors((p) => ({ ...p, mobileNumber: "" }));
+                    } else {
+                      setErrors((p) => ({ ...p, mobileNumber: "Mobile number cannot exceed 10 digits" }));
+                    }
+                  }
+                }}
+                onBlur={() => {
+                  if (!formData.mobileNumber) {
+                    setErrors((p) => ({ ...p, mobileNumber: "Mobile number is required" }));
+                  } else if (formData.mobileNumber.length < 10) {
+                    setErrors((p) => ({ ...p, mobileNumber: "Mobile number must be 10 digits" }));
                   }
                 }}
                 placeholder="Enter mobile number"
@@ -216,8 +240,8 @@ const Login = () => {
 
             <div className="flex justify-between items-center mb-8">
               <div className="flex items-center gap-2">
-                <Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} />
-                <span className="text-sm text-gray-600 font-medium">Remember me</span>
+                <Checkbox inputId="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} />
+                <label htmlFor="rememberMe" className="text-sm text-gray-600 font-medium cursor-pointer">Remember me</label>
               </div>
               <Link
                 to="/forgot-password"

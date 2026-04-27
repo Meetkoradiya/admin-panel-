@@ -84,6 +84,7 @@ export const MasterRoutes = [
   { path: "customers", name: "Customers", element: <CustomerList /> },
   { path: "customers/add", name: "Add Customer", element: <CustomerCreate /> },
   { path: "customers/edit/:id", name: "Edit Customer", element: <CustomerCreate /> },
+  { path: "customers/view/:id", name: "Customer Details", element: <CustomerDetail /> },
 
   // Inventory
   { path: "inventory/stock", name: "Stock", element: <InventoryList /> },
@@ -113,6 +114,7 @@ export const AdminRoutes = [
   { path: "customers", name: "Customers", element: <CustomerList /> },
   { path: "customers/add", name: "Add Customer", element: <CustomerCreate /> },
   { path: "customers/edit/:id", name: "Edit Customer", element: <CustomerCreate /> },
+  { path: "customers/view/:id", name: "Customer Details", element: <CustomerDetail /> },
 
   // Inventory
   { path: "inventory/stock", name: "Stock", element: <InventoryList /> },

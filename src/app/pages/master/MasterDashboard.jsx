@@ -78,10 +78,10 @@ const MasterDashboard = () => {
             </h1>
             <p className="text-slate-500 font-medium mt-1">Here&apos;s a quick overview of your water management system.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full md:w-auto">
             <button 
               onClick={() => navigate('/master/admins/add')}
-              className="bg-blue-600 text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all flex items-center gap-2"
+              className="btn-primary btn-responsive"
             >
               <i className="pi pi-plus" />
               New Admin

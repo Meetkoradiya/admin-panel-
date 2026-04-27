@@ -6,7 +6,7 @@ import { AdminRoutes, MasterRoutes, PublicRoutes } from "./router";
 import HomeLayout from "../layout/HomeLayout/HomeLayout";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import VerifyOtp from "../pages/auth/VerifyOtp";
-import CreateNewPassword from "../pages/auth/CreateNewPassword"; 
+import CreateNewPassword from "../pages/auth/CreateNewPassword";
 
 const AppRoutes = () => {
   const toastRef = useRef(null);

@@ -13,26 +13,19 @@
 }
 
 h2, .h2 {
-    font-size: var(--text-3xl);
-    /* line-height: var(--tw-leading, var(--text-3xl--line-height)); */
-    /* --tw-font-weight: var(--font-weight-bold); */
-    font-weight: var(--font-weight-bold);
-    color: var(--gray-900);
+    @apply text-3xl font-bold text-slate-900;
 }
+
 .form-label {
-    /* --tw-font-weight: var(--font-weight-semibold); */
-    font-weight: var(--font-weight-semibold);
-    align-items: center;
-    display: flex;
+    @apply font-semibold flex items-center mb-2;
 }
+
 .form-item.vertical {
-    flex-direction: column;
-    display: flex;
+    @apply flex flex-col;
 }
 
 .form-item {
-    margin-bottom: calc(var(--spacing) * 7);
-    position: relative;
+    @apply mb-7 relative;
 }
 
 @layer base {
@@ -142,4 +135,145 @@ h2, .h2 {
 .p-password {
   display: block !important;
   width: 100%;
+}
+
+/* Premium Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Global Transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Premium PrimeReact Overrides */
+.p-datatable.p-datatable-minimal {
+  border: none;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-thead > tr > th {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1.25rem 1.5rem;
+  color: #64748b;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr {
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:hover {
+  background: #fdfdfd;
+  box-shadow: inset 4px 0 0 0 #3b82f6;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
+  padding: 1.5rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+/* Paginator Polishing */
+.p-paginator {
+  background: #ffffff !important;
+  border-top: 1px solid #f1f5f9 !important;
+  padding: 1.5rem !important;
+  border-radius: 0 0 40px 40px;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  border-radius: 12px;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin: 0 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+}
+
+.p-paginator .p-link {
+  color: #94a3b8;
+}
+
+.p-paginator .p-link:not(.p-disabled):hover {
+  background: #f1f5f9;
+  color: #3b82f6;
+}
+
+.p-dropdown.p-paginator-rpp-options {
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+/* Action Button Polishing */
+.p-button.p-button-rounded {
+    border-radius: 14px !important;
+}
+
+.p-button.p-button-text:not(.p-disabled):hover {
+    background: #f8fafc !important;
+}
+
+/* Global Button Utilities */
+.btn-primary {
+  @apply bg-cyan-500 border-none text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-cyan-100 hover:bg-cyan-600 transition-all text-sm transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 flex items-center justify-center gap-2 tracking-tight;
+}
+
+.btn-secondary {
+  @apply border border-slate-200 text-slate-500 hover:bg-slate-50 px-8 py-4 rounded-2xl font-bold transition-all text-sm bg-white flex items-center justify-center gap-2;
+}
+
+.btn-icon {
+  @apply w-12 h-12 border border-slate-100 rounded-2xl bg-white shadow-sm transition-all flex items-center justify-center text-sm hover:shadow-md active:scale-90;
+}
+
+@media (max-width: 1024px) {
+  .btn-responsive {
+    @apply !w-full !flex !justify-center;
+  }
+}
+
+.p-toast {
+    font-family: 'Inter', sans-serif;
+}
+
+.p-toast .p-toast-message {
+    border-radius: 20px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.p-tooltip .p-tooltip-text {
+    background: #1e293b !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 8px 12px !important;
 }

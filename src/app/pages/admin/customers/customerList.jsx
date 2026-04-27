@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import { Page } from "@/components/shared/Page";
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import ListLayout from '@/components/shared/ListLayout';
 
 const CustomerManagement = () => {
     const [customers, setCustomers] = useState([]);
@@ -26,13 +24,8 @@ const CustomerManagement = () => {
             const response = await axios.get(`${BASE_URL}/admin/customers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            if (Array.isArray(response.data)) {
-                setCustomers(response.data);
-            } else if (response.data && Array.isArray(response.data.data)) {
-                setCustomers(response.data.data);
-            } else {
-                setCustomers([]);
-            }
+            const data = response.data?.data || response.data || [];
+            setCustomers(Array.isArray(data) ? data : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch customers' });
         } finally {
@@ -41,13 +34,12 @@ const CustomerManagement = () => {
     };
 
     useEffect(() => {
-        if (token) {
-            fetchCustomers();
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (token) fetchCustomers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const deleteCustomer = async (rowData) => {
+        if (!window.confirm(`Are you sure you want to delete ${rowData.username}?`)) return;
         try {
             const deleteId = rowData.id || rowData.userId;
             await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
@@ -60,95 +52,73 @@ const CustomerManagement = () => {
         }
     };
 
-    // Helper to calculate index based on row data
-    const rowIndexTemplate = (rowData, props) => {
-        return <span>{props.rowIndex + 1}</span>;
-    };
-
     const statusBodyTemplate = (rowData) => {
         const isActive = rowData.status === 'ACTIVE' || !rowData.status;
         return (
-            <span className={classNames('px-3 py-1 rounded-full text-xs font-bold uppercase', {
-                'bg-emerald-100 text-emerald-700': isActive,
-                'bg-rose-100 text-rose-700': !isActive
+            <span className={classNames('px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border', {
+                'bg-emerald-50 text-emerald-600 border-emerald-100': isActive,
+                'bg-rose-50 text-rose-600 border-rose-100': !isActive
             })}>
                 {rowData.status || 'ACTIVE'}
             </span>
         );
     };
 
-    const header = (
-        <div className="flex flex-wrap items-center justify-between gap-4 py-2">
-            <h2 className="m-0 text-2xl font-bold text-slate-800">Manage Customers</h2>
-            <div className="flex items-center gap-3">
-                <span className="p-input-icon-left w-full md:w-auto">
-                    <i className="pi pi-search text-slate-400" />
-                    <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." className="p-inputtext-sm border-slate-200 rounded-lg w-full" />
-                </span>
-                <Button 
-                    label="New Customer" 
-                    className="bg-blue-600 border-none px-4 py-2.5 rounded-lg font-bold shadow-md hover:bg-blue-700 transition-all text-white" 
-                    onClick={() => navigate('/admin/customers/add')} 
-                />
-            </div>
-        </div>
-    );
-
     const actionBodyTemplate = (rowData) => {
         return (
-            <div className="flex gap-3 justify-center">
-                <Button 
-                    icon="pi pi-pencil" 
-                    rounded 
-                    outlined 
+            <div className="flex gap-2 justify-center">
+                <Button
+                    icon="pi pi-pencil"
+                    rounded text
                     tooltip="Edit Customer"
                     tooltipOptions={{ position: 'top' }}
-                    className="w-10 h-10 border-sky-500 text-sky-500 hover:bg-sky-50 transition-colors" 
-                    onClick={() => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })} 
+                    className="btn-icon text-sky-500"
+                    onClick={() => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })}
                 />
-                <Button 
-                    icon="pi pi-trash" 
-                    rounded 
-                    outlined 
+                <Button
+                    icon="pi pi-trash"
+                    rounded text
                     tooltip="Delete Customer"
                     tooltipOptions={{ position: 'top' }}
-                    className="w-10 h-10 border-rose-500 text-rose-500 hover:bg-rose-50 transition-colors" 
+                    className="btn-icon text-rose-500"
                     onClick={() => deleteCustomer(rowData)}
                 />
             </div>
         );
     };
 
-    return (
-        <Page title="Customers">
-            <div className="bg-slate-50 min-h-screen">
-                <Toast ref={toast} />
-
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <DataTable 
-                        value={Array.isArray(customers) ? customers : []} 
-                        header={header} 
-                        paginator 
-                        rows={10} 
-                        loading={loading}
-                        globalFilter={globalFilter}
-                        className="p-datatable-sm"
-                        stripedRows
-                        responsiveLayout="stack" 
-                        breakpoint="960px"
-                        emptyMessage="No customers found."
-                        dataKey="id"
-                    >
-                        <Column header="#" body={rowIndexTemplate} style={{ width: '4rem', textAlign: 'center' }} className="font-semibold text-slate-500"></Column>
-                        <Column field="username" header="Full Name" sortable className="font-medium text-slate-700"></Column>
-                        <Column field="mobileNumber" header="Mobile No" className="font-medium text-slate-700"></Column>
-                        <Column field="address" header="Location" className="font-medium text-slate-700"></Column>
-                        <Column field="status" header="Status" body={statusBodyTemplate} sortable className="font-medium text-slate-700"></Column>
-                        <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem' }}></Column>
-                    </DataTable>
-                </div>
+    const customerBodyTemplate = (rowData) => (
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 font-black text-xs border border-blue-100">
+                {rowData.username?.charAt(0).toUpperCase()}
             </div>
-        </Page>
+            <div className="flex flex-col">
+                <span className="font-bold text-slate-800 text-sm">{rowData.username}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.mobileNumber}</span>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="animate-fade-in">
+            <Toast ref={toast} />
+            <ListLayout
+                title="Customer Management"
+                subtitle="Manage and oversee your customer database"
+                data={customers}
+                loading={loading}
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+                onAdd={() => navigate('/admin/customers/add')}
+                addLabel="New Customer"
+            >
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
+                <Column header="Customer Info" body={customerBodyTemplate} sortable sortField="username" />
+                <Column field="address" header="Location" className="text-slate-500 font-medium text-sm" />
+                <Column field="status" header="Status" body={statusBodyTemplate} sortable style={{ width: '10rem', textAlign: 'center' }} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+            </ListLayout>
+        </div>
     );
 };
 

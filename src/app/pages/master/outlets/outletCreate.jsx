@@ -1,139 +1,115 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import { Page } from "@/components/shared/Page";
-import { Tag } from 'primereact/tag';
 import useApi from '@/hooks/useApi';
+import FormLayout, { FormSection } from '@/components/shared/FormLayout';
 
 const OutletCreate = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const { id } = useParams();
+    const location = useLocation();
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const isEditMode = Boolean(id);
-    const { apiPost, apiPut, apiGet } = useApi();
-
+    const { apiPost, apiPut } = useApi();
+    
     const [outlet, setOutlet] = useState({
         name: '',
-        address: '',
-        isActive: true,
+        mobileNumber: '',
+        location: '',
+        address: ''
     });
 
     useEffect(() => {
-        if (isEditMode) {
-            const existing = location.state?.outlet;
-            if (existing) {
-                setOutlet({
-                    name: existing.name || '',
-                    address: existing.address || '',
-                    isActive: existing.isActive !== false,
-                });
-            } else {
-                // Fetch from API if no state (e.g. page refresh)
-                apiGet(`/master/outlets/${id}`)
-                    .then(data => {
-                        const o = data?.id ? data : (data?.data || {});
-                        setOutlet({ name: o.name || '', address: o.address || '', isActive: o.isActive !== false });
-                    })
-                    .catch(() => navigate('/master/outlets'));
-            }
+        if (id && location.state?.outlet) {
+            setOutlet(location.state.outlet);
         }
-    }, [id, isEditMode]);
+    }, [id, location.state]);
 
     const handleSave = async () => {
         setSubmitted(true);
-        if (!outlet.name.trim() || !outlet.address.trim()) {
-            toast.current?.show({ severity: 'warn', summary: 'Validation', detail: 'Outlet name and address are required' });
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const payload = {
-                name: outlet.name,
-                address: outlet.address,
-                isActive: outlet.isActive,
-            };
-
-            if (isEditMode) {
-                await apiPut(`/master/outlets/${id}`, payload);
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet updated successfully' });
-            } else {
-                await apiPost('/master/outlets', payload);
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet registered successfully' });
+        if (outlet.name.trim() && outlet.mobileNumber.trim()) {
+            setLoading(true);
+            try {
+                if (id) {
+                    await apiPut(`/master/outlets/${id}`, outlet);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet Updated' });
+                } else {
+                    await apiPost('/master/outlets', outlet);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet Created' });
+                }
+                setTimeout(() => navigate('/master/outlets'), 1000);
+            } catch (error) {
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save outlet' });
+                setLoading(false);
             }
-            setTimeout(() => navigate('/master/outlets'), 1200);
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Operation failed' });
-        } finally {
-            setLoading(false);
         }
     };
 
+    const fieldClass = (isValid) => classNames(
+        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner',
+        { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
+    );
+
     return (
-        <Page title="Create Outlet">
-            <div className="bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-6 pb-32">
-                <Toast ref={toast} />
-                
-                <h2 className="text-xl font-bold text-slate-800 mb-6">Create Outlet</h2>
-
-                <div>
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-                        <h3 className="text-base font-bold text-slate-800 mb-6">Overview</h3>
-                        
-                        <div className="grid grid-cols-1 gap-8">
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-bold text-slate-500">Outlet Name</label>
-                                <InputText
-                                    value={outlet.name}
-                                    onChange={(e) => setOutlet({...outlet, name: e.target.value})}
-                                    placeholder="Enter outlet name"
-                                    className={classNames("p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm", {
-                                        'border-rose-400': submitted && !outlet.name
-                                    })}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-bold text-slate-500">Address</label>
-                                <InputText
-                                    value={outlet.address}
-                                    onChange={(e) => setOutlet({...outlet, address: e.target.value})}
-                                    placeholder="Enter permanent address"
-                                    className={classNames("p-3 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-0 transition-all outline-none font-medium text-sm", {
-                                        'border-rose-400': submitted && !outlet.address
-                                    })}
-                                />
-                            </div>
+        <div className="animate-fade-in">
+            <Toast ref={toast} />
+            <FormLayout
+                title={id ? "Edit Outlet Definition" : "Register New Outlet"}
+                loading={loading}
+                isEditMode={!!id}
+                onSave={handleSave}
+                onDiscard={() => navigate('/master/outlets')}
+            >
+                <FormSection title="Core Information" icon="pi pi-building">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Outlet Name</label>
+                            <InputText 
+                                value={outlet.name} 
+                                onChange={(e) => setOutlet({...outlet, name: e.target.value})} 
+                                className={fieldClass(outlet.name)}
+                                placeholder="e.g. Surat Main Branch"
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Contact Number</label>
+                            <InputText 
+                                value={outlet.mobileNumber} 
+                                onChange={(e) => setOutlet({...outlet, mobileNumber: e.target.value})} 
+                                className={fieldClass(outlet.mobileNumber)}
+                                placeholder="Phone number"
+                            />
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
-                {/* Fixed Footer */}
-                <div className="fixed bottom-0 left-[260px] right-0 bg-white border-t border-slate-100 p-4 z-50">
-                    <div className="flex justify-end gap-4 px-8">
-                        <Button
-                            label="Discard"
-                            icon="pi pi-trash"
-                            className="p-button-outlined border-rose-400 text-rose-500 hover:bg-rose-50 px-8 py-2.5 rounded-xl font-bold transition-all text-sm"
-                            onClick={() => navigate('/master/outlets')}
-                            disabled={loading}
-                        />
-                        <Button
-                            label={isEditMode ? "Update" : "Create"}
-                            className="bg-[#3b82f6] border-none text-white px-10 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 transition-all text-sm"
-                            onClick={handleSave}
-                            loading={loading}
-                        />
+                <FormSection title="Geographic Data" icon="pi pi-map-marker">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">City / Region</label>
+                            <InputText 
+                                value={outlet.location} 
+                                onChange={(e) => setOutlet({...outlet, location: e.target.value})} 
+                                className={fieldClass(true)}
+                                placeholder="e.g. Surat"
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Full Address</label>
+                            <InputText 
+                                value={outlet.address} 
+                                onChange={(e) => setOutlet({...outlet, address: e.target.value})} 
+                                className={fieldClass(true)}
+                                placeholder="Detailed address"
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
-        </Page>
+                </FormSection>
+            </FormLayout>
+        </div>
     );
 };
 

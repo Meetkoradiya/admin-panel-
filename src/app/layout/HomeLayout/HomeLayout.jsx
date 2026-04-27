@@ -145,20 +145,9 @@ function HomeLayout() {
           <Outlet />
         </div>
 
-        <footer className="layout-footer-text">
-          {/* <p>
-						All rights reserved &#169;
-						<a href="">Admin Boilerplate</a>
-					</p> */}
-          <p>
-            Developed and Maintained By &#169;
-            <a
-              href="https://www.horizontechserv.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Horizon
-            </a>
+        <footer className="py-6 px-8 border-t border-slate-100 flex items-center justify-center mt-auto bg-white/50">
+          <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">
+            Developed by <a href="https://www.horizontechserv.in/" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-cyan-600 transition-colors">Horizon Tech serv</a>
           </p>
         </footer>
       </div>

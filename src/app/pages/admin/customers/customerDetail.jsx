@@ -1,266 +1,200 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { Button } from "primereact/button";
-import { CheckSquareIcon, ShoppingCart } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import { Skeleton } from "primereact/skeleton";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
+import { Toast } from "primereact/toast";
+import { Avatar } from "primereact/avatar";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { FiCopy } from "react-icons/fi";
 import { Page } from "@/components/shared/Page";
-import EmptyMessage from "@/components/shared/EmptyMessage";
 
 const CustomerDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [orders, setOrders] = useState([]);
-  
-  const token = useSelector((state) => state.auth.token);
-  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const toast = useRef(null);
+    const [customer, setCustomer] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [loadingOrders, setLoadingOrders] = useState(true);
+    const [orders, setOrders] = useState([]);
+    
+    const token = useSelector((state) => state.auth.token);
+    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
-  const blankRows = Array.from({ length: 5 }, (_, i) => ({
-    id: i,
-    orderDate: "",
-    qty: "",
-    price: "",
-    driverName: "",
-    status: "",
-  }));
+    useEffect(() => {
+        const fetchDetails = async () => {
+            try {
+                setLoading(true);
+                const res = await axios.get(`${BASE_URL}/admin/customers/by-user/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setCustomer(res.data?.data || res.data);
+            } catch (err) {
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to load profile' });
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  useEffect(() => {
-    if (!id) {
-      setFormData({});
-      return;
-    }
+        const fetchOrders = async () => {
+            try {
+                setLoadingOrders(true);
+                const res = await axios.get(`${BASE_URL}/orders/customer/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = res.data?.data || res.data || [];
+                setOrders(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error("Orders fetch failed");
+            } finally {
+                setLoadingOrders(false);
+            }
+        };
 
-    const fetchCustomerById = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${BASE_URL}/admin/customers/by-user/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        setFormData(response?.data?.data || response?.data);
-      } catch {
-        toast.error("Failed to fetch details");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchCustomerOrders = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${BASE_URL}/orders/customer/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        let dataArray = [];
-        if (Array.isArray(res.data)) {
-          dataArray = res.data;
-        } else if (res.data?.data) {
-          if (Array.isArray(res.data.data)) dataArray = res.data.data;
-          else if (Array.isArray(res.data.data.content)) dataArray = res.data.data.content;
-          else if (typeof res.data.data === 'object') {
-            const possibleArray = Object.values(res.data.data).find(Array.isArray);
-            if (possibleArray) dataArray = possibleArray;
-          }
+        if (id && token) {
+            fetchDetails();
+            fetchOrders();
         }
-        setOrders(dataArray);
-      } catch {
-        toast.error("Failed to fetch orders");
-      } finally {
-        setLoading(false);
-      }
+    }, [id, token, BASE_URL]);
+
+    const handleDelete = async () => {
+        if (!window.confirm("Permanentely delete this customer?")) return;
+        try {
+            await axios.delete(`${BASE_URL}/admin/users/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.current?.show({ severity: 'success', summary: 'Deleted', detail: 'Customer removed' });
+            setTimeout(() => navigate('/admin/customers'), 1000);
+        } catch (error) {
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Delete failed' });
+        }
     };
 
-    fetchCustomerOrders();
-    fetchCustomerById();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  const handleCopy = async () => {
-    if (!formData?.mobileNumber) return;
-
-    await navigator.clipboard.writeText(formData.mobileNumber);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 10000);
-  };
-
-  const orderTypeBodyTemplate = (rowData) => {
-    if (loading) return <Skeleton width="100%" height="1.2rem" />;
-    const isAssigned = rowData.orderType === "DAILY";
-    return (
-      <Tag
-        value={rowData.orderType}
-        style={{
-          background: isAssigned
-            ? "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)"
-            : "linear-gradient(135deg, #EF4444 0%, #F97316 100%)",
-          color: "#fff",
-          borderRadius: "999px",
-          padding: "4px 14px",
-          fontSize: "12px",
-          fontWeight: 600,
-          border: "none",
-        }}
-      />
-    );
-  };
-
-  const orderTemplate = (rowData) => loading ? <Skeleton width="100%" height="1.2rem" /> : <span>{rowData.id}</span>;
-  const dateBodyTemplate = (rowData) => loading ? <Skeleton width="100%" height="1.2rem" /> : <span>{dayjs(rowData.orderDate).format("DD MMM YYYY")}</span>;
-  const userNameBodyTemplate = (rowData) => loading ? <Skeleton width="100%" height="1.2rem" /> : <span>{rowData.driverName}</span>;
-  const qtyBodyTemplate = (rowData) => loading ? <Skeleton width="100%" height="1.2rem" /> : <span>{rowData.qty}</span>;
-  
-  const totalBodyTemplate = (rowData) => {
-    return loading ? <Skeleton width="100%" height="1.2rem" /> : (
-      <span>{new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(rowData.price || 0)}</span>
-    );
-  };
-
-  const statusBodyTemplate = (row) => {
-    if (loading) return <Skeleton width="100%" height="1.2rem" />;
-    const statusStyles = {
-      CREATED: "bg-blue-300 text-gray-900",
-      IN_PROGRESS: "bg-yellow-300 text-gray-900",
-      DELIVERED: "bg-emerald-300 text-gray-900",
+    const statusBodyTemplate = (row) => {
+        const status = row.status || 'PENDING';
+        const map = {
+            DELIVERED: 'success',
+            IN_PROGRESS: 'warning',
+            CANCELLED: 'danger'
+        };
+        return <Tag value={status} severity={map[status] || 'info'} rounded className="px-3 py-1 font-bold text-[10px] uppercase tracking-widest" />;
     };
+
     return (
-      <span className={`rounded-lg px-2 py-1 text-xs ${statusStyles[row.status] || "bg-gray-200"}`}>
-        {row.status}
-      </span>
-    );
-  };
+        <Page title="Customer Insights">
+            <Toast ref={toast} />
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 animate-fade-in pb-20">
+                
+                {/* LEFT SIDEBAR: PROFILE CARD */}
+                <div className="lg:col-span-1 flex flex-col gap-8">
+                    <div className="bg-white rounded-[40px] p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center">
+                        {loading ? <Skeleton shape="circle" size="6rem" className="mb-4" /> : (
+                            <Avatar 
+                                label={customer?.username?.charAt(0)} 
+                                size="xlarge" 
+                                className="bg-blue-50 text-blue-500 font-black mb-6 w-24 h-24 text-4xl rounded-3xl" 
+                            />
+                        )}
+                        
+                        <h2 className="text-xl font-black text-slate-800 tracking-tight">
+                            {loading ? <Skeleton width="8rem" height="1.5rem" /> : (customer?.username || '—')}
+                        </h2>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
+                            {loading ? <Skeleton width="5rem" height="0.8rem" /> : `UID: ${id}`}
+                        </p>
 
-  return (
-    <Page title="Customer Details">
-      <main className="h-full">
-        <div className="w-full h-full pb-0">
-          <div className="flex h-full w-full">
-            <div className="form-container vertical flex w-full flex-col justify-between">
-              <div className="w-full">
-                <div className="flex flex-col gap-4 xl:flex-row">
-                  <div className="min-w-330px 2xl:min-w-400px">
-                    <div className="card card-border w-full">
-                      {loading ? (
-                        <>
-                          <div className="flex items-center gap-3">
-                            <Skeleton shape="circle" size="6rem" />
-                            <div className="flex w-full flex-col gap-2">
-                              <Skeleton width="50%" height="1rem" />
-                              <Skeleton width="90%" height="0.7rem" />
-                              <Skeleton width="40%" height="0.6rem" />
-                            </div>
-                          </div>
-                          <hr className="my-4" />
-                          <div className="flex flex-col gap-5">
-                            <Skeleton width="70%" height="1rem" />
-                            <Skeleton width="60%" height="1rem" />
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex flex-col px-1">
-                          <div className="flex items-center gap-3">
-                            <div className="h-14 w-14 shrink-0">
-                              <img src="/images/avatar.jpg" alt="Avatar" className="h-full w-full rounded-full object-cover" />
-                            </div>
-                            <div className="flex flex-col">
-                              <p className="flex items-center gap-2 text-lg font-bold">
-                                {formData.username || 'N/A'}
-                                <span className={`w-fit rounded-full px-4 py-0.5 text-xs font-semibold ${formData.status === "ACTIVE" ? "bg-emerald-200 text-gray-900" : "bg-red-200 text-gray-900"}`}>
-                                  {formData.status ? "Active" : "Blocked"}
-                                </span>
-                              </p>
-                              <span className="text-sm text-gray-600">{formData.address || 'No Address Provided'}</span>
-                            </div>
-                          </div>
-                          <hr className="my-4" />
+                        <div className="w-full h-[1px] bg-slate-50 my-8" />
 
-                          <div className="mb-6 flex flex-col gap-y-4">
-                            <div className="flex flex-row items-center justify-between">
-                              <span className="text-sm text-gray-500">Phone :</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold">{formData.mobileNumber}</span>
-                                <button onClick={handleCopy} className="text-gray-500 transition hover:text-gray-700">
-                                  {copied ? <CheckSquareIcon size={16} color="#008236" /> : <FiCopy size={16} />}
-                                </button>
-                              </div>
-                            </div>
-                            
-                            <div className="flex flex-row items-center justify-between">
-                                <span className="text-sm text-gray-500">Delivery Type :</span>
-                                <span className="text-sm font-semibold">{formData.deliveryType}</span>
-                            </div>
-
-                            <div className="flex flex-row items-center justify-between">
-                                <span className="text-sm text-gray-500">Quantity:</span>
-                                <span className="text-sm font-semibold">{formData.defaultQty || formData.qty || 0} items/day</span>
-                            </div>
-
-                            <div className="flex flex-row items-center justify-between">
-                                <span className="text-sm text-gray-500">Price Per Bottle :</span>
-                                <span className="text-sm font-semibold">₹ {formData.pricePerBottle || formData.price || 0}</span>
-                            </div>
-
-                            <div className="flex flex-row items-center justify-between">
-                                <span className="text-sm text-gray-500">Deposit :</span>
-                                <span className="text-sm font-semibold">₹ {formData.deposit || 0}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-col gap-4">
-                            <Button className="h-11 w-full" label="Edit Customer" size="small" onClick={() => navigate(`/admin/customers/edit/${id}`)} />
-                            <Button className="h-11 w-full" severity="danger" outlined label="Delete Customer" size="small" />
-                          </div>
+                        <div className="w-full flex flex-col gap-5 text-left">
+                            <DetailRow label="Mobile" value={customer?.mobileNumber} icon="pi pi-phone" loading={loading} />
+                            <DetailRow label="Location" value={customer?.address} icon="pi pi-map-marker" loading={loading} />
+                            <DetailRow label="Type" value={customer?.deliveryType} icon="pi pi-truck" loading={loading} />
+                            <DetailRow label="Status" value={customer?.status || 'ACTIVE'} isTag loading={loading} />
                         </div>
-                      )}
-                    </div>
-                  </div>
 
-                  <div className="card card-border w-full">
-                    <div className="mb-3 flex items-start gap-3">
-                      <span className="flex items-center justify-center rounded-md bg-blue-200 p-2">
-                        <ShoppingCart size={18} />
-                      </span>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold">Total Orders</span>
-                        <span className="text-xs text-gray-500">Total orders placed by this customer</span>
-                      </div>
+                        <div className="w-full flex flex-col gap-3 mt-10 pt-10 border-t border-slate-50">
+                            <Button 
+                                label="Edit Profile" 
+                                icon="pi pi-pencil" 
+                                className="w-full p-button-outlined border-slate-200 text-slate-600 font-bold rounded-2xl h-12 transition-all hover:bg-slate-50" 
+                                onClick={() => navigate(`/admin/customers/edit/${id}`)}
+                            />
+                            <Button 
+                                label="Delete" 
+                                icon="pi pi-trash" 
+                                className="w-full p-button-text text-rose-500 font-bold rounded-2xl h-12 transition-all hover:bg-rose-50" 
+                                onClick={handleDelete}
+                            />
+                        </div>
                     </div>
-                    
-                    <DataTable
-                        value={loading ? blankRows : orders}
-                        paginator
-                        rows={20}
-                        rowsPerPageOptions={[10, 20, 50]}
-                        paginatorTemplate=" FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                        emptyMessage={<EmptyMessage title="No Orders Found" subtitle="This customer has not placed any orders yet." />}
-                        className="border"
-                    >
-                        <Column header="Order" body={orderTemplate} />
-                        <Column field="orderDate" header="Date" body={dateBodyTemplate} />
-                        <Column field="qty" header="Quantity" body={qtyBodyTemplate} />
-                        <Column field="price" header="Total" body={totalBodyTemplate} />
-                        <Column header="Driver" body={userNameBodyTemplate} />
-                        <Column header="Status" field="status" sortable body={statusBodyTemplate} />
-                    </DataTable>
-                  </div>
                 </div>
-              </div>
+
+                {/* RIGHT CONTENT: STATS & ORDERS */}
+                <div className="lg:col-span-3 flex flex-col gap-8">
+                    
+                    {/* STAT CARDS */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <StatCard label="Monthly Spend" value={`₹${(orders.reduce((a,b) => a + (b.price || 0), 0)).toLocaleString()}`} icon="pi pi-wallet" color="text-emerald-500" bg="bg-emerald-50" />
+                        <StatCard label="Total Units" value={orders.reduce((a,b) => a + (b.qty || 0), 0)} icon="pi pi-box" color="text-blue-500" bg="bg-blue-50" />
+                        <StatCard label="Order Count" value={orders.length} icon="pi pi-shopping-cart" color="text-violet-500" bg="bg-violet-50" />
+                    </div>
+
+                    {/* RECENT ORDERS TABLE */}
+                    <div className="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
+                        <div className="px-8 py-8 border-b border-slate-50 flex items-center justify-between">
+                            <h3 className="text-lg font-black text-slate-800 tracking-tight">Order Timeline</h3>
+                            <Button icon="pi pi-refresh" text rounded className="text-slate-400 hover:bg-slate-50" />
+                        </div>
+                        <DataTable 
+                            value={orders} 
+                            loading={loadingOrders}
+                            paginator rows={10} 
+                            className="p-datatable-minimal"
+                            responsiveLayout="scroll"
+                            emptyMessage="No historical orders found"
+                        >
+                            <Column field="id" header="Order ID" body={(r) => <span className="font-black text-blue-500 text-xs">#{r.id}</span>} />
+                            <Column field="orderDate" header="Timestamp" body={(r) => <span className="text-slate-500 font-medium text-sm">{dayjs(r.orderDate).format('DD MMM, YYYY')}</span>} sortable />
+                            <Column field="qty" header="Units" body={(r) => <span className="font-bold text-slate-800">{r.qty}</span>} />
+                            <Column field="price" header="Value" body={(r) => <span className="font-black text-slate-900">₹{r.price?.toLocaleString()}</span>} sortable />
+                            <Column field="status" header="Status" body={statusBodyTemplate} style={{ textAlign: 'center' }} />
+                        </DataTable>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </main>
-    </Page>
-  );
+        </Page>
+    );
 };
+
+const DetailRow = ({ label, value, icon, isTag, loading }) => (
+    <div className="flex flex-col gap-1">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">{label}</span>
+        {loading ? <Skeleton width="80%" height="1.2rem" /> : (
+            isTag ? (
+                <Tag value={value} severity={value === 'ACTIVE' ? 'success' : 'danger'} rounded className="w-fit px-3 py-1 text-[9px] font-black uppercase tracking-widest" />
+            ) : (
+                <div className="flex items-center gap-2 text-slate-700 font-bold text-sm">
+                    {icon && <i className={`${icon} text-blue-400 text-xs`} />}
+                    <span className="truncate">{value || 'Not set'}</span>
+                </div>
+            )
+        )}
+    </div>
+);
+
+const StatCard = ({ label, value, icon, color, bg }) => (
+    <div className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-50 flex items-center gap-5 hover:shadow-md transition-all group">
+        <div className={`w-14 h-14 rounded-2xl ${bg} ${color} flex items-center justify-center text-xl group-hover:scale-110 transition-transform`}>
+            <i className={icon} />
+        </div>
+        <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</span>
+            <span className="text-xl font-black text-slate-800 tracking-tight">{value}</span>
+        </div>
+    </div>
+);
 
 export default CustomerDetail;

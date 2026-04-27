@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
-import { classNames } from 'primereact/utils';
-import { Page } from "@/components/shared/Page";
+import { Avatar } from 'primereact/avatar';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import ListLayout from '@/components/shared/ListLayout';
 
-const DriverManagement = () => {
+const DriverList = () => {
     const [drivers, setDrivers] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [globalFilter, setGlobalFilter] = useState("");
     const toast = useRef(null);
     const navigate = useNavigate();
 
@@ -26,133 +24,90 @@ const DriverManagement = () => {
             const response = await axios.get(`${BASE_URL}/admin/drivers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            if (Array.isArray(response.data)) {
-                setDrivers(response.data);
-            } else if (response.data && Array.isArray(response.data.data)) {
-                setDrivers(response.data.data);
-            } else {
-                setDrivers([]);
-            }
+            const data = response.data?.data || response.data || [];
+            setDrivers(Array.isArray(data) ? data : []);
         } catch (error) {
-            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch drivers' });
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch drivers' });
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (token) {
-            fetchDrivers();
-        }
+        if (token) fetchDrivers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
-    const openNew = () => {
-        navigate('/admin/drivers/add');
-    };
-
     const deleteDriver = async (rowData) => {
+        if (!window.confirm(`Delete driver "${rowData.username}"?`)) return;
         try {
-            await axios.delete(`${BASE_URL}/admin/users/${rowData.id}`, {
+            const deleteId = rowData.id || rowData.userId;
+            await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.current.show({ severity: 'success', summary: 'Success', detail: 'Driver Deleted Successfully', life: 3000 });
+            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Removed', life: 3000 });
             fetchDrivers();
         } catch (error) {
-            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete driver' });
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete driver' });
         }
     };
 
-    // Helper to calculate index based on row data
-    const rowIndexTemplate = (rowData, props) => {
-        return <span>{props.rowIndex + 1}</span>;
-    };
-
-    const statusBodyTemplate = (rowData) => {
-        const isActive = rowData.status === 'ACTIVE' || !rowData.status;
-        return (
-            <span className={classNames('px-3 py-1 rounded-full text-xs font-bold uppercase', {
-                'bg-emerald-100 text-emerald-700': isActive,
-                'bg-rose-100 text-rose-700': !isActive
-            })}>
-                {rowData.status || 'ACTIVE'}
-            </span>
-        );
-    };
-
-    const header = (
-        <div className="flex flex-wrap items-center justify-between gap-4 py-2">
-            <h2 className="m-0 text-2xl font-bold text-slate-800">Manage Drivers</h2>
-            <div className="flex items-center gap-3">
-                <span className="p-input-icon-left">
-                    <i className="pi pi-search text-slate-400" />
-                    <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." className="p-inputtext-sm border-slate-200 rounded-lg" />
-                </span>
-                <Button 
-                    label="New Driver" 
-                    className="bg-blue-600 border-none px-4 py-2.5 rounded-lg font-bold shadow-md hover:bg-blue-700 transition-all text-white" 
-                    onClick={openNew} 
-                />
+    const driverBodyTemplate = (rowData) => (
+        <div className="flex items-center gap-3">
+            <Avatar
+                label={rowData.username?.charAt(0).toUpperCase()}
+                className="bg-blue-50 text-blue-500 font-bold"
+                style={{ width: '36px', height: '36px', borderRadius: '12px' }}
+            />
+            <div className="flex flex-col">
+                <span className="font-bold text-slate-700 text-sm">{rowData.username}</span>
+                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{rowData.mobileNumber}</span>
             </div>
         </div>
     );
 
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <div className="flex gap-3 justify-center">
-                <Button 
-                    icon="pi pi-pencil" 
-                    rounded 
-                    outlined 
-                    tooltip="Edit Driver"
-                    tooltipOptions={{ position: 'top' }}
-                    className="w-10 h-10 border-sky-500 text-sky-500 hover:bg-sky-50 transition-colors" 
-                    onClick={() => navigate(`/admin/drivers/edit/${rowData.id}`, { state: { driver: rowData } })} 
-                />
-                <Button 
-                    icon="pi pi-trash" 
-                    rounded 
-                    outlined 
-                    tooltip="Delete Driver"
-                    tooltipOptions={{ position: 'top' }}
-                    className="w-10 h-10 border-rose-500 text-rose-500 hover:bg-rose-50 transition-colors" 
-                    onClick={() => deleteDriver(rowData)}
-                />
-            </div>
-        );
-    };
+    const actionBodyTemplate = (rowData) => (
+        <div className="flex gap-2 justify-center">
+            <Button
+                icon="pi pi-pencil"
+                rounded text
+                tooltip="Edit Driver"
+                tooltipOptions={{ position: 'top' }}
+                className="btn-icon text-sky-500"
+                onClick={() => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId}`, { state: { driver: rowData } })}
+            />
+            <Button
+                icon="pi pi-trash"
+                rounded text
+                tooltip="Delete Driver"
+                tooltipOptions={{ position: 'top' }}
+                className="btn-icon text-rose-500"
+                onClick={() => deleteDriver(rowData)}
+            />
+        </div>
+    );
 
     return (
-        <Page title="Drivers">
-            <div className="bg-slate-50 min-h-screen">
-                <Toast ref={toast} />
-                
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <DataTable 
-                        value={Array.isArray(drivers) ? drivers : []} 
-                        header={header} 
-                        paginator 
-                        rows={10} 
-                        loading={loading}
-                        globalFilter={globalFilter}
-                        className="p-datatable-sm"
-                        stripedRows
-                        responsiveLayout="stack" 
-                        breakpoint="960px"
-                        emptyMessage="No drivers found."
-                        dataKey="id"
-                    >
-                        <Column header="#" body={rowIndexTemplate} style={{ width: '4rem', textAlign: 'center' }} className="font-semibold text-slate-500"></Column>
-                        <Column field="username" header="Full Name" sortable className="font-medium text-slate-700"></Column>
-                        <Column field="mobileNumber" header="Mobile No" className="font-medium text-slate-700"></Column>
-                        <Column field="vehicleName" header="Vehicle Name" className="font-medium text-slate-700"></Column>
-                        <Column field="vehicleNumber" header="Vehicle Number" className="font-medium text-slate-700"></Column>
-                        <Column field="status" header="Status" body={statusBodyTemplate} sortable className="font-medium text-slate-700"></Column>
-                        <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem' }}></Column>
-                    </DataTable>
-                </div>
-            </div>
-        </Page>
+        <div className="animate-fade-in">
+            <Toast ref={toast} />
+            <ListLayout
+                title="Logistics Team"
+                subtitle="Manage delivery personnel and assignment status"
+                data={drivers}
+                loading={loading}
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+                onAdd={() => navigate('/admin/drivers/add')}
+                addLabel="New Driver"
+            >
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
+                <Column header="Personnel" body={driverBodyTemplate} sortable sortField="username" />
+                <Column field="mobileNumber" header="Contact" className="text-slate-500 text-sm font-medium" />
+                <Column field="route.routeName" header="Assigned Route" body={(row) => <span className="text-blue-500 font-bold text-xs uppercase tracking-wider">{row.route?.routeName || 'Unassigned'}</span>} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+            </ListLayout>
+        </div>
     );
 };
 
-export default DriverManagement;
+export default DriverList;
