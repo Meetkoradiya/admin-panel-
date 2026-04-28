@@ -73,8 +73,8 @@ const MasterDashboard = () => {
       <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 mb-8 shadow-sm hover:shadow-md transition-all border border-white/50">
         <div className="flex justify-between items-center flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
-              {greeting}, {user?.username?.split(' ')[0] || 'Admin'} 👋
+            <h1 className="text-3xl font-extrabold bg-linear-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
+              {greeting}, Master Admin 👋
             </h1>
             <p className="text-slate-500 font-medium mt-1">Here&apos;s a quick overview of your water management system.</p>
           </div>
@@ -117,7 +117,7 @@ const MasterDashboard = () => {
             className="bg-white rounded-3xl p-6 border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group flex flex-col items-start"
             onClick={() => navigate(card.url)}
           >
-            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
+            <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
               <i className={`${card.icon} text-lg`} />
             </div>
             <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>

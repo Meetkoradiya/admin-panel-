@@ -43,7 +43,7 @@ const FormLayout = ({
                     "fixed bottom-0 right-0 bg-white border-t border-slate-100 p-4 z-40 shadow-2xl transition-all duration-300",
                     isSidebarCollapsed ? "left-0" : "left-0 md:left-[280px]"
                 )}>
-                    <div className="flex flex-col-reverse md:flex-row justify-end gap-3 px-4 max-w-7xl mx-auto">
+                    <div className="flex flex-col-reverse md:flex-row justify-end gap-3 px-8 w-full">
                         <Button
                             label={discardLabel}
                             icon="pi pi-times"

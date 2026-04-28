@@ -95,8 +95,8 @@ export default function UnifiedDashboard() {
         <div className="bg-white/70 backdrop-blur-xl rounded-[40px] p-8 shadow-sm hover:shadow-md transition-all border border-white/50">
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-black bg-gradient-to-r from-slate-900 to-blue-900 bg-clip-text text-transparent">
-                {greeting}, {user?.username?.split(' ')[0] || 'Admin'} 👋
+              <h1 className="text-3xl font-black bg-linear-to-r from-slate-900 to-blue-900 bg-clip-text text-transparent">
+                {greeting}, Admin 👋
               </h1>
               <p className="text-slate-500 font-medium mt-1 uppercase tracking-widest text-[10px]">Pure Water Management System Overview</p>
             </div>
