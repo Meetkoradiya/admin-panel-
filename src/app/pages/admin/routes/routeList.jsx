@@ -66,15 +66,7 @@ const RouteList = () => {
                 tooltip="Edit Route"
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-sky-500"
-                onClick={() => {
-                    showConfirmDialog({
-                        title: 'Edit Route',
-                        message: `Modify route "${rowData.routeName || rowData.name}"?`,
-                        type: 'edit',
-                        acceptLabel: 'Edit',
-                        onAccept: () => navigate(`/admin/routes/edit/${rowData.id}`, { state: { route: rowData } })
-                    });
-                }}
+                onClick={() => navigate(`/admin/routes/edit/${rowData.id || rowData._id}`, { state: { route: rowData } })}
             />
             <Button
                 icon="pi pi-trash"
@@ -87,15 +79,23 @@ const RouteList = () => {
         </div>
     );
 
-    const routeBodyTemplate = (rowData) => (
-        <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center text-violet-500 font-black text-xs border border-violet-100">
-                <i className="pi pi-map-marker text-lg" />
-            </div>
-            <div className="flex flex-col">
-                <span className="font-bold text-slate-800 text-sm">{rowData.routeName || rowData.name}</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.id ? `ID: ${rowData.id}` : 'Draft'}</span>
-            </div>
+    const statusBodyTemplate = (rowData) => {
+        const status = rowData.status || 'Active';
+        return (
+            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+            }`}>
+                {status}
+            </span>
+        );
+    };
+
+    const routeNameTemplate = (rowData) => (
+        <div className="flex flex-col gap-1 py-1">
+            <span className="text-slate-800 font-black text-sm">{rowData.routeName || rowData.name}</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-slate-50 w-fit px-2 py-0.5 rounded-md border border-slate-100">
+                {rowData.id || rowData._id ? `ID: ${rowData.id || rowData._id}` : 'Draft'}
+            </span>
         </div>
     );
 
@@ -103,8 +103,8 @@ const RouteList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Route Management"
-                subtitle="Manage delivery routes and geographic distribution"
+                title="Route Distribution"
+                subtitle="Manage and monitor all delivery routes"
                 data={routes}
                 loading={loading}
                 globalFilter={globalFilter}
@@ -112,10 +112,12 @@ const RouteList = () => {
                 onAdd={() => navigate('/admin/routes/add')}
                 addLabel="New Route"
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column header="Route Details" body={routeBodyTemplate} sortable sortField="routeName" />
-                <Column field="description" header="Description" className="text-slate-500 text-sm italic" />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column header="Route Details" body={routeNameTemplate} sortable sortField="routeName" />
+                <Column field="startPoint" header="Start Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.startPoint || '—'}</span>} sortable />
+                <Column field="endPoint" header="End Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.endPoint || '—'}</span>} sortable />
+                <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '8rem', textAlign: 'center' }} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
     );

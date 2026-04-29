@@ -51,10 +51,20 @@ const DriverList = () => {
                     await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Removed', life: 3000 });
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'Driver Removed', 
+                        detail: 'The driver account has been successfully deleted from the system.', 
+                        life: 3000 
+                    });
                     fetchDrivers();
                 } catch (error) {
-                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete driver' });
+                    toast.current?.show({ 
+                        severity: 'error', 
+                        summary: 'Delete Failed', 
+                        detail: 'Unable to remove the driver. They might be linked to active routes or orders.', 
+                        life: 5000 
+                    });
                 }
             }
         });
@@ -82,15 +92,7 @@ const DriverList = () => {
                 tooltip="Edit Driver"
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-sky-500"
-                onClick={() => {
-                    showConfirmDialog({
-                        title: 'Edit Driver',
-                        message: `Modify information for ${rowData.username}?`,
-                        type: 'edit',
-                        acceptLabel: 'Edit',
-                        onAccept: () => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId}`, { state: { driver: rowData } })
-                    });
-                }}
+                onClick={() => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId || rowData._id}`, { state: { driver: rowData } })}
             />
             <Button
                 icon="pi pi-trash"
@@ -119,6 +121,12 @@ const DriverList = () => {
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Personnel" body={driverBodyTemplate} sortable sortField="username" />
                 <Column field="mobileNumber" header="Contact" className="text-slate-500 text-sm font-medium" />
+                <Column header="Vehicle" body={(row) => (
+                    <div className="flex flex-col">
+                        <span className="text-slate-700 font-bold text-xs">{row.vehicleName || '—'}</span>
+                        <span className="text-[10px] text-slate-400 font-bold">{row.vehicleNumber || '—'}</span>
+                    </div>
+                )} />
                 <Column field="route.routeName" header="Assigned Route" body={(row) => <span className="text-blue-500 font-bold text-xs uppercase tracking-wider">{row.route?.routeName || 'Unassigned'}</span>} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
             </ListLayout>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Page } from './Page';
+import QuickSearchInput from './QuickSearchInput';
 
 const ListLayout = ({
     title,
@@ -24,15 +24,10 @@ const ListLayout = ({
                 {subtitle && <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-2">{subtitle}</p>}
             </div>
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto">
-                <div className="relative group flex-grow md:flex-grow-0">
-                    <i className="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-sm group-focus-within:text-blue-500 transition-colors" />
-                    <InputText
-                        type="search"
-                        onInput={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Quick search..."
-                        className="pl-11 pr-4 py-3 border-slate-200 rounded-2xl w-full md:w-72 bg-white text-sm font-semibold focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition-all outline-none shadow-sm"
-                    />
-                </div>
+                <QuickSearchInput
+                    value={globalFilter}
+                    onInput={(e) => setGlobalFilter(e.target.value)}
+                />
                 {onAdd && (
                     <Button
                         label={addLabel}
@@ -59,12 +54,21 @@ const ListLayout = ({
                     className="p-datatable-minimal"
                     responsiveLayout="scroll"
                     emptyMessage={
-                        <div className="text-center py-24 text-slate-400 font-medium bg-slate-50/20">
-                            <i className="pi pi-search text-4xl mb-4 opacity-20" />
-                            <div className="text-sm font-bold uppercase tracking-widest">{emptyMessage}</div>
+                        <div className="text-center py-24 flex flex-col items-center justify-center bg-slate-50/20">
+                            <img 
+                                src="/images/no-data.png" 
+                                alt="No Data" 
+                                className="w-64 h-auto mb-6 opacity-80"
+                                onError={(e) => {
+                                    e.target.src = 'https://cdn-icons-png.flaticon.com/512/7486/7486744.png'; // Fallback
+                                    e.target.className = "w-32 h-auto mb-6 opacity-20";
+                                }}
+                            />
+                            <div className="text-sm font-bold uppercase tracking-widest text-slate-400">{emptyMessage}</div>
+                            <p className="text-xs text-slate-300 mt-2 font-medium">Try adjusting your filters or adding a new record</p>
                         </div>
                     }
-                    dataKey="_id"
+                    dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
                     rowHover
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"

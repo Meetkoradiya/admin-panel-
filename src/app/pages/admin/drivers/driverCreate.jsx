@@ -24,7 +24,9 @@ const DriverCreate = () => {
         username: '',
         mobileNumber: '',
         route: '',
-        password: ''
+        password: '',
+        vehicleName: '',
+        vehicleNumber: ''
     });
 
     useEffect(() => {
@@ -38,47 +40,111 @@ const DriverCreate = () => {
                 console.error("Failed to load routes");
             }
         };
-        if (token) fetchRoutes();
-    }, [token, BASE_URL]);
 
-    useEffect(() => {
-        if (id && location.state?.driver) {
-            const d = location.state.driver;
-            setDriver({
-                username: d.username || '',
-                mobileNumber: d.mobileNumber || '',
-                route: d.routeId || d.route?.id || '',
-                password: ''
-            });
+        const fetchDriverDetails = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(`${BASE_URL}/admin/drivers`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = response.data?.data || response.data || [];
+                const found = data.find(d => (d.id?.toString() === id?.toString()) || (d.userId?.toString() === id?.toString()) || (d._id?.toString() === id?.toString()));
+                if (found) {
+                    setDriver({
+                        username: found.username || '',
+                        mobileNumber: found.mobileNumber || '',
+                        route: found.routeId || found.route?.id || found.route?._id || '',
+                        password: '',
+                        vehicleName: found.vehicleName || '',
+                        vehicleNumber: found.vehicleNumber || ''
+                    });
+                } else {
+                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Driver profile not found.' });
+                }
+            } catch (error) {
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch driver details' });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (token) {
+            fetchRoutes();
+            if (id && !location.state?.driver) {
+                fetchDriverDetails();
+            } else if (id && location.state?.driver) {
+                const d = location.state.driver;
+                setDriver({
+                    username: d.username || '',
+                    mobileNumber: d.mobileNumber || '',
+                    route: d.routeId || d.route?.id || d.route?._id || '',
+                    password: '',
+                    vehicleName: d.vehicleName || '',
+                    vehicleNumber: d.vehicleNumber || ''
+                });
+            }
         }
-    }, [id, location.state]);
+    }, [id, location.state, token, BASE_URL]);
 
     const handleSave = async () => {
         setSubmitted(true);
-        if (driver.username.trim() && driver.mobileNumber.trim() && driver.mobileNumber.length === 10) {
+        const isValid = driver.username.trim() && 
+                        driver.mobileNumber.trim() && 
+                        driver.mobileNumber.length === 10 &&
+                        driver.vehicleName.trim() &&
+                        driver.vehicleNumber.trim();
+
+        if (isValid) {
             setLoading(true);
             try {
                 const payload = {
                     username: driver.username,
                     mobileNumber: driver.mobileNumber,
-                    routeId: driver.route,
-                    password: driver.password || 'driver123' // default if empty on create
+                    vehicleName: driver.vehicleName,
+                    vehicleNumber: driver.vehicleNumber
                 };
 
+                // Add routeId if selected
+                if (driver.route) {
+                    payload.routeId = parseInt(driver.route);
+                }
+
                 if (id) {
+                    // Update profile
                     await axios.put(`${BASE_URL}/admin/drivers/${id}`, payload, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Profile Updated' });
+
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'Profile Updated', 
+                        detail: 'Driver and vehicle information saved successfully.',
+                        life: 3000 
+                    });
                 } else {
-                    await axios.post(`${BASE_URL}/admin/register-driver`, payload, {
+                    // Registration
+                    const regPayload = { 
+                        ...payload, 
+                        password: driver.password || 'driver123' 
+                    };
+                    await axios.post(`${BASE_URL}/admin/register-driver`, regPayload, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'New Driver Registered' });
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'Driver Registered', 
+                        detail: 'New driver and vehicle added to the system.',
+                        life: 3000 
+                    });
                 }
                 setTimeout(() => navigate('/admin/drivers'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save driver' });
+                toast.current?.show({ 
+                    severity: 'error', 
+                    summary: 'Update Failed', 
+                    detail: error?.response?.data?.message || 'Server validation failed. Please ensure all vehicle details are unique.',
+                    life: 5000 
+                });
                 setLoading(false);
             }
         }
@@ -99,7 +165,7 @@ const DriverCreate = () => {
                 onSave={handleSave}
                 onDiscard={() => navigate('/admin/drivers')}
             >
-                <FormSection title="Identity Details" icon="pi pi-user">
+                <FormSection title="Identity & Contact" icon="pi pi-user">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Full Name</label>
@@ -107,7 +173,7 @@ const DriverCreate = () => {
                                 value={driver.username}
                                 onChange={(e) => setDriver({ ...driver, username: e.target.value })}
                                 className={fieldClass(driver.username)}
-                                placeholder="Enter driver's name"
+                                placeholder="Driver's legal name"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -117,14 +183,32 @@ const DriverCreate = () => {
                                 maxLength={10}
                                 onChange={(e) => setDriver({ ...driver, mobileNumber: e.target.value })}
                                 className={fieldClass(driver.mobileNumber && driver.mobileNumber.length === 10)}
-                                placeholder="10-digit number"
+                                placeholder="10-digit primary contact"
                             />
                         </div>
                     </div>
                 </FormSection>
 
-                <FormSection title="Account & Logistics" icon="pi pi-shield">
+                <FormSection title="Vehicle & Logistics" icon="pi pi-truck">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vehicle Type/Name</label>
+                            <InputText
+                                value={driver.vehicleName}
+                                onChange={(e) => setDriver({ ...driver, vehicleName: e.target.value })}
+                                className={fieldClass(driver.vehicleName)}
+                                placeholder="e.g. Tata Ace, Bolero"
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vehicle Number</label>
+                            <InputText
+                                value={driver.vehicleNumber}
+                                onChange={(e) => setDriver({ ...driver, vehicleNumber: e.target.value })}
+                                className={fieldClass(driver.vehicleNumber)}
+                                placeholder="e.g. GJ-01-XX-1234"
+                            />
+                        </div>
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Assigned Route</label>
                             <Dropdown
@@ -142,7 +226,7 @@ const DriverCreate = () => {
                                 value={driver.password}
                                 onChange={(e) => setDriver({ ...driver, password: e.target.value })}
                                 className={fieldClass(!id ? driver.password : true)}
-                                placeholder={id ? "Keep blank to leave unchanged" : "••••••••"}
+                                placeholder={id ? "••••••••" : "Create password"}
                             />
                         </div>
                     </div>

@@ -342,11 +342,50 @@
 
 .p-toast {
     font-family: 'Inter', sans-serif;
+    z-index: 9999 !important;
 }
 
 .p-toast .p-toast-message {
     border-radius: 20px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    margin-top: 1.5rem;
+    border: 1px solid transparent;
+}
+
+.p-toast .p-toast-message.p-toast-message-success {
+    background: #f0fdf4 !important;
+    border-color: #dcfce7 !important;
+    color: #15803d !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-error {
+    background: #fef2f2 !important;
+    border-color: #fee2e2 !important;
+    color: #b91c1c !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-content {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.p-toast .p-toast-message .p-toast-message-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.p-toast .p-toast-message .p-toast-summary {
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: block;
+}
+
+.p-toast .p-toast-message .p-toast-detail {
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    opacity: 0.8;
 }
 
 .p-tooltip .p-tooltip-text {

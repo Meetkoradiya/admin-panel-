@@ -142,7 +142,7 @@ const NotificationList = () => {
                         <div className="bg-white rounded-2xl p-20 text-center border border-slate-100">
                             <i className="pi pi-bell-slash text-4xl text-slate-200 mb-4 block" />
                             <h3 className="text-lg font-bold text-slate-800">No Notifications</h3>
-                            <p className="text-slate-400 mt-2">You're all caught up!</p>
+                            <p className="text-slate-400 mt-2">You&apos;re all caught up!</p>
                         </div>
                     ) : (
                         notifications.map((n) => (

@@ -124,16 +124,31 @@ const AddCustomer = () => {
                     await axios.put(`${BASE_URL}/admin/customers/${updateId}`, payload, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Updated Successfully', life: 3000 });
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'Account Updated', 
+                        detail: 'Customer profile has been successfully modified.', 
+                        life: 3000 
+                    });
                 } else {
                     await axios.post(`${BASE_URL}/admin/register-customer`, payload, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Added Successfully', life: 3000 });
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'Customer Added', 
+                        detail: 'A new customer account has been created successfully.', 
+                        life: 3000 
+                    });
                 }
                 setTimeout(() => navigate('/admin/customers'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save customer', life: 3000 });
+                toast.current?.show({ 
+                    severity: 'error', 
+                    summary: 'Save Failed', 
+                    detail: error?.response?.data?.message || 'There was an error saving the customer profile. Please verify the details.', 
+                    life: 5000 
+                });
                 setLoading(false);
             }
         }

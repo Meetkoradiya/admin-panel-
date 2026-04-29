@@ -13,9 +13,8 @@ import { logout } from "../../../redux/slice/AuthSlice";
 import { Setting } from "./setting";
 import { User } from "./user";
 import { Notification } from "./notification";
-import { Instruction } from "./instruction";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
+import { QuickSearch } from "./QuickSearch";
+import QuickSearchInput from "../../../components/shared/QuickSearchInput";
 
 const AppTopbar = forwardRef((props, ref) => {
   const navigate = useNavigate();
@@ -24,6 +23,7 @@ const AppTopbar = forwardRef((props, ref) => {
   const topbarmenuRef = useRef(null);
   const topbarmenubuttonRef = useRef(null);
   const dispatch = useDispatch();
+  const [searchVisible, setSearchVisible] = useState(false);
 
   const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
   const token = useSelector((state) => state.auth.token);
@@ -41,6 +41,7 @@ const AppTopbar = forwardRef((props, ref) => {
 
   return (
     <div className="layout-topbar">
+      <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
       <div className="layout-menus">
         <button
           ref={menubuttonRef}
@@ -48,11 +49,23 @@ const AppTopbar = forwardRef((props, ref) => {
           className="p-link layout-topbar-button"
           onClick={onMenuToggle}
         >
-          <i className="pi pi-align-left" />
+          <i className="pi pi-align-left text-xl text-slate-600" />
         </button>
 
-        <button type="button" className="p-link layout-topbar-button ml-2">
-          <i className="pi pi-search" />
+        <div className="hidden md:block ml-4">
+          <QuickSearchInput
+              readOnly
+              onClick={() => setSearchVisible(true)}
+              containerClassName="w-64"
+          />
+        </div>
+
+        <button 
+          type="button" 
+          className="p-link layout-topbar-button md:hidden ml-2"
+          onClick={() => setSearchVisible(true)}
+        >
+          <i className="pi pi-search text-xl text-slate-600" />
         </button>
       </div>
 

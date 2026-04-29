@@ -21,12 +21,20 @@ const RouteCreate = () => {
 
     const [route, setRoute] = useState({
         routeName: '',
-        description: ''
+        startPoint: '',
+        endPoint: '',
+        status: 'Active'
     });
 
     useEffect(() => {
         if (id && location.state?.route) {
-            setRoute(location.state.route);
+            const r = location.state.route;
+            setRoute({
+                routeName: r.routeName || r.name || '',
+                startPoint: r.startPoint || '',
+                endPoint: r.endPoint || '',
+                status: r.status || 'Active'
+            });
         } else if (id) {
             fetchRouteDetails();
         }
@@ -39,8 +47,15 @@ const RouteCreate = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = response.data?.data || response.data || [];
-            const found = data.find(r => r.id === parseInt(id));
-            if (found) setRoute(found);
+            const found = data.find(r => (r.id?.toString() === id?.toString()) || (r._id?.toString() === id?.toString()));
+            if (found) {
+                setRoute({
+                    routeName: found.routeName || found.name || '',
+                    startPoint: found.startPoint || '',
+                    endPoint: found.endPoint || '',
+                    status: found.status || 'Active'
+                });
+            }
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch route details' });
         }
@@ -48,23 +63,46 @@ const RouteCreate = () => {
 
     const handleSave = async () => {
         setSubmitted(true);
-        if (route.routeName.trim()) {
+        if (route.routeName?.trim()) {
             setLoading(true);
             try {
+                const payload = {
+                    name: route.routeName,
+                    routeName: route.routeName,
+                    startPoint: route.startPoint || '',
+                    endPoint: route.endPoint || '',
+                    status: route.status || 'Active'
+                };
+                
                 if (id) {
-                    await axios.put(`${BASE_URL}/admin/routes/${id}`, route, {
+                    await axios.put(`${BASE_URL}/admin/routes/${id}`, payload, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Route Updated Successfully' });
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'Route Configuration Saved', 
+                        detail: 'The delivery route has been successfully updated.',
+                        life: 3000 
+                    });
                 } else {
-                    await axios.post(`${BASE_URL}/admin/routes`, route, {
+                    await axios.post(`${BASE_URL}/admin/routes`, payload, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Route Created Successfully' });
+                    toast.current?.show({ 
+                        severity: 'success', 
+                        summary: 'New Route Created', 
+                        detail: 'The delivery route has been added to your logistics map.',
+                        life: 3000 
+                    });
                 }
                 setTimeout(() => navigate('/admin/routes'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save route' });
+                toast.current?.show({ 
+                    severity: 'error', 
+                    summary: 'Save Attempt Failed', 
+                    detail: error?.response?.data?.message || 'Unable to save route details. Please check the network connection and try again.',
+                    life: 5000 
+                });
                 setLoading(false);
             }
         }
@@ -86,23 +124,32 @@ const RouteCreate = () => {
                 onDiscard={() => navigate('/admin/routes')}
             >
                 <FormSection title="Route Configuration" icon="pi pi-map">
-                    <div className="flex flex-col gap-6">
-                        <div className="flex flex-col gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-2 md:col-span-2">
                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Route Name</label>
                             <InputText
-                                value={route.routeName || route.name || ''}
+                                value={route.routeName || ''}
                                 onChange={(e) => setRoute({ ...route, routeName: e.target.value })}
-                                className={fieldClass(route.routeName || route.name)}
+                                className={fieldClass(route.routeName)}
                                 placeholder="e.g. North Sector A"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Description / Area Details</label>
-                            <InputTextarea
-                                value={route.description}
-                                onChange={(e) => setRoute({ ...route, description: e.target.value })}
-                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner min-h-[120px]"
-                                placeholder="Details about covered buildings, landmarks, etc."
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Start Point</label>
+                            <InputText
+                                value={route.startPoint || ''}
+                                onChange={(e) => setRoute({ ...route, startPoint: e.target.value })}
+                                className={fieldClass(true)}
+                                placeholder="Starting location"
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">End Point</label>
+                            <InputText
+                                value={route.endPoint || ''}
+                                onChange={(e) => setRoute({ ...route, endPoint: e.target.value })}
+                                className={fieldClass(true)}
+                                placeholder="Ending location"
                             />
                         </div>
                     </div>

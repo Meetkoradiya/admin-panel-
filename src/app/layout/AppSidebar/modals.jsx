@@ -1,62 +1,64 @@
-import DashboardsIcon from "../../../assets/dualicons/dashboards.svg?react";
-import OrdersIcon from "../../../assets/dualicons/bag.svg?react";
-import BillingIcon from "../../../assets/dualicons/ticket.svg?react";
-import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
-import RouteIcon from "../../../assets/dualicons/routes.svg?react";
-import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
-import CustomersIcon from "../../../assets/dualicons/group.svg?react";
-
 export const menuModel = [
   {
-    label: "Overview",
+    label: "DASHBOARD",
     items: [
-      { label: "Dashboard", Icon: DashboardsIcon, to: "/admin/dashboard" },
+      { label: "Dashboard", icon: "pi pi-th-large text-blue-500", to: "/admin/dashboard" },
     ],
   },
   {
-    label: "Operations",
+    label: "OPERATIONS",
     items: [
       {
         label: "Routes",
-        Icon: RouteIcon,
+        icon: "pi pi-map text-violet-500",
         items: [
-          { label: "Manage Routes", to: "/admin/routes", Icon: ComponentsIcon },
-          { label: "Add Route", to: "/admin/routes/add", Icon: ComponentsIcon },
+          { label: "Create route", to: "/admin/routes/add", icon: "pi pi-circle-fill text-[8px]" },
+          { label: "Route list", to: "/admin/routes", icon: "pi pi-circle-fill text-[8px]" },
         ],
       },
       {
-        label: "Drivers",
-        Icon: DriverIcon,
-        items: [
-          { label: "Manage Drivers", to: "/admin/drivers", Icon: ComponentsIcon },
-          { label: "Add Driver", to: "/admin/drivers/add", Icon: ComponentsIcon },
-        ],
-      },
-      {
-        label: "Customers",
-        Icon: CustomersIcon,
-        items: [
-          { label: "Manage Customers", to: "/admin/customers", Icon: ComponentsIcon },
-          { label: "Add Customer", to: "/admin/customers/add", Icon: ComponentsIcon },
-        ],
+        label: "Product",
+        to: "/admin/products",
+        icon: "pi pi-box text-orange-500",
       },
       {
         label: "Inventory",
         to: "/admin/inventory/stock",
-        Icon: ComponentsIcon,
+        icon: "pi pi-database text-emerald-500",
       },
       {
-        label: "Products",
-        to: "/admin/products",
-        Icon: ComponentsIcon,
+        label: "Drivers",
+        icon: "pi pi-id-card text-sky-500",
+        items: [
+          { label: "Add Driver", to: "/admin/drivers/add", icon: "pi pi-circle-fill text-[8px]" },
+          { label: "Driver list", to: "/admin/drivers", icon: "pi pi-circle-fill text-[8px]" },
+        ],
+      },
+      {
+        label: "Customers",
+        icon: "pi pi-users text-indigo-500",
+        items: [
+          { label: "Add Customer", to: "/admin/customers/add", icon: "pi pi-circle-fill text-[8px]" },
+          { label: "Customer list", to: "/admin/customers", icon: "pi pi-circle-fill text-[8px]" },
+        ],
+      },
+      {
+        label: "Device Verification",
+        to: "/admin/devices",
+        icon: "pi pi-shield text-emerald-500",
+      },
+      {
+        label: "Complaints",
+        to: "/admin/complaints",
+        icon: "pi pi-exclamation-circle text-rose-500",
       },
     ],
   },
   {
-    label: "Billing & Finance",
+    label: "BILLING & FINANCE",
     items: [
-      { label: "Orders", Icon: OrdersIcon, to: "/admin/orders" },
-      { label: "Billings", Icon: BillingIcon, to: "/admin/billings" },
+      { label: "Orders", icon: "pi pi-shopping-cart text-amber-500", to: "/admin/orders" },
+      { label: "Billings", icon: "pi pi-ticket text-teal-500", to: "/admin/billings" },
     ],
   },
 ];

@@ -1,16 +1,8 @@
-import DashboardsIcon from "../../../assets/dualicons/dashboards.svg?react";
-import ComponentsIcon from "../../../assets/dualicons/prototypes.svg?react";
-import DriverIcon from "../../../assets/dualicons/useradd.svg?react";
-import OrderIcon from "../../../assets/dualicons/bag.svg?react";
-import UserScanIcon from "../../../assets/dualicons/userscan.svg?react";
-import MessageIcon from "../../../assets/dualicons/alarm.svg?react";
-
-
 export const masterMenuModel = [
   {
     label: "DASHBOARD",
     items: [
-      { label: "Dashboard", Icon: DashboardsIcon, to: "/master/dashboard" },
+      { label: "Dashboard", icon: "pi pi-th-large text-blue-500", to: "/master/dashboard" },
     ],
   },
   {
@@ -18,29 +10,29 @@ export const masterMenuModel = [
     items: [
       {
         label: "Outlets",
-        Icon: ComponentsIcon,
+        icon: "pi pi-map text-violet-500",
         items: [
-          { label: "Create Outlets", to: "/master/outlets/add" },
-          { label: "Outlet list", to: "/master/outlets" },
+          { label: "Create Outlets", to: "/master/outlets/add", icon: "pi pi-circle-fill text-[8px]" },
+          { label: "Outlet list", to: "/master/outlets", icon: "pi pi-circle-fill text-[8px]" },
         ],
       },
       {
         label: "Admins",
-        Icon: DriverIcon,
+        icon: "pi pi-users text-sky-500",
         items: [
-          { label: "Create Admin", to: "/master/admins/add" },
-          { label: "Admin list", to: "/master/admins" },
+          { label: "Create Admin", to: "/master/admins/add", icon: "pi pi-circle-fill text-[8px]" },
+          { label: "Admin list", to: "/master/admins", icon: "pi pi-circle-fill text-[8px]" },
         ],
       },
       {
         label: "Device Verification",
-        Icon: UserScanIcon,
         to: "/master/devices",
+        icon: "pi pi-shield text-emerald-500",
       },
       {
         label: "Subscriptions",
-        Icon: OrderIcon,
         to: "/master/subscriptions",
+        icon: "pi pi-ticket text-amber-500",
       },
     ],
   },
