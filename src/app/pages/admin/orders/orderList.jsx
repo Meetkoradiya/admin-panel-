@@ -4,39 +4,33 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 import { classNames } from 'primereact/utils';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import useApi from '@/hooks/useApi';
 
 const OrderList = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
     const toast = useRef(null);
+    const { apiGet } = useApi();
 
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/orders`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data || [];
-            setOrders(Array.isArray(data) ? data : []);
+            const data = await apiGet('/admin/orders');
+            const ordersList = data?.data || data || [];
+            setOrders(Array.isArray(ordersList) ? ordersList : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch orders' });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchOrders();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchOrders();
+    }, [fetchOrders]);
 
     const statusBodyTemplate = (rowData) => {
         return <StatusTag status={rowData.status || 'PENDING'} />;

@@ -3,11 +3,10 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const CustomerManagement = () => {
@@ -16,29 +15,24 @@ const CustomerManagement = () => {
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const navigate = useNavigate();
+    const { apiGet, apiDelete } = useApi();
 
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
-
-    const fetchCustomers = async () => {
+    const fetchCustomers = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/customers`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data || [];
-            setCustomers(Array.isArray(data) ? data : []);
+            const data = await apiGet('/admin/customers');
+            const customerList = data?.data || data || [];
+            setCustomers(Array.isArray(customerList) ? customerList : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch customers' });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchCustomers();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchCustomers();
+    }, [fetchCustomers]);
 
     const deleteCustomer = async (rowData) => {
         showConfirmDialog({
@@ -49,9 +43,7 @@ const CustomerManagement = () => {
             onAccept: async () => {
                 try {
                     const deleteId = rowData.id || rowData.userId;
-                    await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiDelete(`/admin/users/${deleteId}`);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Deleted Successfully', life: 3000 });
                     fetchCustomers();
                 } catch (error) {

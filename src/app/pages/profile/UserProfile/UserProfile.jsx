@@ -12,6 +12,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
 import { login as loginAction } from "../../../../redux/slice/AuthSlice";
+import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const UserProfile = () => {
   const toast = useRef(null);
@@ -70,16 +71,36 @@ const UserProfile = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
   const token = auth.token;
 
+  const handleRemoveProfile = () => {
+    showConfirmDialog({
+      title: 'Remove Image',
+      message: 'Are you sure you want to remove your profile image?',
+      acceptLabel: 'Remove',
+      type: 'delete',
+      onAccept: () => {
+        setProfile("");
+        setImageFile(null);
+      }
+    });
+  };
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
       if (activeTab === "profile") {
-        await axios.put(`${BASE_URL}/admin/update-profile`, {
+        const payload = {
           username: formData.username,
           mobileNumber: formData.mobileNumber,
           email: formData.email,
-          profileImageUrl: profile || ""
-        }, {
+          gender: formData.gender
+        };
+        
+        // Only send if it's a valid remote URL. If they selected a local file (blob:http), we can't send it yet without uploading.
+        if (profile && profile.startsWith('http')) {
+          payload.profileImageUrl = profile;
+        }
+
+        await axios.put(`${BASE_URL}/admin/update-profile`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Profile updated successfully' });
@@ -135,6 +156,7 @@ const UserProfile = () => {
         toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Notification preferences saved local' });
       }
     } catch (error) {
+      console.error("Update Profile Error Response:", error.response?.data);
       toast.current?.show({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || 'Failed to save changes' });
     } finally {
       setIsLoading(false);
@@ -190,7 +212,7 @@ const UserProfile = () => {
                     </div>
                     <div className="flex gap-3">
                       <Button label="Upload New" className="p-button-sm rounded-lg bg-blue-600 border-none px-4 font-bold" onClick={() => setShowDialog(true)} />
-                      <Button label="Remove" className="p-button-sm p-button-outlined p-button-secondary rounded-lg px-4" onClick={() => {setProfile(""); setImageFile(null);}} />
+                      <Button label="Remove" className="p-button-sm p-button-outlined p-button-secondary rounded-lg px-4" onClick={handleRemoveProfile} />
                     </div>
                   </div>
 
@@ -282,7 +304,22 @@ const UserProfile = () => {
 
       <Dialog header="Update Avatar" visible={showDialog} style={{ width: "25rem" }} onHide={() => setShowDialog(false)} className="rounded-3xl">
         <div className="flex flex-col items-center gap-4 py-4">
-          <FileUpload mode="basic" auto customUpload uploadHandler={(e) => { /* handle upload */ setShowDialog(false); }} accept="image/*" chooseLabel="Select Image" className="p-button-rounded bg-blue-50 text-blue-600 border-none" />
+          <FileUpload 
+            mode="basic" 
+            auto 
+            customUpload 
+            uploadHandler={(e) => { 
+                const file = e.files[0];
+                if (file) {
+                    setImageFile(file);
+                    setProfile(URL.createObjectURL(file));
+                }
+                setShowDialog(false); 
+            }} 
+            accept="image/*" 
+            chooseLabel="Select Image" 
+            className="p-button-rounded bg-blue-50 text-blue-600 border-none" 
+          />
         </div>
       </Dialog>
     </div>

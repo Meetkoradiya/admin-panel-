@@ -8,10 +8,10 @@ import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import { Avatar } from "primereact/avatar";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { Page } from "@/components/shared/Page";
 import StatusTag from "@/components/shared/StatusTag";
+import useApi from "@/hooks/useApi";
 import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const CustomerDetail = () => {
@@ -24,30 +24,13 @@ const CustomerDetail = () => {
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [orders, setOrders] = useState([]);
 
-  const token = useSelector((state) => state.auth.token);
-  const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+  const { apiGet, apiDelete } = useApi();
 
-  useEffect(() => {
-    if (!id || !token) return;
-
-    fetchCustomer();
-    fetchOrders();
-  }, [id, token]);
-
-  const fetchCustomer = async () => {
+  const fetchCustomer = useCallback(async () => {
     try {
       setLoading(true);
-
-      const res = await axios.get(
-        `${BASE_URL}/admin/customers/by-user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setCustomer(res.data?.data || res.data);
+      const res = await apiGet(`/admin/customers/by-user/${id}`);
+      setCustomer(res?.data || res);
     } catch (error) {
       toast.current?.show({
         severity: "error",
@@ -57,29 +40,28 @@ const CustomerDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, apiGet]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoadingOrders(true);
-
-      const res = await axios.get(
-        `${BASE_URL}/orders/customer/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = res.data?.data || res.data || [];
+      const res = await apiGet(`/orders/customer/${id}`);
+      const data = res?.data || res || [];
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Orders fetch failed");
     } finally {
       setLoadingOrders(false);
     }
-  };
+  }, [id, apiGet]);
+
+  useEffect(() => {
+    if (!id) return;
+    fetchCustomer();
+    fetchOrders();
+  }, [id, fetchCustomer, fetchOrders]);
+
+
 
   const handleDelete = async () => {
     showConfirmDialog({
@@ -88,9 +70,7 @@ const CustomerDetail = () => {
       acceptLabel: 'Delete',
       onAccept: async () => {
         try {
-          await axios.delete(`${BASE_URL}/admin/users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          await apiDelete(`/admin/users/${id}`);
 
           toast.current?.show({
             severity: "success",

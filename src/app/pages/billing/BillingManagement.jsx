@@ -3,39 +3,33 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import useApi from '@/hooks/useApi';
 
 const BillingManagement = () => {
     const [billings, setBillings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
     const toast = useRef(null);
+    const { apiGet } = useApi();
 
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
-
-    const fetchBillings = async () => {
+    const fetchBillings = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/billings`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data || [];
-            setBillings(Array.isArray(data) ? data : []);
+            const data = await apiGet('/admin/billings');
+            const billingsList = data?.data || data || [];
+            setBillings(Array.isArray(billingsList) ? billingsList : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch billing records' });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchBillings();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchBillings();
+    }, [fetchBillings]);
 
     const statusBodyTemplate = (rowData) => {
         return <StatusTag status={rowData.status || 'UNPAID'} />;
