@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import ActionButtons from '@/components/shared/ActionButtons';
+import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const RouteList = () => {
@@ -15,28 +15,24 @@ const RouteList = () => {
     const toast = useRef(null);
     const navigate = useNavigate();
 
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+    const { apiGet, apiPut, apiDelete } = useApi();
 
-    const fetchRoutes = async () => {
+    const fetchRoutes = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/routes`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data || [];
+            const response = await apiGet('/admin/routes');
+            const data = response?.data || response || [];
             setRoutes(Array.isArray(data) ? data : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch routes' });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchRoutes();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchRoutes();
+    }, [fetchRoutes]);
 
     const deleteRoute = async (rowData) => {
         showConfirmDialog({
@@ -46,9 +42,7 @@ const RouteList = () => {
             acceptLabel: 'Delete',
             onAccept: async () => {
                 try {
-                    await axios.delete(`${BASE_URL}/admin/routes/${rowData.id}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiDelete(`/admin/routes/${rowData.id}`);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Route Deleted', life: 3000 });
                     fetchRoutes();
                 } catch (error) {
@@ -58,25 +52,30 @@ const RouteList = () => {
         });
     };
 
+    const toggleStatus = async (rowData) => {
+        const newStatus = rowData.status === 'Inactive' ? 'Active' : 'Inactive';
+        try {
+            const id = rowData.id || rowData._id;
+            const payload = {
+                routeName: rowData.routeName || rowData.name,
+                description: rowData.description || "",
+                status: newStatus
+            };
+            await apiPut(`/admin/routes/${id}`, payload);
+            toast.current?.show({ severity: 'success', summary: 'Success', detail: `Route set to ${newStatus}` });
+            fetchRoutes();
+        } catch (error) {
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to update status' });
+        }
+    };
+
     const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            <Button
-                icon="pi pi-pencil"
-                rounded text
-                tooltip="Edit Route"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-sky-500"
-                onClick={() => navigate(`/admin/routes/edit/${rowData.id || rowData._id}`, { state: { route: rowData } })}
-            />
-            <Button
-                icon="pi pi-trash"
-                rounded text
-                tooltip="Delete Route"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-rose-500"
-                onClick={() => deleteRoute(rowData)}
-            />
-        </div>
+        <ActionButtons 
+            onEdit={() => navigate(`/admin/routes/edit/${rowData.id || rowData._id}`, { state: { route: rowData } })}
+            onDelete={() => deleteRoute(rowData)}
+            onDeactivate={() => toggleStatus(rowData)}
+            isDeactivated={rowData.status === 'Inactive'}
+        />
     );
 
     const statusBodyTemplate = (rowData) => {

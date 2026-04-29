@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -6,6 +6,7 @@ import { classNames } from 'primereact/utils';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import ActionButtons from '@/components/shared/ActionButtons';
 import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
@@ -15,7 +16,7 @@ const CustomerManagement = () => {
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const navigate = useNavigate();
-    const { apiGet, apiDelete } = useApi();
+    const { apiGet, apiPut, apiDelete } = useApi();
 
     const fetchCustomers = useCallback(async () => {
         setLoading(true);
@@ -52,6 +53,40 @@ const CustomerManagement = () => {
             }
         });
     };
+    
+    const toggleStatus = async (rowData) => {
+        const currentStatus = rowData.status || 'ACTIVE';
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        
+        try {
+            const id = rowData.id || rowData.userId;
+            const payload = {
+                username: rowData.username,
+                mobileNumber: rowData.mobileNumber,
+                address: rowData.address,
+                deliveryType: rowData.deliveryType,
+                status: newStatus
+            };
+            
+            console.log("Customer Toggle Diagnostic:", { id, payload, originalRow: rowData });
+            await apiPut(`/admin/customers/${id}`, payload);
+            
+            toast.current?.show({ 
+                severity: 'success', 
+                summary: 'Status Updated', 
+                detail: `Customer status changed to ${newStatus}.`,
+                life: 3000 
+            });
+            fetchCustomers();
+        } catch (error) {
+            toast.current?.show({ 
+                severity: 'error', 
+                summary: 'Update Failed', 
+                detail: 'Could not change customer status.',
+                life: 5000 
+            });
+        }
+    };
 
     const statusBodyTemplate = (rowData) => {
         const isActive = rowData.status === 'ACTIVE' || !rowData.status;
@@ -60,32 +95,12 @@ const CustomerManagement = () => {
 
     const actionBodyTemplate = (rowData) => {
         return (
-            <div className="flex gap-2 justify-center">
-                <Button
-                    icon="pi pi-pencil"
-                    rounded text
-                    tooltip="Edit Customer"
-                    tooltipOptions={{ position: 'top' }}
-                    className="btn-icon text-sky-500"
-                    onClick={() => {
-                    showConfirmDialog({
-                        title: 'Edit Customer',
-                        message: `Modify information for ${rowData.username}?`,
-                        type: 'edit',
-                        acceptLabel: 'Edit',
-                        onAccept: () => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })
-                    });
-                }}
-                />
-                <Button
-                    icon="pi pi-trash"
-                    rounded text
-                    tooltip="Delete Customer"
-                    tooltipOptions={{ position: 'top' }}
-                    className="btn-icon text-rose-500"
-                    onClick={() => deleteCustomer(rowData)}
-                />
-            </div>
+            <ActionButtons 
+                onEdit={() => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })}
+                onDelete={() => deleteCustomer(rowData)}
+                onDeactivate={() => toggleStatus(rowData)}
+                isDeactivated={rowData.status === 'INACTIVE'}
+            />
         );
     };
 
@@ -96,7 +111,7 @@ const CustomerManagement = () => {
             </div>
             <div className="flex flex-col">
                 <span className="font-bold text-slate-800 text-sm">{rowData.username}</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.mobileNumber}</span>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
             </div>
         </div>
     );

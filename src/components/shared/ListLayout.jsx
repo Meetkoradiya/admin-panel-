@@ -42,7 +42,7 @@ const ListLayout = ({
 
     return (
         <Page title={title}>
-            <div className="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden animate-slide-up">
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden animate-slide-up">
                 <DataTable
                     value={data}
                     header={header}

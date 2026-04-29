@@ -42,6 +42,8 @@ const ProductList = lazy(() => import("@/app/pages/admin/product/product"));
 
 // Admin Orders
 const OrderList = lazy(() => import("@/app/pages/admin/orders/orderList"));
+const DeviceVerificationList = lazy(() => import("@/app/pages/admin/device-verification/deviceVerificationList"));
+const ComplaintList = lazy(() => import("@/app/pages/admin/complaints/complaintList"));
 
 const BillingManagement = lazy(() =>
   import("../pages/billing/BillingManagement")
@@ -124,5 +126,9 @@ export const AdminRoutes = [
   // Billing & Finance
   { path: "orders", name: "Orders", element: <OrderList /> },
   { path: "billings", name: "Billings", element: <BillingManagement /> },
+
+  // Verification & Support
+  { path: "devices", name: "Device Verification", element: <DeviceVerificationList /> },
+  { path: "complaints", name: "Complaints", element: <ComplaintList /> },
 ];
 

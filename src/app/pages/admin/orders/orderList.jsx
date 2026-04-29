@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { Tag } from 'primereact/tag';
 import { classNames } from 'primereact/utils';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import ActionButtons from '@/components/shared/ActionButtons';
 import useApi from '@/hooks/useApi';
 
 const OrderList = () => {
@@ -43,19 +43,18 @@ const OrderList = () => {
     const customerBodyTemplate = (rowData) => (
         <div className="flex flex-col">
             <span className="font-bold text-slate-700 text-sm">{rowData.customer?.username || rowData.customerName || 'Walk-in'}</span>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.customer?.mobileNumber || '—'}</span>
+            <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{rowData.customer?.mobileNumber || '—'}</span>
         </div>
     );
 
     const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            <Button
-                icon="pi pi-eye"
-                rounded text
-                tooltip="View Details"
-                className="btn-icon text-slate-500"
-            />
-        </div>
+        <ActionButtons 
+            onEdit={() => toast.current?.show({ severity: 'info', summary: 'Order Details', detail: 'Fulfillment details view under development' })}
+            onDelete={() => toast.current?.show({ severity: 'warn', summary: 'Restricted', detail: 'Orders cannot be deleted directly' })}
+            onDeactivate={() => {
+                toast.current?.show({ severity: 'info', summary: 'Status Updated', detail: 'Order status has been updated.' });
+            }}
+        />
     );
 
     return (

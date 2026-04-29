@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { logout } from '../redux/slice/AuthSlice';
 import { useMemo } from 'react';
+import { store } from '../redux/Store';
 
 const useApi = () => {
     const dispatch = useDispatch();
-    const token = useSelector((state) => state.auth.token);
     const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
     const apiClient = useMemo(() => {
@@ -14,8 +14,13 @@ const useApi = () => {
         });
 
         client.interceptors.request.use((config) => {
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
+            const state = store.getState();
+            const currentToken = state.auth?.token;
+
+            if (currentToken) {
+                config.headers.Authorization = `Bearer ${currentToken}`;
+            } else {
+                console.warn("API Request made without token (from store):", config.url);
             }
             return config;
         }, (error) => Promise.reject(error));
@@ -49,7 +54,7 @@ const useApi = () => {
         );
 
         return client;
-    }, [BASE_URL, token]);
+    }, [BASE_URL]);
 
     // Expose standard axios methods wrapped to use our instance
     return useMemo(() => ({

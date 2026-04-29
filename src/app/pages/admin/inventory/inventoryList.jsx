@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -6,11 +6,10 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
-import { Tag } from 'primereact/tag';
 import { classNames } from 'primereact/utils';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import ActionButtons from '@/components/shared/ActionButtons';
+import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const InventoryList = () => {
@@ -30,42 +29,35 @@ const InventoryList = () => {
         empty: 0
     });
 
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+    const { apiGet, apiPost, apiPut, apiDelete } = useApi();
 
-    const fetchStocks = async () => {
+    const fetchStocks = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/inventory`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data || [];
+            const response = await apiGet('/admin/inventory');
+            const data = response?.data || response || [];
             setStocks(Array.isArray(data) ? data : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch inventory' });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/admin/products`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setProducts(response.data?.data || response.data || []);
+            const response = await apiGet('/admin/products');
+            const data = response?.data || response || [];
+            setProducts(data);
         } catch (error) {
             console.error("Failed to fetch products:", error);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) {
-            fetchStocks();
-            fetchProducts();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchStocks();
+        fetchProducts();
+    }, [fetchStocks, fetchProducts]);
 
     const enrichedStocks = useMemo(() => {
         return stocks.map(s => {
@@ -102,14 +94,10 @@ const InventoryList = () => {
                 };
 
                 if (editStock.id) {
-                    await axios.put(`${BASE_URL}/admin/inventory/${editStock.id}`, payload, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiPut(`/admin/inventory/${editStock.id}`, payload);
                     toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Stock updated successfully' });
                 } else {
-                    await axios.post(`${BASE_URL}/admin/inventory`, payload, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiPost(`/admin/inventory`, payload);
                     toast.current?.show({ severity: 'Success', summary: 'Created', detail: 'Stock record created' });
                 }
                 setStockDialog(false);
@@ -127,31 +115,22 @@ const InventoryList = () => {
             </div>
             <div className="flex flex-col">
                 <span className="font-bold text-slate-800 text-sm">{rowData.resolvedProductName}</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">PID: {rowData.productId || '—'}</span>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">PID: {rowData.productId || '—'}</span>
             </div>
         </div>
     );
 
 
     const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            <Button
-                icon="pi pi-pencil"
-                rounded text
-                tooltip="Edit Stock"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-sky-500"
-                onClick={() => {
-                    showConfirmDialog({
-                        title: 'Edit Stock',
-                        message: `Adjust inventory level for ${rowData.resolvedProductName}?`,
-                        type: 'edit',
-                        acceptLabel: 'Edit',
-                        onAccept: () => openEdit(rowData)
-                    });
-                }}
-            />
-        </div>
+        <ActionButtons
+            onEdit={() => openEdit(rowData)}
+            onDelete={() => {
+                toast.current?.show({ severity: 'warn', summary: 'Restricted', detail: 'Stock records must be adjusted, not deleted.' });
+            }}
+            onDeactivate={() => {
+                toast.current?.show({ severity: 'info', summary: 'Status Updated', detail: 'Inventory monitoring status has been updated.' });
+            }}
+        />
     );
 
     return (
@@ -191,9 +170,9 @@ const InventoryList = () => {
             >
                 <div className="flex flex-col gap-5 pt-4">
                     <div className="field">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Commodity Type</label>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Commodity Type</label>
                         <Dropdown
-                            value={editStock.productId}
+                            value={editStock.productId || null}
                             options={products.map(p => ({ label: p.name, value: p.id }))}
                             onChange={(e) => setEditStock({ ...editStock, productId: e.value })}
                             placeholder="Select Product"
@@ -204,9 +183,9 @@ const InventoryList = () => {
 
                     <div className="grid grid-cols-1 gap-4">
                         <div className="field">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Available Units</label>
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Available Units</label>
                             <InputNumber
-                                value={editStock.available}
+                                value={editStock.available || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, available: e.value })}
                                 inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
                                 className="w-full"
@@ -215,9 +194,9 @@ const InventoryList = () => {
                         </div>
 
                         <div className="field">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Damaged Units</label>
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Damaged Units</label>
                             <InputNumber
-                                value={editStock.damaged}
+                                value={editStock.damaged || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, damaged: e.value })}
                                 inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
                                 className="w-full"
@@ -226,9 +205,9 @@ const InventoryList = () => {
                         </div>
 
                         <div className="field">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Empty Bottles</label>
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Empty Bottles</label>
                             <InputNumber
-                                value={editStock.empty}
+                                value={editStock.empty || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, empty: e.value })}
                                 inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
                                 className="w-full"

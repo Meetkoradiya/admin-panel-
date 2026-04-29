@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { classNames } from 'primereact/utils';
-import axios from "axios";
-import { useSelector } from "react-redux";
+import { Page } from "@/components/shared/Page";
 import ListLayout from "@/components/shared/ListLayout";
+import ActionButtons from "@/components/shared/ActionButtons";
+import useApi from "@/hooks/useApi";
 import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const ProductList = () => {
     const toast = useRef(null);
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,39 +23,35 @@ const ProductList = () => {
     const [productName, setProductName] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
-    const fetchProducts = async () => {
+    const { apiGet, apiPost, apiPut, apiDelete } = useApi();
+
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/products`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data;
+            const response = await apiGet('/admin/products');
+            const data = response?.data || response;
+            console.log("Fetched Products:", data);
             setProducts(Array.isArray(data) ? data : []);
         } catch (error) {
             toast.current?.show({ severity: "error", summary: "Error", detail: "Failed to fetch products" });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchProducts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchProducts();
+    }, [fetchProducts]);
 
     const saveProduct = async () => {
         setSubmitted(true);
         if (productName.trim()) {
             try {
                 if (productId) {
-                    await axios.put(`${BASE_URL}/admin/products/${productId}`, { name: productName }, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiPut(`/admin/products/${productId}`, { name: productName });
                     toast.current?.show({ severity: "success", summary: "Successful", detail: "Product Updated", life: 3000 });
                 } else {
-                    await axios.post(`${BASE_URL}/admin/products`, { name: productName }, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiPost(`/admin/products`, { name: productName });
                     toast.current?.show({ severity: "success", summary: "Successful", detail: "Product Created", life: 3000 });
                 }
                 setProductDialog(false);
@@ -68,6 +63,7 @@ const ProductList = () => {
     };
 
     const deleteProduct = async (rowData) => {
+        const id = rowData.id || rowData._id;
         showConfirmDialog({
             title: 'Delete Product',
             message: `Delete ${rowData.name}? This action cannot be undone.`,
@@ -75,9 +71,7 @@ const ProductList = () => {
             acceptLabel: 'Delete',
             onAccept: async () => {
                 try {
-                    await axios.delete(`${BASE_URL}/admin/products/${rowData.id}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiDelete(`/admin/products/${id}`);
                     toast.current?.show({ severity: "success", summary: "Successful", detail: "Product Deleted", life: 3000 });
                     fetchProducts();
                 } catch (error) {
@@ -87,38 +81,48 @@ const ProductList = () => {
         });
     };
 
+    const toggleStatus = async (rowData) => {
+        const id = rowData.id || rowData._id;
+        const currentStatus = rowData.status || 'ACTIVE';
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+
+        try {
+            await apiPut(`/admin/products/${id}`, {
+                name: rowData.name || rowData.productName,
+                status: newStatus
+            });
+
+            toast.current?.show({
+                severity: 'success',
+                summary: 'Status Updated',
+                detail: `Product is now ${newStatus.toLowerCase()}.`,
+                life: 3000
+            });
+            fetchProducts();
+        } catch (error) {
+            toast.current?.show({
+                severity: 'error',
+                summary: 'Update Failed',
+                detail: 'Could not update product status.',
+                life: 5000
+            });
+        }
+    };
+
     const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            <Button
-                icon="pi pi-pencil"
-                rounded text
-                tooltip="Edit Commodity"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-sky-500"
-                onClick={() => {
-                    showConfirmDialog({
-                        title: 'Edit Product',
-                        message: `Modify details for ${rowData.name}?`,
-                        type: 'edit',
-                        acceptLabel: 'Edit',
-                        onAccept: () => {
-                            setProductId(rowData.id);
-                            setProductName(rowData.name);
-                            setSubmitted(false);
-                            setProductDialog(true);
-                        }
-                    });
-                }}
-            />
-            <Button
-                icon="pi pi-trash"
-                rounded text
-                tooltip="Delete Commodity"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-rose-500"
-                onClick={() => deleteProduct(rowData)}
-            />
-        </div>
+        <ActionButtons
+            onEdit={() => {
+                const id = rowData?.id || rowData?._id;
+                const name = rowData?.name || rowData?.productName || "";
+                setProductId(id);
+                setProductName(name);
+                setSubmitted(false);
+                setProductDialog(true);
+            }}
+            onDelete={() => deleteProduct(rowData)}
+            onDeactivate={() => toggleStatus(rowData)}
+            isDeactivated={rowData.status === 'INACTIVE'}
+        />
     );
 
     return (
@@ -154,9 +158,9 @@ const ProductList = () => {
             >
                 <div className="flex flex-col gap-5 pt-6 pb-2">
                     <div className="field">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Commodity Title</label>
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Commodity Title</label>
                         <InputText
-                            value={productName}
+                            value={productName || ""}
                             onChange={(e) => setProductName(e.target.value)}
                             placeholder="e.g. 20L Premium Can"
                             className={classNames('w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 focus:ring-4 focus:ring-blue-50 transition-all', { 'border-rose-400 bg-rose-50/50': submitted && !productName })}

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { Tag } from 'primereact/tag';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
@@ -94,7 +93,7 @@ const DeviceList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={null}
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column field="deviceId" header="Hardware ID" body={(row) => <span className="font-black text-slate-800 text-xs">#{row.deviceId || 'UNK-000'}</span>} sortable />
                 <Column field="outlet.name" header="Assigned Outlet" body={(row) => <span className="font-bold text-slate-700">{row.outlet?.name || '—'}</span>} sortable />
                 <Column field="lastLogin" header="Last Seen" className="text-slate-400 text-xs font-medium" />

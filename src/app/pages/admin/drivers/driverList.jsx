@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import ActionButtons from '@/components/shared/ActionButtons';
+import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const DriverList = () => {
@@ -16,28 +16,24 @@ const DriverList = () => {
     const toast = useRef(null);
     const navigate = useNavigate();
 
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+    const { apiGet, apiPut, apiDelete } = useApi();
 
-    const fetchDrivers = async () => {
+    const fetchDrivers = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${BASE_URL}/admin/drivers`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = response.data?.data || response.data || [];
+            const response = await apiGet('/admin/drivers');
+            const data = response?.data || response || [];
             setDrivers(Array.isArray(data) ? data : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch drivers' });
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchDrivers();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchDrivers();
+    }, [fetchDrivers]);
 
     const deleteDriver = async (rowData) => {
         showConfirmDialog({
@@ -48,9 +44,7 @@ const DriverList = () => {
             onAccept: async () => {
                 try {
                     const deleteId = rowData.id || rowData.userId;
-                    await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await apiDelete(`/admin/users/${deleteId}`);
                     toast.current?.show({ 
                         severity: 'success', 
                         summary: 'Driver Removed', 
@@ -69,6 +63,40 @@ const DriverList = () => {
             }
         });
     };
+    
+    const toggleStatus = async (rowData) => {
+        const currentStatus = rowData.status || 'ACTIVE';
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        
+        try {
+            const id = rowData.id || rowData.userId || rowData._id;
+            const payload = {
+                username: rowData.username,
+                mobileNumber: rowData.mobileNumber,
+                vehicleName: rowData.vehicleName,
+                vehicleNumber: rowData.vehicleNumber,
+                routeId: rowData.routeId || rowData.route?.id,
+                status: newStatus
+            };
+            
+            await apiPut(`/admin/drivers/${id}`, payload);
+            
+            toast.current?.show({ 
+                severity: 'success', 
+                summary: 'Status Updated', 
+                detail: `Driver status changed to ${newStatus}.`,
+                life: 3000 
+            });
+            fetchDrivers();
+        } catch (error) {
+            toast.current?.show({ 
+                severity: 'error', 
+                summary: 'Update Failed', 
+                detail: 'Could not change driver status.',
+                life: 5000 
+            });
+        }
+    };
 
     const driverBodyTemplate = (rowData) => (
         <div className="flex items-center gap-3">
@@ -79,30 +107,18 @@ const DriverList = () => {
             />
             <div className="flex flex-col">
                 <span className="font-bold text-slate-700 text-sm">{rowData.username}</span>
-                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{rowData.mobileNumber}</span>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
             </div>
         </div>
     );
 
     const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            <Button
-                icon="pi pi-pencil"
-                rounded text
-                tooltip="Edit Driver"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-sky-500"
-                onClick={() => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId || rowData._id}`, { state: { driver: rowData } })}
-            />
-            <Button
-                icon="pi pi-trash"
-                rounded text
-                tooltip="Delete Driver"
-                tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-rose-500"
-                onClick={() => deleteDriver(rowData)}
-            />
-        </div>
+        <ActionButtons 
+            onEdit={() => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId || rowData._id}`, { state: { driver: rowData } })}
+            onDelete={() => deleteDriver(rowData)}
+            onDeactivate={() => toggleStatus(rowData)}
+            isDeactivated={rowData.status === 'INACTIVE'}
+        />
     );
 
     return (
@@ -124,7 +140,7 @@ const DriverList = () => {
                 <Column header="Vehicle" body={(row) => (
                     <div className="flex flex-col">
                         <span className="text-slate-700 font-bold text-xs">{row.vehicleName || '—'}</span>
-                        <span className="text-[10px] text-slate-400 font-bold">{row.vehicleNumber || '—'}</span>
+                        <span className="text-xs text-slate-400 font-bold mt-0.5">{row.vehicleNumber || '—'}</span>
                     </div>
                 )} />
                 <Column field="route.routeName" header="Assigned Route" body={(row) => <span className="text-blue-500 font-bold text-xs uppercase tracking-wider">{row.route?.routeName || 'Unassigned'}</span>} />

@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import dayjs from "dayjs";
 import { Button } from "primereact/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "primereact/skeleton";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import { Avatar } from "primereact/avatar";
 import { useSelector } from "react-redux";
@@ -113,7 +112,7 @@ const CustomerDetail = () => {
       <div className="grid grid-cols-1 gap-8 pb-20 lg:grid-cols-4">
         {/* LEFT SIDE */}
         <div className="flex flex-col gap-8 lg:col-span-1">
-          <div className="flex flex-col items-center rounded-[40px] border border-slate-100 bg-white p-8 text-center shadow-sm">
+          <div className="flex flex-col items-center rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-sm">
             {loading ? (
               <Skeleton
                 shape="circle"
@@ -229,7 +228,7 @@ const CustomerDetail = () => {
           </div>
 
           {/* TABLE */}
-          <div className="overflow-hidden rounded-[40px] border border-slate-100 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-slate-100 px-8 py-8">
               <h3 className="text-lg font-black text-slate-800">
                 Order Timeline
@@ -310,21 +309,16 @@ const DetailRow = ({
 }) => {
   return (
     <div className="flex flex-col gap-1">
-      <span className="ml-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+      <span className="ml-1 text-xs font-black uppercase tracking-widest text-slate-400">
         {label}
       </span>
 
       {loading ? (
         <Skeleton width="80%" height="1.2rem" />
       ) : isTag ? (
-        <Tag
-          value={value}
-          severity={
-            value === "ACTIVE" ? "success" : "danger"
-          }
-          rounded
-          className="w-fit px-3 py-1 text-[9px] font-black uppercase tracking-widest"
-        />
+        <div className="mt-1">
+          <StatusTag status={value || "ACTIVE"} />
+        </div>
       ) : (
         <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
           {icon && (
@@ -355,7 +349,7 @@ const StatCard = ({
       </div>
 
       <div className="flex flex-col">
-        <span className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+        <span className="mb-1 text-xs font-black uppercase tracking-widest text-slate-400">
           {label}
         </span>
 
