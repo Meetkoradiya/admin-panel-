@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
+import StatusTag from '@/components/shared/StatusTag';
 
 const SubscriptionList = () => {
     const [subscriptions, setSubscriptions] = useState([]);
@@ -28,8 +29,7 @@ const SubscriptionList = () => {
     useEffect(() => { fetchSubscriptions(); }, []);
 
     const statusBodyTemplate = (rowData) => {
-        const isActive = rowData.status === 'ACTIVE';
-        return <Tag value={rowData.status} severity={isActive ? 'success' : 'danger'} rounded className="px-3 py-1 font-bold text-[10px] uppercase tracking-widest" />;
+        return <StatusTag status={rowData.status || 'INACTIVE'} />;
     };
 
     const priceBodyTemplate = (rowData) => (

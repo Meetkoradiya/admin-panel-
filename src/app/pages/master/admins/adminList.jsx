@@ -8,6 +8,7 @@ import { Avatar } from 'primereact/avatar';
 import { useNavigate } from 'react-router-dom';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
+import StatusTag from '@/components/shared/StatusTag';
 
 const AdminList = () => {
     const [admins, setAdmins] = useState([]);
@@ -66,12 +67,8 @@ const AdminList = () => {
     );
 
     const statusBodyTemplate = (rowData) => {
-        const isActive = rowData.status === 'ACTIVE' || rowData.status === true;
-        return (
-            <span className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border ${isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
-                {isActive ? 'Active' : 'Inactive'}
-            </span>
-        );
+        const statusValue = (rowData.status === 'ACTIVE' || rowData.status === true) ? 'ACTIVE' : 'INACTIVE';
+        return <StatusTag status={statusValue} />;
     };
 
     const roleBodyTemplate = (rowData) => {

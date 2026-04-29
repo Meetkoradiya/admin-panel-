@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
+import StatusTag from '@/components/shared/StatusTag';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const CustomerManagement = () => {
@@ -62,14 +63,7 @@ const CustomerManagement = () => {
 
     const statusBodyTemplate = (rowData) => {
         const isActive = rowData.status === 'ACTIVE' || !rowData.status;
-        return (
-            <span className={classNames('px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border', {
-                'bg-emerald-50 text-emerald-600 border-emerald-100': isActive,
-                'bg-rose-50 text-rose-600 border-rose-100': !isActive
-            })}>
-                {rowData.status || 'ACTIVE'}
-            </span>
-        );
+        return <StatusTag status={isActive ? 'ACTIVE' : 'INACTIVE'} />;
     };
 
     const actionBodyTemplate = (rowData) => {

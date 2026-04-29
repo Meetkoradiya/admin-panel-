@@ -6,6 +6,7 @@ import { Tag } from 'primereact/tag';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import StatusTag from '@/components/shared/StatusTag';
 
 const BillingManagement = () => {
     const [billings, setBillings] = useState([]);
@@ -37,9 +38,7 @@ const BillingManagement = () => {
     }, [token]);
 
     const statusBodyTemplate = (rowData) => {
-        const status = rowData.status || 'UNPAID';
-        const severity = status === 'PAID' ? 'success' : 'danger';
-        return <Tag value={status} severity={severity} rounded className="px-3 py-1 font-bold text-[10px] uppercase tracking-widest" />;
+        return <StatusTag status={rowData.status || 'UNPAID'} />;
     };
 
     const amountBodyTemplate = (rowData) => (

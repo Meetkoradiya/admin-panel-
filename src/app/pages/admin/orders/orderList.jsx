@@ -7,6 +7,7 @@ import { classNames } from 'primereact/utils';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import StatusTag from '@/components/shared/StatusTag';
 
 const OrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -38,14 +39,7 @@ const OrderList = () => {
     }, [token]);
 
     const statusBodyTemplate = (rowData) => {
-        const status = rowData.status || 'PENDING';
-        let severity = 'info';
-
-        if (status === 'DELIVERED' || status === 'COMPLETED') severity = 'success';
-        else if (status === 'CANCELLED') severity = 'danger';
-        else if (status === 'IN_PROGRESS' || status === 'ON_THE_WAY') severity = 'warning';
-
-        return <Tag value={status} severity={severity} rounded className="px-3 py-1 font-bold text-[10px] uppercase tracking-widest" />;
+        return <StatusTag status={rowData.status || 'PENDING'} />;
     };
 
     const priceBodyTemplate = (rowData) => {

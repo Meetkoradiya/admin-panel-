@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
+import StatusTag from '@/components/shared/StatusTag';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const DeviceList = () => {
@@ -57,15 +58,7 @@ const DeviceList = () => {
     };
 
     const statusBodyTemplate = (rowData) => {
-        const isVerified = rowData.isVerified;
-        return (
-            <Tag 
-                value={isVerified ? 'Verified' : 'Pending'} 
-                severity={isVerified ? 'success' : 'warning'} 
-                rounded 
-                className="px-3 py-1 font-bold text-[10px] uppercase tracking-widest" 
-            />
-        );
+        return <StatusTag status={rowData.isVerified ? 'VERIFIED' : 'PENDING'} />;
     };
 
     const actionBodyTemplate = (rowData) => (

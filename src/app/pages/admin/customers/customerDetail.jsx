@@ -11,6 +11,7 @@ import { Avatar } from "primereact/avatar";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Page } from "@/components/shared/Page";
+import StatusTag from "@/components/shared/StatusTag";
 import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const CustomerDetail = () => {
@@ -112,23 +113,7 @@ const CustomerDetail = () => {
   };
 
   const statusBodyTemplate = (rowData) => {
-    const status = rowData.status || "PENDING";
-
-    const severityMap = {
-      DELIVERED: "success",
-      IN_PROGRESS: "warning",
-      CANCELLED: "danger",
-      PENDING: "info",
-    };
-
-    return (
-      <Tag
-        value={status}
-        severity={severityMap[status]}
-        rounded
-        className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest"
-      />
-    );
+    return <StatusTag status={rowData.status || "PENDING"} />;
   };
 
   const totalSpend = orders.reduce(
