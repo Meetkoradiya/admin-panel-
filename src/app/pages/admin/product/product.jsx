@@ -8,6 +8,7 @@ import { classNames } from 'primereact/utils';
 import axios from "axios";
 import { useSelector } from "react-redux";
 import ListLayout from "@/components/shared/ListLayout";
+import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const ProductList = () => {
     const toast = useRef(null);
@@ -67,16 +68,23 @@ const ProductList = () => {
     };
 
     const deleteProduct = async (rowData) => {
-        if (!window.confirm(`Delete ${rowData.name}?`)) return;
-        try {
-            await axios.delete(`${BASE_URL}/admin/products/${rowData.id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            toast.current?.show({ severity: "success", summary: "Successful", detail: "Product Deleted", life: 3000 });
-            fetchProducts();
-        } catch (error) {
-            toast.current?.show({ severity: "error", summary: "Error", detail: "Failed to delete product" });
-        }
+        showConfirmDialog({
+            title: 'Delete Product',
+            message: `Delete ${rowData.name}? This action cannot be undone.`,
+            type: 'delete',
+            acceptLabel: 'Delete',
+            onAccept: async () => {
+                try {
+                    await axios.delete(`${BASE_URL}/admin/products/${rowData.id}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current?.show({ severity: "success", summary: "Successful", detail: "Product Deleted", life: 3000 });
+                    fetchProducts();
+                } catch (error) {
+                    toast.current?.show({ severity: "error", summary: "Error", detail: "Failed to delete product" });
+                }
+            }
+        });
     };
 
     const actionBodyTemplate = (rowData) => (
@@ -88,10 +96,18 @@ const ProductList = () => {
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-sky-500"
                 onClick={() => {
-                    setProductId(rowData.id);
-                    setProductName(rowData.name);
-                    setSubmitted(false);
-                    setProductDialog(true);
+                    showConfirmDialog({
+                        title: 'Edit Product',
+                        message: `Modify details for ${rowData.name}?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => {
+                            setProductId(rowData.id);
+                            setProductName(rowData.name);
+                            setSubmitted(false);
+                            setProductDialog(true);
+                        }
+                    });
                 }}
             />
             <Button

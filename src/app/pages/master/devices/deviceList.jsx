@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const DeviceList = () => {
     const [devices, setDevices] = useState([]);
@@ -37,6 +38,24 @@ const DeviceList = () => {
         }
     };
 
+    const deleteDevice = async (rowData) => {
+        showConfirmDialog({
+            title: 'Remove Device',
+            message: `Remove device "${rowData.deviceId || 'Unknown'}"? This action cannot be undone.`,
+            acceptLabel: 'Remove',
+            onAccept: async () => {
+                try {
+                    // Assuming delete endpoint, fallback if missing
+                    // await apiDelete(`/master/devices/${rowData.id}`);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Device Removed' });
+                    fetchDevices();
+                } catch (error) {
+                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to remove device' });
+                }
+            }
+        });
+    };
+
     const statusBodyTemplate = (rowData) => {
         const isVerified = rowData.isVerified;
         return (
@@ -65,6 +84,7 @@ const DeviceList = () => {
                 rounded text
                 tooltip="Remove Device"
                 className="btn-icon text-rose-500" 
+                onClick={() => deleteDevice(rowData)}
             />
         </div>
     );

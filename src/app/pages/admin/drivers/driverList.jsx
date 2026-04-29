@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const DriverList = () => {
     const [drivers, setDrivers] = useState([]);
@@ -39,17 +40,24 @@ const DriverList = () => {
     }, [token]);
 
     const deleteDriver = async (rowData) => {
-        if (!window.confirm(`Delete driver "${rowData.username}"?`)) return;
-        try {
-            const deleteId = rowData.id || rowData.userId;
-            await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Removed', life: 3000 });
-            fetchDrivers();
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete driver' });
-        }
+        showConfirmDialog({
+            title: 'Delete Driver',
+            message: `Delete driver "${rowData.username}"? This action cannot be undone.`,
+            type: 'delete',
+            acceptLabel: 'Delete',
+            onAccept: async () => {
+                try {
+                    const deleteId = rowData.id || rowData.userId;
+                    await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Removed', life: 3000 });
+                    fetchDrivers();
+                } catch (error) {
+                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete driver' });
+                }
+            }
+        });
     };
 
     const driverBodyTemplate = (rowData) => (
@@ -74,7 +82,15 @@ const DriverList = () => {
                 tooltip="Edit Driver"
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-sky-500"
-                onClick={() => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId}`, { state: { driver: rowData } })}
+                onClick={() => {
+                    showConfirmDialog({
+                        title: 'Edit Driver',
+                        message: `Modify information for ${rowData.username}?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId}`, { state: { driver: rowData } })
+                    });
+                }}
             />
             <Button
                 icon="pi pi-trash"

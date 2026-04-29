@@ -11,6 +11,7 @@ import { Avatar } from "primereact/avatar";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Page } from "@/components/shared/Page";
+import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const CustomerDetail = () => {
   const { id } = useParams();
@@ -80,35 +81,34 @@ const CustomerDetail = () => {
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Permanently delete this customer?"
-    );
+    showConfirmDialog({
+      title: 'Delete Customer',
+      message: 'Permanently delete this customer? This action cannot be undone.',
+      acceptLabel: 'Delete',
+      onAccept: async () => {
+        try {
+          await axios.delete(`${BASE_URL}/admin/users/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-    if (!confirmDelete) return;
+          toast.current?.show({
+            severity: "success",
+            summary: "Deleted",
+            detail: "Customer removed successfully",
+          });
 
-    try {
-      await axios.delete(`${BASE_URL}/admin/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.current?.show({
-        severity: "success",
-        summary: "Deleted",
-        detail: "Customer removed successfully",
-      });
-
-      setTimeout(() => {
-        navigate("/admin/customers");
-      }, 1000);
-    } catch (error) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Delete failed",
-      });
-    }
+          setTimeout(() => {
+            navigate("/admin/customers");
+          }, 1000);
+        } catch (error) {
+          toast.current?.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Delete failed",
+          });
+        }
+      }
+    });
   };
 
   const statusBodyTemplate = (rowData) => {

@@ -6,6 +6,7 @@ import { Avatar } from 'primereact/avatar';
 import { useNavigate } from 'react-router-dom';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const OutletList = () => {
     const [outlets, setOutlets] = useState([]);
@@ -30,14 +31,21 @@ const OutletList = () => {
     useEffect(() => { fetchOutlets(); }, []);
 
     const deleteOutlet = async (rowData) => {
-        if (!window.confirm(`Delete outlet "${rowData.name}"?`)) return;
-        try {
-            await apiDelete(`/master/outlets/${rowData.id}`);
-            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet Removed' });
-            fetchOutlets();
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete outlet' });
-        }
+        showConfirmDialog({
+            title: 'Delete Outlet',
+            message: `Delete outlet "${rowData.name}"? This action cannot be undone.`,
+            type: 'delete',
+            acceptLabel: 'Delete',
+            onAccept: async () => {
+                try {
+                    await apiDelete(`/master/outlets/${rowData.id}`);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Outlet Removed' });
+                    fetchOutlets();
+                } catch (error) {
+                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete outlet' });
+                }
+            }
+        });
     };
 
     const nameBodyTemplate = (rowData) => (
@@ -59,7 +67,15 @@ const OutletList = () => {
                 rounded text
                 tooltip="Edit Outlet"
                 className="btn-icon text-sky-500" 
-                onClick={() => navigate(`/master/outlets/edit/${rowData.id}`, { state: { outlet: rowData } })} 
+                onClick={() => {
+                    showConfirmDialog({
+                        title: 'Edit Outlet',
+                        message: `Modify details for ${rowData.name}?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => navigate(`/master/outlets/edit/${rowData.id}`, { state: { outlet: rowData } })
+                    });
+                }} 
             />
             <Button 
                 icon="pi pi-trash" 

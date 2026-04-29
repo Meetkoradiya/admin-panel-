@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const CustomerManagement = () => {
     const [customers, setCustomers] = useState([]);
@@ -39,17 +40,24 @@ const CustomerManagement = () => {
     }, [token]);
 
     const deleteCustomer = async (rowData) => {
-        if (!window.confirm(`Are you sure you want to delete ${rowData.username}?`)) return;
-        try {
-            const deleteId = rowData.id || rowData.userId;
-            await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Deleted Successfully', life: 3000 });
-            fetchCustomers();
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete customer' });
-        }
+        showConfirmDialog({
+            title: 'Delete Customer',
+            message: `Are you sure you want to delete ${rowData.username}? This action cannot be undone.`,
+            type: 'delete',
+            acceptLabel: 'Delete',
+            onAccept: async () => {
+                try {
+                    const deleteId = rowData.id || rowData.userId;
+                    await axios.delete(`${BASE_URL}/admin/users/${deleteId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Deleted Successfully', life: 3000 });
+                    fetchCustomers();
+                } catch (error) {
+                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete customer' });
+                }
+            }
+        });
     };
 
     const statusBodyTemplate = (rowData) => {
@@ -73,7 +81,15 @@ const CustomerManagement = () => {
                     tooltip="Edit Customer"
                     tooltipOptions={{ position: 'top' }}
                     className="btn-icon text-sky-500"
-                    onClick={() => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })}
+                    onClick={() => {
+                    showConfirmDialog({
+                        title: 'Edit Customer',
+                        message: `Modify information for ${rowData.username}?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })
+                    });
+                }}
                 />
                 <Button
                     icon="pi pi-trash"

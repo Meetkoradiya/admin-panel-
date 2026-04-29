@@ -11,6 +11,7 @@ import { classNames } from 'primereact/utils';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const InventoryList = () => {
     const [stocks, setStocks] = useState([]);
@@ -140,7 +141,15 @@ const InventoryList = () => {
                 tooltip="Edit Stock"
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-sky-500"
-                onClick={() => openEdit(rowData)}
+                onClick={() => {
+                    showConfirmDialog({
+                        title: 'Edit Stock',
+                        message: `Adjust inventory level for ${rowData.resolvedProductName}?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => openEdit(rowData)
+                    });
+                }}
             />
         </div>
     );

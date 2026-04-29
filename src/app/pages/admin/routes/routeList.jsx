@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ListLayout from '@/components/shared/ListLayout';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const RouteList = () => {
     const [routes, setRoutes] = useState([]);
@@ -38,16 +39,23 @@ const RouteList = () => {
     }, [token]);
 
     const deleteRoute = async (rowData) => {
-        if (!window.confirm(`Delete route "${rowData.routeName || rowData.name}"?`)) return;
-        try {
-            await axios.delete(`${BASE_URL}/admin/routes/${rowData.id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Route Deleted', life: 3000 });
-            fetchRoutes();
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete route' });
-        }
+        showConfirmDialog({
+            title: 'Delete Route',
+            message: `Delete route "${rowData.routeName || rowData.name}"? This action cannot be undone.`,
+            type: 'delete',
+            acceptLabel: 'Delete',
+            onAccept: async () => {
+                try {
+                    await axios.delete(`${BASE_URL}/admin/routes/${rowData.id}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Route Deleted', life: 3000 });
+                    fetchRoutes();
+                } catch (error) {
+                    toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete route' });
+                }
+            }
+        });
     };
 
     const actionBodyTemplate = (rowData) => (
@@ -58,7 +66,15 @@ const RouteList = () => {
                 tooltip="Edit Route"
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-sky-500"
-                onClick={() => navigate(`/admin/routes/edit/${rowData.id}`, { state: { route: rowData } })}
+                onClick={() => {
+                    showConfirmDialog({
+                        title: 'Edit Route',
+                        message: `Modify route "${rowData.routeName || rowData.name}"?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => navigate(`/admin/routes/edit/${rowData.id}`, { state: { route: rowData } })
+                    });
+                }}
             />
             <Button
                 icon="pi pi-trash"

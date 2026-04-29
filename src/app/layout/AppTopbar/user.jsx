@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { logout } from "../../../redux/slice/AuthSlice";
 import useApi from "../../../hooks/useApi";
+import { showConfirmDialog } from "../../../utils/confirmUtils";
 
 export const User = () => {
     const navigate = useNavigate();
@@ -29,8 +30,16 @@ export const User = () => {
     }, [fetchProfilePicture]);
 
     const handleLogout = async () => {
-        dispatch(logout());
-        navigate("/login");
+        showConfirmDialog({
+            title: 'Logout',
+            message: 'Are you sure you want to logout from the system?',
+            type: 'logout',
+            acceptLabel: 'Logout',
+            onAccept: () => {
+                dispatch(logout());
+                navigate("/login");
+            }
+        });
     };
 
     return (

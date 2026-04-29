@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 import HomeLayout from "./app/layout/HomeLayout/HomeLayout";
 import ChangePassword from "./app/pages/profile/ChangePassword/ChangePassword";
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <>
+      <ConfirmDialog />
       {isAuthenticated && <AutoRefreshToken />}
 
       <AppRoutes />

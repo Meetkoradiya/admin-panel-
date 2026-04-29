@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { showConfirmDialog } from '@/utils/confirmUtils';
 import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
 import { useNavigate } from 'react-router-dom';
@@ -34,15 +34,12 @@ const AdminList = () => {
     useEffect(() => { fetchAdmins(); }, []);
 
     const handleDelete = (rowData) => {
-        confirmDialog({
+        showConfirmDialog({
+            title: 'Delete Admin',
             message: `Remove "${rowData.username}" from the system? This action cannot be undone.`,
-            header: 'Confirm Deletion',
-            icon: 'pi pi-exclamation-triangle',
-            acceptClassName: 'p-button-danger rounded-xl',
-            acceptLabel: 'Yes, Delete',
-            rejectLabel: 'Cancel',
-            rejectClassName: 'p-button-text text-slate-500 rounded-xl',
-            accept: async () => {
+            type: 'delete',
+            acceptLabel: 'Delete',
+            onAccept: async () => {
                 try {
                     const deleteId = rowData.id || rowData._id;
                     await apiDelete(`/admin/users/${deleteId}`);
@@ -94,7 +91,15 @@ const AdminList = () => {
                 tooltip="Edit Account"
                 tooltipOptions={{ position: 'top' }}
                 className="btn-icon text-blue-500"
-                onClick={() => navigate(`/master/admins/edit/${rowData.id || rowData._id}`, { state: { admin: rowData } })}
+                onClick={() => {
+                    showConfirmDialog({
+                        title: 'Edit Account',
+                        message: `Modify details for ${rowData.username}?`,
+                        type: 'edit',
+                        acceptLabel: 'Edit',
+                        onAccept: () => navigate(`/master/admins/edit/${rowData.id || rowData._id}`, { state: { admin: rowData } })
+                    });
+                }}
             />
             <Button
                 icon="pi pi-trash"
@@ -110,7 +115,6 @@ const AdminList = () => {
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
-            <ConfirmDialog />
             <ListLayout
                 title="Admin Management"
                 subtitle="System administrators and role management"
