@@ -94,14 +94,14 @@ export const Notification = () => {
             <Toast ref={toast} />
             <button
                 type="button"
-                className="p-link layout-topbar-button relative rounded-xl hover:bg-slate-100 transition-all p-2"
+                className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 border border-slate-100 relative"
                 onClick={(e) => op.current.toggle(e)}
             >
-                <i className="pi pi-bell text-slate-600"></i>
+                <i className="pi pi-bell text-[1.2rem] text-slate-800"></i>
                 <Badge 
                     value={unreadCount > 99 ? '99+' : unreadCount} 
                     severity={unreadCount > 0 ? "danger" : "info"} 
-                    className={`absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 scale-75 ${unreadCount === 0 ? 'opacity-50' : ''}`} 
+                    className={`absolute -top-1 -right-1 scale-75 border-2 border-white ${unreadCount === 0 ? 'opacity-0' : ''}`} 
                 />
             </button>
 

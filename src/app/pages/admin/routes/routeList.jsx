@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
 import ActionButtons from '@/components/shared/ActionButtons';
+import StatusTag from '@/components/shared/StatusTag';
 import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
@@ -79,14 +80,7 @@ const RouteList = () => {
     );
 
     const statusBodyTemplate = (rowData) => {
-        const status = rowData.status || 'Active';
-        return (
-            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-            }`}>
-                {status}
-            </span>
-        );
+        return <StatusTag status={rowData.status || 'Active'} />;
     };
 
     const routeNameTemplate = (rowData) => (
@@ -102,7 +96,7 @@ const RouteList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Route Distribution"
+                title="Route List"
                 subtitle="Manage and monitor all delivery routes"
                 data={routes}
                 loading={loading}

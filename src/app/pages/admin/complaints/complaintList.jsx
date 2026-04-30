@@ -97,7 +97,7 @@ const ComplaintList = () => {
             {/* Left: Complaints Table */}
             <div className="col-span-12 xl:col-span-9">
                 <ListLayout
-                    title="Complaints"
+                    title="Complaint List"
                     subtitle="Monitor and resolve customer service issues and feedback"
                     data={complaints}
                     loading={loading}

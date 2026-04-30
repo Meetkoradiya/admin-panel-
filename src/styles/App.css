@@ -3,17 +3,23 @@
 
 
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
 }
 
 @layer components {
-    h2, .h2 {
+
+    h2,
+    .h2 {
         font-size: 1.875rem;
         line-height: 2.25rem;
         font-weight: 700;
@@ -39,210 +45,229 @@
 }
 
 @layer base {
-  @media (max-width: 1440px) {
-    html {
-      font-size: 99%;
+    @media (max-width: 1440px) {
+        html {
+            font-size: 99%;
+        }
     }
-  }
 
-  @media (max-width: 1280px) {
-    html {
-      font-size: 98%;
+    @media (max-width: 1280px) {
+        html {
+            font-size: 98%;
+        }
     }
-  }
 
-  @media (max-width: 1024px) {
-    html {
-      font-size: 97%;
+    @media (max-width: 1024px) {
+        html {
+            font-size: 97%;
+        }
     }
-  }
 
-  @media (max-width: 900px) {
-    html {
-      font-size: 96%;
+    @media (max-width: 900px) {
+        html {
+            font-size: 96%;
+        }
     }
-  }
 
-  @media (max-width: 768px) {
-    html {
-      font-size: 95%;
+    @media (max-width: 768px) {
+        html {
+            font-size: 95%;
+        }
     }
-  }
 
-  @media (max-width: 640px) {
-    html {
-      font-size: 94%;
+    @media (max-width: 640px) {
+        html {
+            font-size: 94%;
+        }
     }
-  }
 
-  @media (max-width: 540px) {
-    html {
-      font-size: 93%;
+    @media (max-width: 540px) {
+        html {
+            font-size: 93%;
+        }
     }
-  }
 
-  @media (max-width: 480px) {
-    html {
-      font-size: 93%;
+    @media (max-width: 480px) {
+        html {
+            font-size: 93%;
+        }
     }
-  }
 
-  @media (max-width: 420px) {
-    html {
-      font-size: 92%;
+    @media (max-width: 420px) {
+        html {
+            font-size: 92%;
+        }
     }
-  }
 
-  @media (max-width: 375px) {
-    html {
-      font-size: 91%;
+    @media (max-width: 375px) {
+        html {
+            font-size: 91%;
+        }
     }
-  }
 
-  @media (max-width: 360px) {
-    html {
-      font-size: 90%;
+    @media (max-width: 360px) {
+        html {
+            font-size: 90%;
+        }
     }
-  }
 
-  @media (max-width: 340px) {
-    html {
-      font-size: 89%;
+    @media (max-width: 340px) {
+        html {
+            font-size: 89%;
+        }
     }
-  }
 
-  @media (max-width: 300px) {
-    html {
-      font-size: 88%;
+    @media (max-width: 300px) {
+        html {
+            font-size: 88%;
+        }
     }
-  }
 }
 
 * {
-  /* box-sizing: border-box; */
+    box-sizing: border-box;
+}
 
-  ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-  }
+}
 
-  ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: #f0f0f0;
     border-radius: 10px;
-  }
+}
 
-  ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: #c1c1c1;
     border-radius: 10px;
     border: 2px solid #f0f0f0;
-  }
+}
 
-  ::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
     background-color: #939393;
-  }
 }
 
 .p-password {
-  display: block !important;
-  width: 100%;
+    display: block !important;
+    width: 100%;
 }
 
 /* Premium Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-zoom-in {
-  animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Global Transitions - Simplified for performance and stability */
 * {
-  transition: background-color 0.1s ease, border-color 0.1s ease;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
 /* Premium PrimeReact Overrides */
 .p-datatable.p-datatable-minimal {
-  border: none;
+    border: none;
 }
 
-.p-datatable.p-datatable-minimal .p-datatable-thead > tr > th {
-  background: #f8fafc !important;
-  border-bottom: 1px solid #f1f5f9;
-  padding: 1.25rem 1.5rem;
-  color: #64748b;
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transition: all 0.2s ease;
+.p-datatable.p-datatable-minimal .p-datatable-thead>tr>th {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem 1.5rem;
+    color: #64748b;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.2s ease;
 }
 
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr {
-  background: #ffffff;
-  transition: all 0.2s ease;
+.p-datatable.p-datatable-minimal .p-datatable-tbody>tr {
+    background: #ffffff;
+    transition: all 0.2s ease;
 }
 
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:hover {
-  background: #f8fafc;
+.p-datatable.p-datatable-minimal .p-datatable-tbody>tr:hover {
+    background: #f8fafc;
 }
 
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
-  padding: 1.5rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
-  vertical-align: middle;
+.p-datatable.p-datatable-minimal .p-datatable-tbody>tr>td {
+    padding: 1.5rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
 }
 
 /* Paginator Polishing */
 .p-paginator {
-  background: #ffffff !important;
-  border-top: 1px solid #f1f5f9 !important;
-  padding: 1.5rem !important;
-  border-radius: 0 0 1.5rem 1.5rem;
+    background: #ffffff !important;
+    border-top: 1px solid #f1f5f9 !important;
+    padding: 1.5rem !important;
+    border-radius: 0 0 1.5rem 1.5rem;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page {
-  border-radius: 12px;
-  min-width: 2.5rem;
-  height: 2.5rem;
-  font-weight: 700;
-  font-size: 0.85rem;
-  margin: 0 0.25rem;
-  transition: all 0.2s ease;
+    border-radius: 12px;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin: 0 0.25rem;
+    transition: all 0.2s ease;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background: #3b82f6 !important;
-  color: #ffffff !important;
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
 }
 
 .p-paginator .p-link {
-  color: #94a3b8;
+    color: #94a3b8;
 }
 
 .p-paginator .p-link:not(.p-disabled):hover {
-  background: #f1f5f9;
-  color: #3b82f6;
+    background: #f1f5f9;
+    color: #3b82f6;
 }
 
 .p-dropdown.p-paginator-rpp-options {

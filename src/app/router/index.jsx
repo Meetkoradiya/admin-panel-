@@ -7,6 +7,7 @@ import HomeLayout from "../layout/HomeLayout/HomeLayout";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import VerifyOtp from "../pages/auth/VerifyOtp";
 import CreateNewPassword from "../pages/auth/CreateNewPassword";
+import NotFound from "../pages/error/NotFound";
 
 const AppRoutes = () => {
   const toastRef = useRef(null);
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/create-new-password" element={<CreateNewPassword />} />
+        <Route path="/unauthorized" element={<NotFound type="401" />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["MASTER_ADMIN"]} />}>
@@ -28,6 +30,7 @@ const AppRoutes = () => {
           {MasterRoutes.map((route) => (
             <Route key={route.name} path={route.path} element={route.element} />
           ))}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Route>
 
@@ -37,10 +40,11 @@ const AppRoutes = () => {
           {AdminRoutes.map((route) => (
             <Route key={route.name} path={route.path} element={route.element} />
           ))}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Route>
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

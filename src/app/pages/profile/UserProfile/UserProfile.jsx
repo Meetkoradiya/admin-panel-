@@ -94,7 +94,7 @@ const UserProfile = () => {
           email: formData.email,
           gender: formData.gender
         };
-        
+
         // Only send if it's a valid remote URL. If they selected a local file (blob:http), we can't send it yet without uploading.
         if (profile && profile.startsWith('http')) {
           payload.profileImageUrl = profile;
@@ -103,7 +103,7 @@ const UserProfile = () => {
         await axios.put(`${BASE_URL}/admin/update-profile`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         // Update Redux state so the sidebar and header update immediately
         dispatch(
           loginAction({
@@ -121,7 +121,7 @@ const UserProfile = () => {
             },
           })
         );
-        
+
         toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Profile updated successfully' });
       } else if (activeTab === "security") {
         if (securityData.newPassword !== securityData.confirmPassword) {
@@ -136,7 +136,7 @@ const UserProfile = () => {
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         // Auto-login logic to refresh token and prevent 401 redirection
         try {
           const res = await axios.post(`${BASE_URL}/auth/login`, {
@@ -147,7 +147,7 @@ const UserProfile = () => {
           if (dataPayload && dataPayload.accessToken) {
             const newToken = dataPayload.accessToken;
             const newRefreshToken = dataPayload.refreshToken;
-            
+
             let newTime = 0;
             try {
               const decoded = JSON.parse(atob(newToken.split('.')[1]));
@@ -161,7 +161,7 @@ const UserProfile = () => {
                 token: newToken,
                 refreshToken: newRefreshToken,
                 time: newTime,
-                userData: auth.userData, 
+                userData: auth.userData,
               })
             );
           }
@@ -219,12 +219,12 @@ const UserProfile = () => {
           {/* MAIN CONTENT AREA */}
           <div className="col-span-12 lg:col-span-9">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
-              
+
               {/* PROFILE TAB */}
               {activeTab === "profile" && (
                 <div className="animate-fadein">
                   <h2 className="text-xl font-bold text-gray-800 mb-8 tracking-tight">Personal information</h2>
-                  
+
                   <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
                     <div className="relative">
                       <img src={profile || "/images/User.webp"} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-gray-50 shadow-sm" />
@@ -252,13 +252,13 @@ const UserProfile = () => {
                     {/* Gender Dropdown Added Back */}
                     <div className="field">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Gender</label>
-                      <Dropdown 
-                        value={genderType.find(g => g.code === formData.gender)} 
-                        options={genderType} 
-                        onChange={(e) => setFormData({...formData, gender: e.value.code})} 
-                        optionLabel="name" 
+                      <Dropdown
+                        value={genderType.find(g => g.code === formData.gender)}
+                        options={genderType}
+                        onChange={(e) => setFormData({ ...formData, gender: e.value.code })}
+                        optionLabel="name"
                         placeholder="Select Gender"
-                        className="bg-gray-50 border-none rounded-xl h-12 flex items-center font-semibold" 
+                        className="bg-gray-50 border-none rounded-xl h-12 flex items-center font-semibold"
                       />
                     </div>
                   </div>
@@ -279,11 +279,11 @@ const UserProfile = () => {
                     </div>
                     <div className="field">
                       <label className="text-sm font-semibold text-gray-700 mb-2 block">New password</label>
-                      <Password name="newPassword" value={securityData.newPassword} onChange={handleSecurityChange} toggleMask inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full"  />
+                      <Password name="newPassword" value={securityData.newPassword} onChange={handleSecurityChange} toggleMask inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full" />
                     </div>
                     <div className="field">
                       <label className="text-sm font-semibold text-gray-700 mb-2 block">Confirm new password</label>
-                      <Password name="confirmPassword" value={securityData.confirmPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full"  />
+                      <Password name="confirmPassword" value={securityData.confirmPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full" />
                     </div>
                   </div>
                 </div>
@@ -299,14 +299,14 @@ const UserProfile = () => {
                         <p className="font-bold text-gray-800">Order Updates</p>
                         <p className="text-xs text-gray-500">Updates about your delivery status.</p>
                       </div>
-                      <InputSwitch checked={notifConfig.orderUpdates} onChange={(e) => setNotifConfig({...notifConfig, orderUpdates: e.value})} />
+                      <InputSwitch checked={notifConfig.orderUpdates} onChange={(e) => setNotifConfig({ ...notifConfig, orderUpdates: e.value })} />
                     </div>
                     <div className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl">
                       <div>
                         <p className="font-bold text-gray-800">Email Alerts</p>
                         <p className="text-xs text-gray-500">Security and account alerts.</p>
                       </div>
-                      <InputSwitch checked={notifConfig.emailNotif} onChange={(e) => setNotifConfig({...notifConfig, emailNotif: e.value})} />
+                      <InputSwitch checked={notifConfig.emailNotif} onChange={(e) => setNotifConfig({ ...notifConfig, emailNotif: e.value })} />
                     </div>
                   </div>
                 </div>
@@ -323,21 +323,21 @@ const UserProfile = () => {
 
       <Dialog header="Update Avatar" visible={showDialog} style={{ width: "25rem" }} onHide={() => setShowDialog(false)} className="rounded-3xl">
         <div className="flex flex-col items-center gap-4 py-4">
-          <FileUpload 
-            mode="basic" 
-            auto 
-            customUpload 
-            uploadHandler={(e) => { 
-                const file = e.files[0];
-                if (file) {
-                    setImageFile(file);
-                    setProfile(URL.createObjectURL(file));
-                }
-                setShowDialog(false); 
-            }} 
-            accept="image/*" 
-            chooseLabel="Select Image" 
-            className="p-button-rounded bg-blue-50 text-blue-600 border-none" 
+          <FileUpload
+            mode="basic"
+            auto
+            customUpload
+            uploadHandler={(e) => {
+              const file = e.files[0];
+              if (file) {
+                setImageFile(file);
+                setProfile(URL.createObjectURL(file));
+              }
+              setShowDialog(false);
+            }}
+            accept="image/*"
+            chooseLabel="Select Image"
+            className="p-button-rounded bg-blue-50 text-blue-600 border-none"
           />
         </div>
       </Dialog>

@@ -155,7 +155,7 @@ const AddCustomer = () => {
     };
 
     const fieldClass = (isValid) => classNames(
-        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner',
+        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-[15px] transition-all outline-none font-medium text-slate-700 shadow-inner',
         { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
     );
 
@@ -163,25 +163,25 @@ const AddCustomer = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <FormLayout
-                title={id ? "Edit Customer Account" : "Create New Customer"}
+                title={id ? "Edit Customer" : "Create Customer"}
                 loading={loading}
                 isEditMode={!!id}
                 onSave={handleSave}
                 onDiscard={() => navigate('/admin/customers')}
             >
-                <FormSection title="Customer Overview" icon="pi pi-user">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormSection title="Overview">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Full Name</label>
+                            <label className="text-[13px] font-bold text-slate-500">Full Name</label>
                             <InputText
                                 value={customer.username}
                                 onChange={(e) => setCustomer({ ...customer, username: e.target.value })}
                                 className={fieldClass(customer.username)}
-                                placeholder="Enter full name"
+                                placeholder="Customer name"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Mobile Number</label>
+                            <label className="text-[13px] font-bold text-slate-500">Mobile Number</label>
                             <InputText
                                 value={customer.mobileNumber}
                                 maxLength={10}
@@ -191,31 +191,31 @@ const AddCustomer = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Delivery Address</label>
+                            <label className="text-[13px] font-bold text-slate-500">Delivery Address</label>
                             <InputText
                                 value={customer.address}
                                 onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
                                 className={fieldClass(true)}
-                                placeholder="Detailed address"
+                                placeholder="Full address"
                             />
                         </div>
                     </div>
                 </FormSection>
 
-                <FormSection title="Pricing & Subscription" icon="pi pi-tag">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormSection title="Pricing & Subscription">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Price Per Bottle (₹)</label>
+                            <label className="text-[13px] font-bold text-slate-500">Price Per Bottle (₹)</label>
                             <InputText
                                 type="number"
                                 value={customer.price}
                                 onChange={(e) => setCustomer({ ...customer, price: e.target.value })}
                                 className={fieldClass(true)}
-                                placeholder="₹ 0.00"
+                                placeholder="0.00"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Default Daily Quantity</label>
+                            <label className="text-[13px] font-bold text-slate-500">Default Daily Quantity</label>
                             <InputText
                                 type="number"
                                 value={customer.quantity}
@@ -225,17 +225,17 @@ const AddCustomer = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Security Deposit (₹)</label>
+                            <label className="text-[13px] font-bold text-slate-500">Security Deposit (₹)</label>
                             <InputText
                                 type="number"
                                 value={customer.deposit}
                                 onChange={(e) => setCustomer({ ...customer, deposit: e.target.value })}
                                 className={fieldClass(true)}
-                                placeholder="₹ 0.00"
+                                placeholder="0.00"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Status</label>
+                            <label className="text-[13px] font-bold text-slate-500">Status</label>
                             <Dropdown
                                 value={customer.status}
                                 options={[
@@ -249,10 +249,10 @@ const AddCustomer = () => {
                     </div>
                 </FormSection>
 
-                <FormSection title="Route & Logistics" icon="pi pi-map">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormSection title="Route & Logistics">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Assigned Route</label>
+                            <label className="text-[13px] font-bold text-slate-500">Assigned Route</label>
                             <Dropdown
                                 value={customer.route}
                                 options={routesData.map(r => ({ label: r.routeName || r.name, value: r.id }))}
@@ -262,7 +262,7 @@ const AddCustomer = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Delivery Frequency</label>
+                            <label className="text-[13px] font-bold text-slate-500">Delivery Frequency</label>
                             <Dropdown
                                 value={customer.deliveryType}
                                 options={deliveryOptions}
@@ -271,7 +271,7 @@ const AddCustomer = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Preferred Product</label>
+                            <label className="text-[13px] font-bold text-slate-500">Preferred Product</label>
                             <Dropdown
                                 value={customer.product}
                                 options={productsData.map(p => ({ label: p.name, value: p.id }))}

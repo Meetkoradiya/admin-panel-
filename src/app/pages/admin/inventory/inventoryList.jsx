@@ -137,7 +137,7 @@ const InventoryList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Inventory Control"
+                title="Inventory List"
                 subtitle="Monitor and manage real-time product stock levels"
                 data={enrichedStocks}
                 loading={loading}
@@ -147,7 +147,7 @@ const InventoryList = () => {
                 addLabel="Add Stock"
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column header="Commodity Details" body={productBodyTemplate} sortField="resolvedProductName" />
+                <Column header="Product Details" body={productBodyTemplate} sortField="resolvedProductName" />
                 <Column field="available" header="Available" body={(row) => <span className="font-black text-emerald-600">{row.available || row.quantity || row.qty || 0}</span>} />
                 <Column field="damaged" header="Damaged" body={(row) => <span className="font-black text-rose-600">{row.damaged || 0}</span>} />
                 <Column field="empty" header="Empty" body={(row) => <span className="font-black text-slate-500">{row.empty || 0}</span>} />
@@ -163,53 +163,53 @@ const InventoryList = () => {
             <Dialog
                 visible={stockDialog}
                 style={{ width: '450px' }}
-                header={<div className="text-xl font-black text-slate-800 tracking-tight">Adjust Inventory Level</div>}
+                header={<div className="text-xl font-black text-slate-800 tracking-tight">{editStock.id ? "Edit Inventory" : "Create Inventory"}</div>}
                 modal
                 className="p-fluid rounded-3xl overflow-hidden shadow-2xl"
                 onHide={() => setStockDialog(false)}
             >
                 <div className="flex flex-col gap-5 pt-4">
                     <div className="field">
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Commodity Type</label>
+                        <label className="text-[13px] font-bold text-slate-500 ml-1 mb-2 block">Product</label>
                         <Dropdown
                             value={editStock.productId || null}
                             options={products.map(p => ({ label: p.name, value: p.id }))}
                             onChange={(e) => setEditStock({ ...editStock, productId: e.value })}
-                            placeholder="Select Product"
+                            placeholder="Select product"
                             disabled={!!editStock.id}
-                            className={classNames('w-full rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 focus:ring-4 focus:ring-blue-50 transition-all shadow-inner', { 'border-rose-400 bg-rose-50/50': submitted && !editStock.productId })}
+                            className={classNames('w-full rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 text-[15px] h-[52px] flex items-center px-2 focus:ring-4 focus:ring-blue-50 transition-all shadow-inner', { 'border-rose-400 bg-rose-50/50': submitted && !editStock.productId })}
                         />
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
                         <div className="field">
-                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Available Units</label>
+                            <label className="text-[13px] font-bold text-slate-500 ml-1 mb-2 block">Available Units</label>
                             <InputNumber
                                 value={editStock.available || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, available: e.value })}
-                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
+                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 text-[15px] shadow-inner"
                                 className="w-full"
                                 placeholder="0"
                             />
                         </div>
 
                         <div className="field">
-                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Damaged Units</label>
+                            <label className="text-[13px] font-bold text-slate-500 ml-1 mb-2 block">Damaged Units</label>
                             <InputNumber
                                 value={editStock.damaged || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, damaged: e.value })}
-                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
+                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 text-[15px] shadow-inner"
                                 className="w-full"
                                 placeholder="0"
                             />
                         </div>
 
                         <div className="field">
-                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Empty Bottles</label>
+                            <label className="text-[13px] font-bold text-slate-500 ml-1 mb-2 block">Empty Bottles</label>
                             <InputNumber
                                 value={editStock.empty || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, empty: e.value })}
-                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 shadow-inner"
+                                inputClassName="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-50 transition-all font-bold text-slate-700 text-[15px] shadow-inner"
                                 className="w-full"
                                 placeholder="0"
                             />
@@ -219,7 +219,7 @@ const InventoryList = () => {
 
                 <div className="flex justify-end gap-3 mt-10 pt-6 border-t border-slate-50">
                     <Button label="Cancel" icon="pi pi-times" onClick={() => setStockDialog(false)} className="p-button-text text-slate-400 hover:bg-slate-50 rounded-xl px-5 font-bold transition-all text-sm" />
-                    <Button label="Save Inventory" icon="pi pi-check" onClick={saveStock} className="bg-[#3b82f6] border-none text-white rounded-xl px-8 py-3 font-black shadow-lg hover:shadow-xl transition-all text-sm" />
+                    <Button label={editStock.id ? "Update" : "Create"} icon="pi pi-check" onClick={saveStock} className="bg-blue-600 hover:bg-blue-700 border-none text-white rounded-xl px-8 py-3 font-black shadow-lg shadow-blue-500/20 transition-all text-sm" />
                 </div>
             </Dialog>
         </div>

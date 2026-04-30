@@ -120,7 +120,7 @@ const CustomerManagement = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Customer Management"
+                title="Customer List"
                 subtitle="Manage and oversee your customer database"
                 data={customers}
                 loading={loading}

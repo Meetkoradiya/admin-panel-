@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -69,7 +69,7 @@ const BillingManagement = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Billing & Invoices"
+                title="Billing List"
                 subtitle="Monitor customer balances, payments, and generated invoices"
                 data={billings}
                 loading={loading}

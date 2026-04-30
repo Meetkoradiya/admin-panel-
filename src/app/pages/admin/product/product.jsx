@@ -129,7 +129,7 @@ const ProductList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Product Base"
+                title="Product List"
                 subtitle="Configure foundational commodities and water units"
                 data={products}
                 loading={loading}
@@ -151,26 +151,26 @@ const ProductList = () => {
             <Dialog
                 visible={productDialog}
                 style={{ width: "450px" }}
-                header={<div className="text-xl font-black text-slate-800 tracking-tight">{productId ? "Edit Definition" : "Create Commodity"}</div>}
+                header={<div className="text-xl font-black text-slate-800 tracking-tight">{productId ? "Edit Product" : "Create Product"}</div>}
                 modal
                 className="p-fluid rounded-3xl overflow-hidden shadow-2xl"
                 onHide={() => setProductDialog(false)}
             >
                 <div className="flex flex-col gap-5 pt-6 pb-2">
                     <div className="field">
-                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Commodity Title</label>
+                        <label className="text-[13px] font-bold text-slate-500 ml-1 mb-2 block">Product Name</label>
                         <InputText
                             value={productName || ""}
                             onChange={(e) => setProductName(e.target.value)}
-                            placeholder="e.g. 20L Premium Can"
-                            className={classNames('w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 focus:ring-4 focus:ring-blue-50 transition-all', { 'border-rose-400 bg-rose-50/50': submitted && !productName })}
+                            placeholder="Product name"
+                            className={classNames('w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 text-[15px] focus:ring-4 focus:ring-blue-50 transition-all', { 'border-rose-400 bg-rose-50/50': submitted && !productName })}
                         />
                     </div>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-50">
                     <Button label="Cancel" icon="pi pi-times" onClick={() => setProductDialog(false)} className="p-button-text text-slate-400 hover:bg-slate-50 rounded-xl px-5 font-bold transition-all text-sm" />
-                    <Button label="Save Changes" icon="pi pi-check" onClick={saveProduct} className="bg-[#3b82f6] border-none text-white rounded-xl px-8 py-3 font-black shadow-lg hover:shadow-xl transition-all text-sm" />
+                    <Button label={productId ? "Update" : "Create"} icon="pi pi-check" onClick={saveProduct} className="bg-blue-600 hover:bg-blue-700 border-none text-white rounded-xl px-8 py-3 font-black shadow-lg shadow-blue-500/20 transition-all text-sm" />
                 </div>
             </Dialog>
         </div>

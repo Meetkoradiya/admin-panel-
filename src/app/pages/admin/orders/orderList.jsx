@@ -61,7 +61,7 @@ const OrderList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Order History"
+                title="Order List"
                 subtitle="Track fulfillment and delivery statuses across all routes"
                 data={orders}
                 loading={loading}

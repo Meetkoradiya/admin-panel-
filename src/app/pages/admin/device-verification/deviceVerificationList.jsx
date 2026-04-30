@@ -86,7 +86,7 @@ const DeviceVerificationList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Device Verifications"
+                title="Device Verification"
                 subtitle="Review and approve hardware access requests from personnel"
                 data={devices}
                 loading={loading}

@@ -42,22 +42,24 @@ const AppTopbar = forwardRef((props, ref) => {
   return (
     <div className="layout-topbar">
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
-      <div className="layout-menus">
+      <div className="layout-menus flex items-center gap-6">
+        {/* Menu Toggle Button */}
         <button
           ref={menubuttonRef}
           type="button"
-          className="p-link layout-topbar-button"
+          className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 border border-slate-100"
           onClick={onMenuToggle}
         >
-          <i className="pi pi-align-left text-xl text-slate-600" />
+          <i className="pi pi-align-left text-[1.2rem] text-slate-800" />
         </button>
 
+        {/* Search Button */}
         <button 
           type="button" 
-          className="p-link layout-topbar-button ml-2"
+          className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-full hover:bg-slate-100 transition-all active:scale-95 border border-slate-100"
           onClick={() => setSearchVisible(true)}
         >
-          <i className="pi pi-search text-xl text-slate-600" />
+          <i className="pi pi-search text-[1.2rem] text-slate-800" />
         </button>
       </div>
 

@@ -9,7 +9,7 @@ const FormLayout = ({
     loading,
     onSave,
     onDiscard,
-    saveLabel = "Save Changes",
+    saveLabel = "Create",
     discardLabel = "Discard",
     isEditMode = false,
     children,
@@ -20,41 +20,40 @@ const FormLayout = ({
 
     return (
         <Page title={title}>
-            <div className="flex flex-col h-full animate-fade-in">
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">{title}</h2>
+            <div className="w-full flex flex-col items-stretch animate-fade-in pb-24">
+                <div className="w-full mb-6 px-1">
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">{title}</h1>
                 </div>
 
-                <div className={sidebar ? "grid grid-cols-1 lg:grid-cols-4 gap-8 mb-24" : "flex flex-col gap-8 mb-24"}>
-                    {/* Main Form Area */}
-                    <div className={sidebar ? "lg:col-span-3 flex flex-col gap-8" : "w-full flex flex-col gap-8"}>
+                <div className={classNames("w-full flex flex-col items-stretch gap-6", { "lg:grid lg:grid-cols-4": sidebar })}>
+                    <div className={classNames("flex flex-col items-stretch gap-6", sidebar ? "lg:col-span-3" : "w-full")}>
                         {children}
                     </div>
 
-                    {/* Sidebar Area (Optional) */}
                     {sidebar && (
-                        <div className="lg:col-span-1 flex flex-col gap-8">
+                        <div className="lg:col-span-1 flex flex-col gap-6 w-full">
                             {sidebar}
                         </div>
                     )}
                 </div>
 
+                {/* Fixed Footer Actions */}
                 <div className={classNames(
-                    "fixed bottom-0 right-0 bg-white border-t border-slate-100 p-4 z-40 shadow-2xl transition-all duration-300",
-                    isSidebarCollapsed ? "left-0" : "left-0 md:left-[280px]"
+                    "fixed bottom-0 right-0 bg-white border-t border-slate-100 p-5 z-40 transition-all duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]",
+                    isSidebarCollapsed ? "left-0" : "left-0 md:left-70"
                 )}>
-                    <div className="flex flex-col-reverse md:flex-row justify-end gap-3 px-8 w-full">
+                    <div className="w-full flex justify-end gap-4 mx-auto px-6">
                         <Button
                             label={discardLabel}
-                            icon="pi pi-times"
-                            className="btn-secondary btn-responsive"
+                            icon="pi pi-trash"
+                            className="p-button-outlined p-button-danger border-rose-100 text-rose-500 font-bold px-6 rounded-xl h-10 text-sm"
                             onClick={onDiscard}
                             disabled={loading}
                         />
                         <Button
                             label={isEditMode ? "Update Details" : saveLabel}
-                            icon={loading ? "pi pi-spin pi-spinner" : "pi pi-check"}
-                            className="btn-primary btn-responsive"
+                            icon={loading ? "pi pi-spin pi-spinner" : ""}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-10 rounded-xl h-10 border-none transition-all shadow-lg shadow-blue-500/10 text-sm"
                             onClick={onSave}
                             loading={loading}
                         />
@@ -66,12 +65,12 @@ const FormLayout = ({
 };
 
 export const FormSection = ({ title, icon, children }) => (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 hover:shadow-md transition-all">
-        <div className="flex items-center gap-3 mb-8 border-b border-slate-50 pb-5">
-            {icon && <i className={`${icon} text-blue-500 text-lg`} />}
-            <h3 className="text-base font-bold text-slate-800 uppercase tracking-widest">{title}</h3>
+    <div className="w-full bg-white rounded-3xl shadow-sm border border-slate-100 p-8 hover:shadow-md transition-all">
+        <div className="flex items-center gap-4 mb-8">
+            <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+            <h3 className="text-xl font-black text-slate-800 tracking-tight">{title}</h3>
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="w-full flex flex-col items-stretch">
             {children}
         </div>
     </div>

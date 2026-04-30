@@ -109,7 +109,7 @@ const RouteCreate = () => {
     };
 
     const fieldClass = (isValid) => classNames(
-        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner',
+        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-[15px] transition-all outline-none font-medium text-slate-700 shadow-inner',
         { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
     );
 
@@ -117,39 +117,39 @@ const RouteCreate = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <FormLayout
-                title={id ? "Edit Delivery Route" : "Create New Route"}
+                title={id ? "Edit Route" : "Create Route"}
                 loading={loading}
                 isEditMode={!!id}
                 onSave={handleSave}
                 onDiscard={() => navigate('/admin/routes')}
             >
-                <FormSection title="Route Configuration" icon="pi pi-map">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormSection title="Overview">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Route Name</label>
+                            <label className="text-[13px] font-bold text-slate-500">Route Name</label>
                             <InputText
                                 value={route.routeName || ''}
                                 onChange={(e) => setRoute({ ...route, routeName: e.target.value })}
                                 className={fieldClass(route.routeName)}
-                                placeholder="e.g. North Sector A"
+                                placeholder="Route name"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Start Point</label>
+                            <label className="text-[13px] font-bold text-slate-500">Start Point</label>
                             <InputText
                                 value={route.startPoint || ''}
                                 onChange={(e) => setRoute({ ...route, startPoint: e.target.value })}
                                 className={fieldClass(true)}
-                                placeholder="Starting location"
+                                placeholder="Start point"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">End Point</label>
+                            <label className="text-[13px] font-bold text-slate-500">End Point</label>
                             <InputText
                                 value={route.endPoint || ''}
                                 onChange={(e) => setRoute({ ...route, endPoint: e.target.value })}
                                 className={fieldClass(true)}
-                                placeholder="Ending location"
+                                placeholder="End point"
                             />
                         </div>
                     </div>

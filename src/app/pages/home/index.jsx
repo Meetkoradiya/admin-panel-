@@ -101,9 +101,9 @@ export default function UnifiedDashboard() {
               <p className="text-slate-500 font-medium mt-1 uppercase tracking-widest text-[10px]">Pure Water Management System Overview</p>
             </div>
             <div className="flex gap-3 w-full md:w-auto">
-              <Button 
-                label="New Order" 
-                icon="pi pi-plus" 
+              <Button
+                label="New Order"
+                icon="pi pi-plus"
                 className="btn-primary btn-responsive"
                 onClick={() => navigate('/admin/orders')}
               />
@@ -114,7 +114,7 @@ export default function UnifiedDashboard() {
         {/* STATS GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {statCards.map((s) => (
-            <div key={s.label} className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer overflow-hidden relative">
+            <div key={s.label} className="bg-white rounded-4xl p-8 shadow-sm border border-slate-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer overflow-hidden relative">
               <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-bl-[100px] -mr-8 -mt-8 opacity-50 group-hover:bg-blue-50 transition-colors" />
               <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-6 group-hover:scale-110 transition-transform relative z-10`}>
                 <i className={`${s.icon} text-xl`} />
@@ -139,7 +139,7 @@ export default function UnifiedDashboard() {
                 <span className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest"><span className="w-2 h-2 rounded-full bg-blue-500" /> Revenue</span>
               </div>
             </div>
-            <div className="h-[350px]">
+            <div className="h-87.5">
               {loading ? <Skeleton height="100%" borderRadius="20px" /> : <StatisticsChart />}
             </div>
           </div>
@@ -150,13 +150,13 @@ export default function UnifiedDashboard() {
               <h3 className="text-xl font-black text-slate-800 tracking-tight">Recent Orders</h3>
               <Button icon="pi pi-arrow-right" className="p-button-rounded p-button-text p-button-sm text-blue-500" onClick={() => navigate('/admin/orders')} />
             </div>
-            
-            <div className="flex flex-col gap-6 flex-grow">
+
+            <div className="flex flex-col gap-6 grow">
               {loading ? (
                 Array(4).fill(0).map((_, i) => (
                   <div key={i} className="flex items-center gap-4">
                     <Skeleton shape="circle" size="3rem" />
-                    <div className="flex-grow flex flex-col gap-2">
+                    <div className="grow flex flex-col gap-2">
                       <Skeleton width="60%" height="1rem" />
                       <Skeleton width="40%" height="0.6rem" />
                     </div>
@@ -187,4 +187,4 @@ export default function UnifiedDashboard() {
       </div>
     </Page>
   );
-}
+}

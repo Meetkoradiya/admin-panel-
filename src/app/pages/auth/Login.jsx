@@ -169,62 +169,76 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f4f7fe] p-6 font-['Inter']">
       <Toast ref={toast} />
 
-      <div className="flex w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden bg-white">
+      {/* Top Logo Section */}
+      <div className="flex flex-col items-center mb-8 animate-fade-in">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="relative">
+            <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full" />
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-12 h-12 relative z-10"
+            >
+              <defs>
+                <linearGradient id="logo-grad-login" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#1d4ed8" />
+                </linearGradient>
+              </defs>
+              <circle cx="12" cy="13" r="9" stroke="url(#logo-grad-login)" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.4" />
+              <path
+                d="M12 3C12 3 6 10 6 14.5C6 18.0899 8.68629 21 12 21C15.3137 21 18 18.0899 18 14.5C18 10 12 3 12 3Z"
+                fill="url(#logo-grad-login)"
+              />
+              <path
+                d="M12 6C12 6 8.5 10.5 8.5 14C8.5 15.933 10.067 17.5 12 17.5C13.933 17.5 15.5 15.933 15.5 14C15.5 10.5 12 6 12 6Z"
+                fill="white"
+                fillOpacity="0.25"
+              />
+              <circle cx="14" cy="10" r="1.5" fill="white" fillOpacity="0.4" />
+            </svg>
+          </div>
+          <span className="text-3xl font-black text-slate-800 tracking-tight">Amrut Water</span>
+        </div>
+        <div className="flex items-center gap-1.5 mt-1">
+          <div className="h-[2px] w-3 bg-blue-500 rounded-full" />
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600">Premium Quality</span>
+        </div>
+      </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center px-10 bg-white">
-          <div className="w-full max-w-md">
+      {/* Main Login Card */}
+      <div className="w-full max-w-[480px] bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
+        <div className="p-10 md:p-12">
+          <div className="mb-10">
+            <h1 className="text-2xl font-black text-slate-900 mb-2">Welcome back</h1>
+            <p className="text-sm font-medium text-slate-400">Enter your credentials to access your dashboard</p>
+          </div>
 
-            <div className="flex items-center gap-4 mb-10">
-              <div className="w-12 h-12 rounded-xl bg-[#1e293b] flex items-center justify-center text-[#22bedb] text-xl shadow-sm">
-                💧
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
-                Amrut Water
-              </h2>
-            </div>
-
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">
-              Welcome Back
-            </h1>
-            <p className="text-gray-400 mb-8 font-medium">
-              Sign in to manage your water system
-            </p>
-
-            <div className="mb-5">
-              <label className="text-sm font-bold text-gray-500">Mobile Number</label>
+          <div className="space-y-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-bold text-slate-500 ml-1">Phone Number</label>
               <InputText
                 name="mobileNumber"
                 value={formData.mobileNumber}
                 onChange={(e) => {
                   const val = e.target.value;
-                  // Allow only numbers
-                  if (/^\d*$/.test(val)) {
-                    if (val.length <= 10) {
-                      setFormData((p) => ({ ...p, mobileNumber: val }));
-                      setErrors((p) => ({ ...p, mobileNumber: "" }));
-                    } else {
-                      setErrors((p) => ({ ...p, mobileNumber: "Mobile number cannot exceed 10 digits" }));
-                    }
+                  if (/^\d*$/.test(val) && val.length <= 10) {
+                    setFormData((p) => ({ ...p, mobileNumber: val }));
+                    setErrors((p) => ({ ...p, mobileNumber: "" }));
                   }
                 }}
-                onBlur={() => {
-                  if (!formData.mobileNumber) {
-                    setErrors((p) => ({ ...p, mobileNumber: "Mobile number is required" }));
-                  } else if (formData.mobileNumber.length < 10) {
-                    setErrors((p) => ({ ...p, mobileNumber: "Mobile number must be 10 digits" }));
-                  }
-                }}
-                placeholder="Enter mobile number"
-                className={`w-full mt-2 p-4 rounded-xl bg-gray-50 border-slate-200 focus:bg-white transition-all ${errors.mobileNumber ? "border-red-400" : ""}`}
+                placeholder="9712705145"
+                className={`w-full p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all ${errors.mobileNumber ? "border-red-400" : ""}`}
               />
-              {errors.mobileNumber && <small className="text-red-500 font-semibold">{errors.mobileNumber}</small>}
+              {errors.mobileNumber && <small className="text-red-500 font-bold ml-1">{errors.mobileNumber}</small>}
             </div>
 
-            <div className="mb-5">
-              <label className="text-sm font-bold text-gray-500">Password</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-bold text-slate-500 ml-1">Password</label>
               <Password
                 name="password"
                 value={formData.password}
@@ -232,43 +246,41 @@ const Login = () => {
                 toggleMask
                 feedback={false}
                 placeholder="••••••••"
-                className="w-full mt-2"
-                inputClassName={`w-full p-4 rounded-xl bg-gray-50 border-slate-200 focus:bg-white transition-all ${errors.password ? "border-red-400" : ""}`}
+                className="w-full"
+                inputClassName={`w-full p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all ${errors.password ? "border-red-400" : ""}`}
               />
-              {errors.password && <small className="text-red-500 font-semibold">{errors.password}</small>}
+              {errors.password && <small className="text-red-500 font-bold ml-1">{errors.password}</small>}
             </div>
 
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center py-2">
               <div className="flex items-center gap-2">
-                <Checkbox inputId="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} />
-                <label htmlFor="rememberMe" className="text-sm text-gray-600 font-medium cursor-pointer">Remember me</label>
+                <Checkbox inputId="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} className="scale-110" />
+                <label htmlFor="rememberMe" className="text-sm text-slate-600 font-bold cursor-pointer">Remember me</label>
               </div>
-              <Link
-                to="/forgot-password"
-                className="text-sm text-cyan-600 font-bold hover:underline"
-              >
-                Forgot password?
-              </Link>
+              <Link to="/forgot-password" title="Recover Password" className="text-sm text-blue-600 font-black hover:underline tracking-tight">Forgot password?</Link>
             </div>
 
             <Button
               label="Sign In"
               loading={isLoading}
               onClick={handleLogin}
-              className="w-full py-4 text-lg bg-cyan-500 border-none rounded-xl font-bold text-white hover:bg-cyan-600 shadow-lg shadow-cyan-100 transition-all active:scale-[0.98]"
+              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-black text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] mt-2"
             />
           </div>
         </div>
 
-        {/* RIGHT SECTION: IMAGE */}
-        <div className="hidden lg:block lg:w-1/2 relative">
-          <img
-            src="/images/authImage.png"
-            alt="Auth Background"
-            className="w-full h-full object-cover"
-          />
+        {/* Card Bottom Footer */}
+        <div className="bg-slate-50/80 p-5 flex items-center justify-center gap-2 border-t border-slate-100">
+          <i className="pi pi-lock text-slate-400 text-xs" />
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Your data is encrypted and secure</span>
         </div>
+      </div>
 
+      {/* Page Bottom Footer Links */}
+      <div className="mt-12 flex items-center gap-6">
+        <Link to="/privacy-policy" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Privacy policy</Link>
+        <div className="w-[1px] h-3 bg-slate-300" />
+        <Link to="/terms" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms & condition</Link>
       </div>
     </div>
   );

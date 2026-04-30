@@ -1,50 +1,44 @@
 import React from 'react';
-import { Tag } from 'primereact/tag';
 
-const defaultSeverityMap = {
-    // Success
-    'ACTIVE': 'success',
-    'COMPLETED': 'success',
-    'DELIVERED': 'success',
-    'RESOLVED': 'success',
-    'PAID': 'success',
-    'APPROVED': 'success',
-    'VERIFIED': 'success',
+const statusStyles = {
+    // Success - Green
+    'ACTIVE': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'COMPLETED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'DELIVERED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'RESOLVED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'PAID': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'APPROVED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'VERIFIED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
     
-    // Warning
-    'IN_PROGRESS': 'warning',
-    'ON_THE_WAY': 'warning',
-    'PENDING': 'warning',
-    'HOLD': 'warning',
+    // Warning - Amber/Yellow
+    'IN_PROGRESS': 'bg-amber-50 text-amber-600 border-amber-100',
+    'ON_THE_WAY': 'bg-amber-50 text-amber-600 border-amber-100',
+    'PENDING': 'bg-amber-50 text-amber-600 border-amber-100',
+    'HOLD': 'bg-amber-50 text-amber-600 border-amber-100',
     
-    // Danger
-    'INACTIVE': 'danger',
-    'CANCELLED': 'danger',
-    'REJECTED': 'danger',
-    'FAILED': 'danger',
-    'UNPAID': 'danger',
+    // Danger - Red
+    'INACTIVE': 'bg-rose-50 text-rose-600 border-rose-100',
+    'CANCELLED': 'bg-rose-50 text-rose-600 border-rose-100',
+    'REJECTED': 'bg-rose-50 text-rose-600 border-rose-100',
+    'FAILED': 'bg-rose-50 text-rose-600 border-rose-100',
+    'UNPAID': 'bg-rose-50 text-rose-600 border-rose-100',
     
-    // Info
-    'NEW': 'info',
-    'ASSIGNED': 'info',
-    'UNKNOWN': 'info'
+    // Info - Blue/Slate
+    'NEW': 'bg-blue-50 text-blue-600 border-blue-100',
+    'ASSIGNED': 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    'UNKNOWN': 'bg-slate-50 text-slate-500 border-slate-100'
 };
 
-const StatusTag = ({ status, customMap = {}, className = "", ...props }) => {
+const StatusTag = ({ status, className = "" }) => {
     const value = status || 'UNKNOWN';
-    const normalizedStatus = value.toString().toUpperCase();
+    const normalizedStatus = value.toString().toUpperCase().replace(/\s+/g, '_');
     
-    const severityMap = { ...defaultSeverityMap, ...customMap };
-    const severity = severityMap[normalizedStatus] || 'info';
+    const style = statusStyles[normalizedStatus] || statusStyles['UNKNOWN'];
 
     return (
-        <Tag 
-            value={value.toString().replace(/_/g, ' ')} 
-            severity={severity} 
-            rounded 
-            className={`px-3 py-1 font-bold text-[10px] uppercase tracking-widest ${className}`}
-            {...props}
-        />
+        <span className={`px-4 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest inline-flex items-center justify-center min-w-[80px] ${style} ${className}`}>
+            {value.toString().replace(/_/g, ' ')}
+        </span>
     );
 };
 

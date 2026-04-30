@@ -151,7 +151,7 @@ const DriverCreate = () => {
     };
 
     const fieldClass = (isValid) => classNames(
-        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner',
+        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-[15px] transition-all outline-none font-medium text-slate-700 shadow-inner',
         { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
     );
 
@@ -159,68 +159,68 @@ const DriverCreate = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <FormLayout
-                title={id ? "Edit Driver Profile" : "Register New Driver"}
+                title={id ? "Edit Driver" : "Create Driver"}
                 loading={loading}
                 isEditMode={!!id}
                 onSave={handleSave}
                 onDiscard={() => navigate('/admin/drivers')}
             >
-                <FormSection title="Identity & Contact" icon="pi pi-user">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormSection title="Overview">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Full Name</label>
+                            <label className="text-[13px] font-bold text-slate-500">Full Name</label>
                             <InputText
                                 value={driver.username}
                                 onChange={(e) => setDriver({ ...driver, username: e.target.value })}
                                 className={fieldClass(driver.username)}
-                                placeholder="Driver's legal name"
+                                placeholder="Driver name"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Mobile Number</label>
+                            <label className="text-[13px] font-bold text-slate-500">Mobile Number</label>
                             <InputText
                                 value={driver.mobileNumber}
                                 maxLength={10}
                                 onChange={(e) => setDriver({ ...driver, mobileNumber: e.target.value })}
                                 className={fieldClass(driver.mobileNumber && driver.mobileNumber.length === 10)}
-                                placeholder="10-digit primary contact"
+                                placeholder="10-digit number"
                             />
                         </div>
                     </div>
                 </FormSection>
 
-                <FormSection title="Vehicle & Logistics" icon="pi pi-truck">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormSection title="Vehicle & Logistics">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vehicle Type/Name</label>
+                            <label className="text-[13px] font-bold text-slate-500">Vehicle Name</label>
                             <InputText
                                 value={driver.vehicleName}
                                 onChange={(e) => setDriver({ ...driver, vehicleName: e.target.value })}
                                 className={fieldClass(driver.vehicleName)}
-                                placeholder="e.g. Tata Ace, Bolero"
+                                placeholder="e.g. Tata Ace"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vehicle Number</label>
+                            <label className="text-[13px] font-bold text-slate-500">Vehicle Number</label>
                             <InputText
                                 value={driver.vehicleNumber}
                                 onChange={(e) => setDriver({ ...driver, vehicleNumber: e.target.value })}
                                 className={fieldClass(driver.vehicleNumber)}
-                                placeholder="e.g. GJ-01-XX-1234"
+                                placeholder="Registration number"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Assigned Route</label>
+                            <label className="text-[13px] font-bold text-slate-500">Assigned Route</label>
                             <Dropdown
                                 value={driver.route}
                                 options={routesData.map(r => ({ label: r.routeName || r.name, value: r.id }))}
                                 onChange={(e) => setDriver({ ...driver, route: e.value })}
                                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
-                                placeholder="Select delivery route"
+                                placeholder="Select route"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Login Password</label>
+                            <label className="text-[13px] font-bold text-slate-500">Login Password</label>
                             <InputText
                                 type="password"
                                 value={driver.password}

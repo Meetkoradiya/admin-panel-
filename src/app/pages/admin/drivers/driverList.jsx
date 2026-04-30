@@ -125,7 +125,7 @@ const DriverList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Logistics Team"
+                title="Driver List"
                 subtitle="Manage delivery personnel and assignment status"
                 data={drivers}
                 loading={loading}

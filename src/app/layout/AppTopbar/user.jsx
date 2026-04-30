@@ -46,15 +46,14 @@ export const User = () => {
         <>
             <button
                 type="button"
-                className="p-link layout-topbar-button"
+                className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 ml-2 border border-slate-100"
                 onClick={(e) => op.current.toggle(e)}
             >
-                <div className="rounded-full bg-[#f1f1f1] size-8">
+                <div className="rounded-full bg-white shadow-sm size-9 overflow-hidden">
                     <img
                         src={profile || "/images/User.webp"}
-
-                        alt=""
-                        className="rounded-full object-cover w-full h-full"
+                        alt="User"
+                        className="object-cover w-full h-full"
                     />
                 </div>
             </button>
