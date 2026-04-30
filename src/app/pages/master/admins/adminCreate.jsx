@@ -163,7 +163,7 @@ const AdminCreate = () => {
                             value={admin.outletId}
                             options={outlets}
                             onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-52px flex items-center px-2 shadow-inner"
                             placeholder="Select an outlet (optional)"
                         />
                     </div>

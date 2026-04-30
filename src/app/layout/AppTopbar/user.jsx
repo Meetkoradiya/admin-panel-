@@ -52,6 +52,7 @@ export const User = () => {
                 <div className="rounded-full bg-[#f1f1f1] size-8">
                     <img
                         src={profile || "/images/User.webp"}
+
                         alt=""
                         className="rounded-full object-cover w-full h-full"
                     />
@@ -73,6 +74,7 @@ export const User = () => {
                             <div className="rounded-full bg-blue-100 overflow-hidden size-12 ">
                                 <img
                                     src={profile || "/images/User.webp"}
+
                                     alt=""
                                     className="h-full w-full object-cover"
                                 />

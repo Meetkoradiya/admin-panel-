@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { menuModel } from '../AppSidebar/modals';
+import { masterMenuModel } from '../AppSidebar/masterModals';
 
 export const QuickSearch = ({ visible, onHide }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
+    const user = useSelector((state) => state.auth.userData);
 
-    const allItems = menuModel.flatMap(category => 
+    const currentMenuModel = user?.role === "MASTER_ADMIN" ? masterMenuModel : menuModel;
+
+    const allItems = currentMenuModel.flatMap(category => 
         category.items.flatMap(item => 
             item.items ? item.items.map(sub => ({ ...sub, category: category.label })) : [{ ...item, category: category.label }]
         )
@@ -33,28 +38,30 @@ export const QuickSearch = ({ visible, onHide }) => {
         <Dialog 
             visible={visible} 
             onHide={onHide} 
-            header={null} 
+            showHeader={false} 
             closable={false}
-            className="quick-search-dialog p-0 overflow-hidden rounded-[24px] shadow-2xl"
-            style={{ width: '600px' }}
+            className="quick-search-dialog overflow-hidden rounded-[24px] shadow-2xl border-none"
+            contentClassName="!p-0"
+            style={{ width: '500px' }}
             maskClassName="backdrop-blur-sm bg-slate-900/40"
         >
-            <div className="flex flex-col h-[70vh]">
+            <div className="flex flex-col h-[55vh]">
                 {/* Search Header */}
-                <div className="p-5 border-b border-slate-100 flex items-center gap-4 sticky top-0 bg-white z-10">
-                    <div className="relative flex-1">
-                        <i className="pi pi-search text-blue-500 text-lg absolute left-3 top-1/2 -translate-y-1/2" />
+                <div className="p-4 border-b border-slate-100 flex items-center gap-4 sticky top-0 bg-white z-10">
+                    <div className="relative flex-1 flex items-center">
+                        <i className="pi pi-search text-slate-400 text-lg absolute left-3 z-10" />
                         <InputText 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Quick Search..." 
-                            className="w-full border-none focus:shadow-none text-lg font-bold text-slate-700 pl-12 py-0"
+                            placeholder="Search menu..." 
+                            className="w-full !border-none !shadow-none !ring-0 !outline-none text-[15px] font-medium text-slate-700 py-1 bg-transparent"
+                            style={{ paddingLeft: '2.5rem' }}
                             autoFocus
                         />
                     </div>
                     <button 
                         onClick={onHide}
-                        className="px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest hover:bg-slate-100 transition-all"
+                        className="px-3 py-1.5 bg-white border border-slate-200 rounded-[10px] text-[13px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all shadow-sm"
                     >
                         Esc
                     </button>
@@ -65,21 +72,22 @@ export const QuickSearch = ({ visible, onHide }) => {
                     {Object.keys(groupedItems).length > 0 ? (
                         Object.entries(groupedItems).map(([category, items]) => (
                             <div key={category} className="mb-6">
-                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-2">{category}</h3>
+                                <h3 className="text-[13px] font-bold text-slate-800 mb-3 ml-2">
+                                    {category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()}
+                                </h3>
                                 <div className="space-y-1">
                                     {items.map((item, idx) => (
                                         <div 
                                             key={idx}
                                             onClick={() => handleItemClick(item.to)}
-                                            className="flex items-center gap-4 p-3 rounded-xl hover:bg-blue-50 cursor-pointer group transition-all"
+                                            className="flex items-center gap-4 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all"
                                         >
-                                            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-white group-hover:border-blue-100 group-hover:shadow-sm transition-all">
-                                                <i className={`${item.icon || 'pi pi-circle-fill'} text-slate-400 group-hover:text-blue-500`} />
+                                            <div className="w-10 h-10 rounded-[12px] bg-white flex items-center justify-center border border-slate-200 shadow-sm">
+                                                <i className={`${item.icon || 'pi pi-circle-fill'} text-slate-600 text-[15px]`} />
                                             </div>
-                                            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
+                                            <span className="text-[14px] font-medium text-slate-700">
                                                 {item.label}
                                             </span>
-                                            <i className="pi pi-chevron-right ml-auto text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                                         </div>
                                     ))}
                                 </div>

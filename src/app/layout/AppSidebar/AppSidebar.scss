@@ -13,8 +13,13 @@
 
     &.sidebar-collapsed {
         width: 80px;
+        overflow: visible;
 
-        .logo-text, .brand-tagline, .layout-menuitem-root-text, .menu-arrow {
+        .sidebar-content {
+            overflow: visible;
+        }
+
+        .logo-text, .brand-tagline, .layout-menuitem-root-text, .layout-submenu-toggler {
             display: none;
         }
 
@@ -23,16 +28,68 @@
             justify-content: center;
         }
         
-        .layout-menu-item > a {
+        /* Base styles for links in collapsed state */
+        ul li > a {
             justify-content: center;
             padding: 1rem 0;
-            span { display: none; }
+            span.layout-menuitem-text, i.layout-submenu-toggler { display: none; }
+        }
+        
+        /* Hover menu logic for collapsed state */
+        ul li {
+            position: relative;
+
+            &:hover {
+                > a {
+                    background: #f8fafc;
+                }
+                
+                /* Submenu floating box */
+                > ul.layout-submenu-enter-done, > ul.layout-submenu-enter-active, > ul, > ul.layout-submenu-exit-done {
+                    display: block !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    position: absolute;
+                    left: 80px;
+                    top: 0;
+                    width: 220px;
+                    background: #ffffff;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    border-radius: 12px;
+                    padding: 0.5rem;
+                    z-index: 9999;
+                    border: 1px solid #e2e8f0;
+
+                    li a {
+                        padding: 0.75rem 1rem;
+                        span.layout-menuitem-text { display: inline !important; } /* Ensure submenu text is visible */
+                        justify-content: flex-start; /* Submenu links should be left-aligned */
+                    }
+                }
+
+                /* Tooltip for items without submenus */
+                > a:not(:has(~ ul)) > span.layout-menuitem-text {
+                    display: block !important;
+                    position: absolute;
+                    left: 80px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: #ffffff;
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                    border: 1px solid #e2e8f0;
+                    z-index: 9999;
+                    white-space: nowrap;
+                    font-size: 0.85rem;
+                }
+            }
         }
     }
 }
 
 .side-nav-header {
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -46,16 +103,16 @@
 }
 
 .logo-icon {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #3b82f6;
     
     svg {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
     }
 }
 
@@ -76,7 +133,7 @@
 .sidebar-content {
     flex: 1;
     overflow-y: auto;
-    padding: 1.5rem 0;
+    padding: 0.5rem 0;
 }
 
 .layout-menu {

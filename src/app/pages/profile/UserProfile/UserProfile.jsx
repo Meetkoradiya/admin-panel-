@@ -24,7 +24,7 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [isLoading, setIsLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState(auth.userData?.profileImageUrl || "");
   const [imageFile, setImageFile] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -103,6 +103,25 @@ const UserProfile = () => {
         await axios.put(`${BASE_URL}/admin/update-profile`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
+        // Update Redux state so the sidebar and header update immediately
+        dispatch(
+          loginAction({
+            token: auth.token,
+            refreshToken: auth.refreshToken,
+            expires_at: auth.expires_at,
+            time: auth.time,
+            userData: {
+              ...auth.userData,
+              username: formData.username,
+              mobileNumber: formData.mobileNumber,
+              email: formData.email,
+              gender: formData.gender,
+              profileImageUrl: profile || auth.userData?.profileImageUrl,
+            },
+          })
+        );
+        
         toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Profile updated successfully' });
       } else if (activeTab === "security") {
         if (securityData.newPassword !== securityData.confirmPassword) {

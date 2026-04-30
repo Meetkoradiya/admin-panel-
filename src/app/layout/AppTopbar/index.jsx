@@ -52,17 +52,9 @@ const AppTopbar = forwardRef((props, ref) => {
           <i className="pi pi-align-left text-xl text-slate-600" />
         </button>
 
-        <div className="hidden md:block ml-4">
-          <QuickSearchInput
-              readOnly
-              onClick={() => setSearchVisible(true)}
-              containerClassName="w-64"
-          />
-        </div>
-
         <button 
           type="button" 
-          className="p-link layout-topbar-button md:hidden ml-2"
+          className="p-link layout-topbar-button ml-2"
           onClick={() => setSearchVisible(true)}
         >
           <i className="pi pi-search text-xl text-slate-600" />

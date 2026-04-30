@@ -38,16 +38,19 @@
 
       &.layout-static-inactive {
         .layout-sidebar {
-          transform: translateX(-100%);
+          transform: translateX(0);
           left: 0;
+          width: 80px;
+          z-index: 1001;
+          overflow: visible;
         }
 
         .layout-main-container {
-          margin-left: 0;
+          margin-left: 80px;
 
           .layout-main {
             .layout-topbar {
-              left: 0;
+              left: 80px;
             }
           }
         }
