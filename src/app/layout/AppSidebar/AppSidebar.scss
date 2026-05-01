@@ -23,11 +23,75 @@
             justify-content: center;
             padding: 1.5rem 0;
         }
+
+        /* Center icons and hide text in collapsed state */
+        ul li > a {
+            justify-content: center;
+            padding: 1rem 0;
+            span.layout-menuitem-text, i.layout-submenu-toggler { display: none; }
+        }
+
+        /* Hover submenu logic */
+        ul li {
+            position: relative;
+
+            &:hover {
+                > a {
+                    background: #f8fafc;
+                }
+                
+                /* Submenu floating box */
+                > ul {
+                    display: block !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    position: absolute;
+                    left: 80px;
+                    top: 0;
+                    width: 220px;
+                    background: #ffffff;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    border-radius: 12px;
+                    padding: 0.5rem;
+                    z-index: 9999;
+                    border: 1px solid #f1f5f9;
+
+                    li {
+                        padding-left: 0; /* Reset padding in popup */
+                        &::before { display: none; } /* Hide dots in popup */
+                        
+                        a {
+                            padding: 0.75rem 1rem;
+                            span.layout-menuitem-text { display: inline !important; } 
+                            justify-content: flex-start;
+                        }
+                    }
+                }
+
+                /* Tooltip for items without submenus */
+                > a:not(:has(~ ul)) > span.layout-menuitem-text {
+                    display: block !important;
+                    position: absolute;
+                    left: 80px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: #ffffff;
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                    border: 1px solid #f1f5f9;
+                    z-index: 9999;
+                    white-space: nowrap;
+                    font-size: 0.85rem;
+                    color: #0f172a;
+                }
+            }
+        }
     }
 }
 
 .side-nav-header {
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -37,7 +101,7 @@
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .brand-name {
@@ -62,7 +126,7 @@
 .sidebar-content {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem 0;
+    padding: 0.5rem 0;
 }
 
 .layout-menuitem-root-text {
