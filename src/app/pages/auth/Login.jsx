@@ -280,7 +280,7 @@ const Login = () => {
       <div className="mt-12 flex items-center gap-6">
         <Link to="/privacy-policy" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Privacy policy</Link>
         <div className="w-[1px] h-3 bg-slate-300" />
-        <Link to="/terms" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms & condition</Link>
+        <Link to="/terms" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms &amp; condition</Link>
       </div>
     </div>
   );

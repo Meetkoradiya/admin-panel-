@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -18,7 +18,7 @@ const AdminList = () => {
     const navigate = useNavigate();
     const { apiGet, apiDelete } = useApi();
 
-    const fetchAdmins = async () => {
+    const fetchAdmins = useCallback(async () => {
         setLoading(true);
         try {
             const data = await apiGet('/admin/admins');
@@ -30,9 +30,9 @@ const AdminList = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
-    useEffect(() => { fetchAdmins(); }, []);
+    useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
     const handleDelete = (rowData) => {
         showConfirmDialog({

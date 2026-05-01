@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -32,7 +32,7 @@ const SupportList = () => {
         { label: 'Rejected', value: 'REJECTED' }
     ];
 
-    const fetchComplaints = async () => {
+    const fetchComplaints = useCallback(async () => {
         setLoading(true);
         try {
             const data = await apiGet('/customer/admin/complaints');
@@ -48,12 +48,12 @@ const SupportList = () => {
             });
         }
         setLoading(false);
-    };
+    }, [apiGet]);
 
 
     useEffect(() => {
         fetchComplaints();
-    }, []);
+    }, [fetchComplaints]);
 
     const handleStatusUpdate = async () => {
         if (!newStatus || !selectedComplaint) return;

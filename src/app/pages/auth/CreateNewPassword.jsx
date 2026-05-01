@@ -156,7 +156,7 @@ const CreateNewPassword = () => {
       <div className="mt-12 flex items-center gap-6">
         <button onClick={() => navigate('/privacy-policy')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Privacy policy</button>
         <div className="w-[1px] h-3 bg-slate-300" />
-        <button onClick={() => navigate('/terms')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms & condition</button>
+        <button onClick={() => navigate('/terms')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms &amp; condition</button>
       </div>
     </div>
   );

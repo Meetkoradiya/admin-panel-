@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -14,7 +14,7 @@ const SubscriptionList = () => {
     const toast = useRef(null);
     const { apiGet } = useApi();
 
-    const fetchSubscriptions = async () => {
+    const fetchSubscriptions = useCallback(async () => {
         setLoading(true);
         try {
             const data = await apiGet('/master/subscriptions');
@@ -24,9 +24,9 @@ const SubscriptionList = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
-    useEffect(() => { fetchSubscriptions(); }, []);
+    useEffect(() => { fetchSubscriptions(); }, [fetchSubscriptions]);
 
     const statusBodyTemplate = (rowData) => {
         return <StatusTag status={rowData.status || 'INACTIVE'} />;

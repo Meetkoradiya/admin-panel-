@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -16,7 +16,7 @@ const OutletList = () => {
     const navigate = useNavigate();
     const { apiGet, apiDelete } = useApi();
 
-    const fetchOutlets = async () => {
+    const fetchOutlets = useCallback(async () => {
         setLoading(true);
         try {
             const data = await apiGet('/master/outlets');
@@ -26,9 +26,9 @@ const OutletList = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
-    useEffect(() => { fetchOutlets(); }, []);
+    useEffect(() => { fetchOutlets(); }, [fetchOutlets]);
 
     const deleteOutlet = async (rowData) => {
         showConfirmDialog({

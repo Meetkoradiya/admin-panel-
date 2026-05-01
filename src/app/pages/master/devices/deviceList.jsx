@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -14,7 +14,7 @@ const DeviceList = () => {
     const toast = useRef(null);
     const { apiGet, apiPost } = useApi();
 
-    const fetchDevices = async () => {
+    const fetchDevices = useCallback(async () => {
         setLoading(true);
         try {
             const data = await apiGet('/master/devices');
@@ -24,9 +24,9 @@ const DeviceList = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiGet]);
 
-    useEffect(() => { fetchDevices(); }, []);
+    useEffect(() => { fetchDevices(); }, [fetchDevices]);
 
     const verifyDevice = async (rowData) => {
         try {
