@@ -1,41 +1,43 @@
-import React from 'react';
+﻿import React from 'react';
+import Button from "@/components/ui/Button";
 
 const ActionButtons = ({ onEdit, onDelete, editTooltip = "Edit", deleteTooltip = "Delete" }) => {
     return (
         <div className="flex items-center justify-center gap-3">
             {/* Edit Button */}
             {onEdit && (
-                <button
+                <Button
+                    variant="icon"
+                    size="sm"
+                    icon="pi pi-pencil"
+                    tooltip={editTooltip}
+                    tooltipOptions={{ position: 'top' }}
                     onClick={(e) => {
                         e.stopPropagation();
                         onEdit();
                     }}
-                    className="group relative flex items-center justify-center w-8 h-8 transition-all duration-300 transform active:scale-90"
-                    title={editTooltip}
-                >
-                    <div className="absolute inset-0 border border-sky-400 rounded-full flex items-center justify-center bg-white group-hover:bg-sky-50 transition-all duration-300 shadow-sm">
-                        <i className="pi pi-pencil text-sky-500 text-[10px] font-bold" />
-                    </div>
-                </button>
+                    className="text-sky-500 hover:bg-sky-50"
+                />
             )}
 
             {/* Delete Button */}
             {onDelete && (
-                <button
+                <Button
+                    variant="icon"
+                    size="sm"
+                    icon="pi pi-trash"
+                    tooltip={deleteTooltip}
+                    tooltipOptions={{ position: 'top' }}
                     onClick={(e) => {
                         e.stopPropagation();
                         onDelete();
                     }}
-                    className="group relative flex items-center justify-center w-8 h-8 transition-all duration-300 transform active:scale-90"
-                    title={deleteTooltip}
-                >
-                    <div className="absolute inset-0 border border-rose-400 rounded-full flex items-center justify-center bg-white group-hover:bg-rose-50 transition-all duration-300 shadow-sm">
-                        <i className="pi pi-trash text-rose-500 text-[10px] font-bold" />
-                    </div>
-                </button>
+                    className="text-rose-500 hover:bg-rose-50"
+                />
             )}
         </div>
     );
 };
 
 export default ActionButtons;
+

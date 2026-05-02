@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Toast } from "primereact/toast";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { Password } from "primereact/password";
 import { InputText } from "primereact/inputtext";
 import { Checkbox } from "primereact/checkbox";
@@ -84,7 +84,7 @@ const Login = () => {
       // Master admin endpoint returns access_token; regular login returns accessToken
       const token = dataPayload?.access_token || dataPayload?.accessToken;
       if (!token) {
-        throw new Error("Invalid response from server — no token received");
+        throw new Error("Invalid response from server â€” no token received");
       }
 
       const refreshToken = dataPayload.refreshToken || dataPayload.refresh_token || null;
@@ -184,43 +184,48 @@ const Login = () => {
               className="w-12 h-12 relative z-10"
             >
               <defs>
-                <linearGradient id="logo-grad-login" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <linearGradient id="logo-grad-login-new" x1="12" y1="3" x2="12" y2="21" gradientUnits="userSpaceOnUse">
                   <stop offset="0%" stopColor="#3b82f6" />
                   <stop offset="100%" stopColor="#1d4ed8" />
                 </linearGradient>
               </defs>
-              <circle cx="12" cy="13" r="9" stroke="url(#logo-grad-login)" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.4" />
               <path
                 d="M12 3C12 3 6 10 6 14.5C6 18.0899 8.68629 21 12 21C15.3137 21 18 18.0899 18 14.5C18 10 12 3 12 3Z"
-                fill="url(#logo-grad-login)"
+                fill="url(#logo-grad-login-new)"
               />
               <path
-                d="M12 6C12 6 8.5 10.5 8.5 14C8.5 15.933 10.067 17.5 12 17.5C13.933 17.5 15.5 15.933 15.5 14C15.5 10.5 12 6 12 6Z"
+                d="M12 21C15.3137 21 18 18.0899 18 14.5C18 10.9101 15.3137 8 12 8V21Z"
+                fill="white"
+                fillOpacity="0.1"
+              />
+              <path
+                d="M12 5.5C12 5.5 10 8.5 10 11.5C10 13.5 10.8954 15 12 15V5.5Z"
                 fill="white"
                 fillOpacity="0.25"
               />
-              <circle cx="14" cy="10" r="1.5" fill="white" fillOpacity="0.4" />
+              <circle cx="14.5" cy="11" r="1.2" fill="white" fillOpacity="0.5" />
             </svg>
           </div>
-          <span className="text-3xl font-black text-slate-800 tracking-tight">Amrut Water</span>
+          <span className="text-3xl font-bold text-slate-800 tracking-tight">Amrut Water</span>
         </div>
-        <div className="flex items-center gap-1.5 mt-1">
-          <div className="h-[2px] w-3 bg-blue-500 rounded-full" />
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600">Premium Quality</span>
+        <div className="flex items-center gap-3 mt-2">
+          <div className="h-[1.5px] w-6 bg-blue-500/40 rounded-full" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-600/80">Premium Quality</span>
+          <div className="h-[1.5px] w-6 bg-blue-500/40 rounded-full" />
         </div>
       </div>
 
       {/* Main Login Card */}
-      <div className="w-full max-w-[480px] bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
-        <div className="p-10 md:p-12">
-          <div className="mb-10">
-            <h1 className="text-2xl font-black text-slate-900 mb-2">Welcome back</h1>
-            <p className="text-sm font-medium text-slate-400">Enter your credentials to access your dashboard</p>
+      <div className="w-full max-w-[440px] bg-white rounded-4xl shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
+        <div className="p-10 md:p-14">
+          <div className="mb-12">
+            <h1 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Welcome back</h1>
+            <p className="text-sm font-medium text-slate-400 leading-relaxed">Enter your credentials to access your dashboard</p>
           </div>
 
-          <div className="space-y-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-slate-500 ml-1">Phone Number</label>
+          <div className="space-y-8">
+            <div className="flex flex-col gap-3">
+              <label className="text-[13px] font-bold text-slate-500 ml-1">Phone Number</label>
               <InputText
                 name="mobileNumber"
                 value={formData.mobileNumber}
@@ -232,13 +237,13 @@ const Login = () => {
                   }
                 }}
                 placeholder="9712705145"
-                className={`w-full p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all ${errors.mobileNumber ? "border-red-400" : ""}`}
+                className={`w-full p-4 rounded-2xl bg-slate-50/50 border-slate-100 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all ${errors.mobileNumber ? "border-red-400" : ""}`}
               />
-              {errors.mobileNumber && <small className="text-red-500 font-bold ml-1">{errors.mobileNumber}</small>}
+              {errors.mobileNumber && <small className="text-red-500 font-bold ml-1 mt-1">{errors.mobileNumber}</small>}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-slate-500 ml-1">Password</label>
+            <div className="flex flex-col gap-3">
+              <label className="text-[13px] font-bold text-slate-500 ml-1">Password</label>
               <Password
                 name="password"
                 value={formData.password}
@@ -247,25 +252,29 @@ const Login = () => {
                 feedback={false}
                 placeholder="••••••••"
                 className="w-full"
-                inputClassName={`w-full p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all ${errors.password ? "border-red-400" : ""}`}
+                inputClassName={`w-full p-4 rounded-2xl bg-slate-50/50 border-slate-100 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all ${errors.password ? "border-red-400" : ""}`}
               />
-              {errors.password && <small className="text-red-500 font-bold ml-1">{errors.password}</small>}
+              {errors.password && <small className="text-red-500 font-bold ml-1 mt-1">{errors.password}</small>}
             </div>
 
-            <div className="flex justify-between items-center py-2">
-              <div className="flex items-center gap-2">
+            <div className="flex justify-between items-center py-1">
+              <div className="flex items-center gap-3">
                 <Checkbox inputId="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} className="scale-110" />
                 <label htmlFor="rememberMe" className="text-sm text-slate-600 font-bold cursor-pointer">Remember me</label>
               </div>
-              <Link to="/forgot-password" title="Recover Password" className="text-sm text-blue-600 font-black hover:underline tracking-tight">Forgot password?</Link>
+              <Link to="/forgot-password" title="Recover Password" className="text-sm text-blue-600 font-bold hover:underline tracking-tight">Forgot password?</Link>
             </div>
 
-            <Button
-              label="Sign In"
-              loading={isLoading}
-              onClick={handleLogin}
-              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-black text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] mt-2"
-            />
+            <div className="pt-4">
+                <Button
+                label="Sign In"
+                loading={isLoading}
+                onClick={handleLogin}
+                variant="primary"
+                size="lg"
+                className="w-full h-[58px] text-lg font-bold bg-[#3b82f6] hover:bg-[#2563eb] rounded-full shadow-lg shadow-blue-500/20 transition-all border-none"
+                />
+            </div>
           </div>
         </div>
 
@@ -287,3 +296,5 @@ const Login = () => {
 };
 
 export default Login;
+
+

@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+﻿import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUserData } from "../../redux/slice/AuthSlice";
 
@@ -30,3 +30,4 @@ const PublicRoute = () => {
 };
 
 export default PublicRoute;
+

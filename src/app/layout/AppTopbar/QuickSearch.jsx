@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom';
@@ -96,7 +96,7 @@ export const QuickSearch = ({ visible, onHide }) => {
                     ) : (
                         <div className="flex flex-col items-center justify-center py-20 opacity-30 grayscale text-center">
                             <i className="pi pi-search text-6xl mb-4" />
-                            <p className="font-bold uppercase tracking-widest text-sm px-10">No results found for &quot;{searchQuery}&quot;</p>
+                            <p className="font-semibold uppercase tracking-widest text-sm px-10">No results found for &quot;{searchQuery}&quot;</p>
                         </div>
                     )}
                 </div>
@@ -104,3 +104,4 @@ export const QuickSearch = ({ visible, onHide }) => {
         </Dialog>
     );
 };
+

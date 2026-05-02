@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -50,12 +50,12 @@ const OutletList = () => {
 
     const nameBodyTemplate = (rowData) => (
         <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 font-black text-xs border border-indigo-100">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 font-bold text-xs border border-indigo-100">
                 {rowData.name?.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
                 <span className="font-bold text-slate-800 text-sm">{rowData.name}</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.location || 'No Location'}</span>
+                <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">{rowData.location || 'No Location'}</span>
             </div>
         </div>
     );
@@ -104,7 +104,7 @@ const OutletList = () => {
                 <Column header="Outlet Details" body={nameBodyTemplate} sortable sortField="name" />
                 <Column field="mobileNumber" header="Contact" className="text-slate-500 text-sm font-medium" />
                 <Column field="status" header="Status" body={(row) => (
-                    <span className="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-semibold uppercase tracking-widest">
                         {row.status || 'ACTIVE'}
                     </span>
                 )} style={{ width: '8rem', textAlign: 'center' }} />
@@ -115,3 +115,5 @@ const OutletList = () => {
 };
 
 export default OutletList;
+
+

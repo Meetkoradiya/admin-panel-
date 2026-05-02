@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -96,7 +96,7 @@ const SupportList = () => {
     };
 
     const dateTemplate = (row) => {
-        if (!row.createdAt) return '—';
+        if (!row.createdAt) return 'â€”';
         return (
             <span className="text-slate-600 text-sm">
                 {new Date(row.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -116,7 +116,7 @@ const SupportList = () => {
     const complainerTemplate = (row) => (
         <div className="flex flex-col">
             <span className="font-bold text-slate-800 text-sm">{row.complainerName || 'Customer'}</span>
-            <span className="text-xs text-slate-400 font-medium">{row.customerMobileNumber || '—'}</span>
+            <span className="text-xs text-slate-400 font-medium">{row.customerMobileNumber || 'â€”'}</span>
         </div>
     );
 
@@ -205,8 +205,8 @@ const SupportList = () => {
                                 <i className={`${s.icon} text-xl`} />
                             </div>
                             <div>
-                                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{s.label}</p>
-                                <p className="text-2xl font-bold text-slate-800">{loading ? '—' : s.value}</p>
+                                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">{s.label}</p>
+                                <p className="text-2xl font-bold text-slate-800">{loading ? 'â€”' : s.value}</p>
                             </div>
                         </div>
                     ))}
@@ -236,7 +236,7 @@ const SupportList = () => {
                         <Column field="no" header="No." body={(_, opts) => <span className="text-slate-600 font-medium text-sm ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
                         <Column header="Complainer" body={complainerTemplate} sortField="complainerName" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                         <Column header="Type" body={typeTemplate} sortField="complaintType" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
-                        <Column field="description" header="Description" className="text-slate-600 font-medium text-sm" body={(row) => <p className="truncate max-w-280px">{row.description || '—'}</p>} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
+                        <Column field="description" header="Description" className="text-slate-600 font-medium text-sm" body={(row) => <p className="truncate max-w-280px">{row.description || 'â€”'}</p>} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                         <Column header="Date" body={dateTemplate} sortField="createdAt" sortable headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                         <Column header="Status" body={statusTemplate} sortField="status" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                         <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
@@ -263,10 +263,10 @@ const SupportList = () => {
                     <div className="pt-4 space-y-6">
                         {selectedComplaint && (
                             <div className="bg-slate-50 rounded-3xl p-5 border border-slate-100">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Active Ticket Details</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Active Ticket Details</p>
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center"><span className="text-xs text-slate-500">Name</span><span className="font-bold text-slate-800 text-sm">{selectedComplaint.complainerName}</span></div>
-                                    <div className="flex justify-between items-center"><span className="text-xs text-slate-500">Contact</span><span className="font-bold text-slate-800 text-sm">{selectedComplaint.complainerMobile || '—'}</span></div>
+                                    <div className="flex justify-between items-center"><span className="text-xs text-slate-500">Contact</span><span className="font-bold text-slate-800 text-sm">{selectedComplaint.complainerMobile || 'â€”'}</span></div>
                                     <div className="flex flex-col gap-1 mt-2 border-t border-slate-200 pt-3">
                                         <span className="text-xs text-slate-500">Description</span>
                                         <p className="text-sm text-slate-700 font-medium leading-relaxed">{selectedComplaint.description}</p>
@@ -275,7 +275,7 @@ const SupportList = () => {
                             </div>
                         )}
                         <div className="flex flex-col gap-3">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Resolution Protocol</label>
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Resolution Protocol</label>
                             <Dropdown
                                 value={newStatus}
                                 options={statusOptions}
@@ -292,3 +292,6 @@ const SupportList = () => {
 };
 
 export default SupportList;
+
+
+

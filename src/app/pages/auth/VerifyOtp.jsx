@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { InputOtp } from "primereact/inputotp";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -47,11 +47,11 @@ const VerifyOtp = () => {
               <circle cx="14" cy="10" r="1.5" fill="white" fillOpacity="0.4" />
             </svg>
           </div>
-          <span className="text-3xl font-black text-slate-800 tracking-tight">Amrut Water</span>
+          <span className="text-3xl font-bold text-slate-800 tracking-tight">Amrut Water</span>
         </div>
         <div className="flex items-center gap-1.5 mt-1">
           <div className="h-[2px] w-3 bg-blue-500 rounded-full" />
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600">Verification</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-600">Verification</span>
         </div>
       </div>
 
@@ -59,7 +59,7 @@ const VerifyOtp = () => {
       <div className="w-full max-w-[480px] bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
         <div className="p-10 md:p-12">
           <div className="mb-10 text-center lg:text-left">
-            <h1 className="text-2xl font-black text-slate-900 mb-2">Verify OTP</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Verify OTP</h1>
             <p className="text-sm font-medium text-slate-400 leading-relaxed">
               We&apos;ve sent a 6-digit verification code to your email. Please enter it below to safely reset your account.
             </p>
@@ -72,26 +72,26 @@ const VerifyOtp = () => {
                 onChange={(e) => setOtp(e.value)}
                 length={6}
                 style={{ gap: "10px" }}
-                inputClassName="w-12 h-14 text-2xl border-2 rounded-xl border-slate-100 bg-slate-50 text-slate-800 font-black transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 shadow-inner"
+                inputClassName="w-12 h-14 text-2xl border-2 rounded-xl border-slate-100 bg-slate-50 text-slate-800 font-bold transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 shadow-inner"
               />
             </div>
 
             <Button
               label="Verify & Continue"
               onClick={handleVerify}
-              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-black text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
+              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-bold text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
             />
 
             <div className="space-y-4 pt-4">
               <p className="text-xs font-bold text-slate-400 text-center uppercase tracking-widest leading-loose">
                 Didn&apos;t receive the code? <br />
-                <button className="text-blue-600 font-black hover:underline mt-1">Resend Code</button>
+                <button className="text-blue-600 font-bold hover:underline mt-1">Resend Code</button>
               </p>
 
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="text-sm font-black text-slate-400 hover:text-blue-600 flex items-center justify-center gap-2 transition-all mx-auto pt-2"
+                className="text-sm font-bold text-slate-400 hover:text-blue-600 flex items-center justify-center gap-2 transition-all mx-auto pt-2"
               >
                 <i className="pi pi-arrow-left text-xs" />
                 Back to Sign In
@@ -118,3 +118,5 @@ const VerifyOtp = () => {
 };
 
 export default VerifyOtp;
+
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -36,13 +36,13 @@ const BillingManagement = () => {
     };
 
     const amountBodyTemplate = (rowData) => (
-        <span className="font-black text-slate-800">₹{(rowData.amount || 0).toLocaleString()}</span>
+        <span className="font-bold text-slate-800">â‚¹{(rowData.amount || 0).toLocaleString()}</span>
     );
 
     const customerBodyTemplate = (rowData) => (
         <div className="flex flex-col">
-            <span className="font-bold text-slate-700 text-sm">{rowData.customer?.username || '—'}</span>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.customer?.mobileNumber || '—'}</span>
+            <span className="font-bold text-slate-700 text-sm">{rowData.customer?.username || 'â€”'}</span>
+            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">{rowData.customer?.mobileNumber || 'â€”'}</span>
         </div>
     );
 
@@ -89,3 +89,5 @@ const BillingManagement = () => {
 };
 
 export default BillingManagement;
+
+

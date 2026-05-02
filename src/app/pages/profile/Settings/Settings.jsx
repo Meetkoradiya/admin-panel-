@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
@@ -11,10 +11,10 @@ import { FileUpload } from "primereact/fileupload";
 import { InputSwitch } from "primereact/inputswitch";
 import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
-import { login as loginAction } from "../../../../redux/slice/AuthSlice";
+import { login as loginAction } from "@/redux/slice/AuthSlice";
 import { showConfirmDialog } from "@/utils/confirmUtils";
 
-const UserProfile = () => {
+const Settings = () => {
   const toast = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -230,8 +230,8 @@ const UserProfile = () => {
                       <img src={profile || "/images/User.webp"} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-gray-50 shadow-sm" />
                     </div>
                     <div className="flex gap-3">
-                      <Button label="Upload New" className="p-button-sm rounded-lg bg-blue-600 border-none px-4 font-bold" onClick={() => setShowDialog(true)} />
-                      <Button label="Remove" className="p-button-sm p-button-outlined p-button-secondary rounded-lg px-4" onClick={handleRemoveProfile} />
+                      <Button label="Upload New" variant="primary" size="sm" onClick={() => setShowDialog(true)} />
+                      <Button label="Remove" variant="secondary" size="sm" onClick={handleRemoveProfile} />
                     </div>
                   </div>
 
@@ -313,7 +313,7 @@ const UserProfile = () => {
               )}
 
               <div className="flex justify-end mt-12 pt-6 border-t border-gray-100">
-                <Button label="Save Changes" onClick={handleSave} loading={isLoading} className="bg-blue-600 border-none px-10 py-3 rounded-xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700" />
+                <Button label="Save Changes" onClick={handleSave} loading={isLoading} variant="primary" className="px-10" />
               </div>
 
             </div>
@@ -345,4 +345,5 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default Settings;
+

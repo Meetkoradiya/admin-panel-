@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Button } from 'primereact/button';
 
@@ -66,7 +66,7 @@ export const showConfirmDialog = ({
 
                 {/* Information Body */}
                 <div className="text-center mb-10">
-                    <h3 className="text-2xl font-black text-slate-800 tracking-tight mb-3 px-2 leading-none">{title}</h3>
+                    <h3 className="text-2xl font-bold text-slate-800 tracking-tight mb-3 px-2 leading-none">{title}</h3>
                     <p className="text-slate-500 font-bold text-sm leading-relaxed px-6">{message}</p>
                 </div>
 
@@ -74,14 +74,14 @@ export const showConfirmDialog = ({
                 <div className="flex flex-col gap-3 w-full">
                     <button 
                         onClick={(e) => { hide(e); if(onAccept) onAccept(); }} 
-                        className={`w-full py-4 rounded-2xl text-white font-black transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 ${theme.btn}`}
+                        className={`w-full py-4 rounded-2xl text-white font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 ${theme.btn}`}
                     >
                         <i className={`${theme.icon} text-sm`}></i>
                         {acceptLabel}
                     </button>
                     <button 
                         onClick={(e) => { hide(e); if(onReject) onReject(); }} 
-                        className="w-full py-4 rounded-2xl bg-slate-50 text-slate-400 font-black hover:bg-slate-100 transition-all active:scale-95"
+                        className="w-full py-4 rounded-2xl bg-slate-50 text-slate-400 font-bold hover:bg-slate-100 transition-all active:scale-95"
                     >
                         {rejectLabel}
                     </button>
@@ -90,3 +90,4 @@ export const showConfirmDialog = ({
         )
     });
 };
+

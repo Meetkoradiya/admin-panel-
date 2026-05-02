@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
@@ -149,7 +149,7 @@ const SignUp = () => {
                                     onChange={handleInputChange}
                                     toggleMask
                                     feedback={false}
-                                    placeholder="••••••••"
+                                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                                     className="w-full"
                                     inputClassName={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50", { 'p-invalid': errors.password })}
                                 />
@@ -164,7 +164,7 @@ const SignUp = () => {
                                     onChange={handleInputChange}
                                     toggleMask
                                     feedback={false}
-                                    placeholder="••••••••"
+                                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                                     className="w-full"
                                     inputClassName={classNames("w-full p-3 rounded-xl border border-slate-200 bg-slate-50", { 'p-invalid': errors.confirmPassword })}
                                 />

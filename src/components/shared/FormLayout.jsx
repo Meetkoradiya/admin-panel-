@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Button } from 'primereact/button';
+import Button from "@/components/ui/Button";
 import { Page } from './Page';
 import { LayoutContext } from '@/app/context/layoutcontent';
 import { classNames } from 'primereact/utils';
@@ -20,9 +20,9 @@ const FormLayout = ({
 
     return (
         <Page title={title}>
-            <div className="w-full flex flex-col items-stretch animate-fade-in pb-24">
+            <div className="w-full flex flex-col items-stretch animate-fade-in pb-24 pt-4">
                 <div className="w-full mb-6 px-1">
-                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">{title}</h1>
+                    <h1 className="text-2xl font-bold text-slate-800 tracking-tight">{title}</h1>
                 </div>
 
                 <div className={classNames("w-full flex flex-col items-stretch gap-6", { "lg:grid lg:grid-cols-4": sidebar })}>
@@ -39,23 +39,24 @@ const FormLayout = ({
 
                 {/* Fixed Footer Actions */}
                 <div className={classNames(
-                    "fixed bottom-0 right-0 bg-white border-t border-slate-100 p-5 z-40 transition-all duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]",
-                    isSidebarCollapsed ? "left-0" : "left-0 md:left-70"
+                    "fixed bottom-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 p-5 z-40 transition-all duration-300",
+                    isSidebarCollapsed ? "left-0" : "left-0 md:left-[280px]"
                 )}>
-                    <div className="w-full flex justify-end gap-4 mx-auto px-6">
+                    <div className="flex justify-end gap-4 px-6">
                         <Button
                             label={discardLabel}
                             icon="pi pi-trash"
-                            className="p-button-outlined p-button-danger border-rose-100 text-rose-500 font-bold px-6 rounded-xl h-10 text-sm"
+                            variant="secondary"
+                            className="text-rose-500 border-rose-100 hover:bg-rose-50"
                             onClick={onDiscard}
                             disabled={loading}
                         />
                         <Button
                             label={isEditMode ? "Update Details" : saveLabel}
-                            icon={loading ? "pi pi-spin pi-spinner" : ""}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-10 rounded-xl h-10 border-none transition-all shadow-lg shadow-blue-500/10 text-sm"
-                            onClick={onSave}
+                            variant="primary"
                             loading={loading}
+                            onClick={onSave}
+                            className="px-10"
                         />
                     </div>
                 </div>
@@ -66,9 +67,8 @@ const FormLayout = ({
 
 export const FormSection = ({ title, icon, children }) => (
     <div className="w-full bg-white rounded-3xl shadow-sm border border-slate-100 p-8 hover:shadow-md transition-all">
-        <div className="flex items-center gap-4 mb-8">
-            <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-            <h3 className="text-xl font-black text-slate-800 tracking-tight">{title}</h3>
+        <div className="flex items-center gap-3 mb-8">
+            <h3 className="text-xl font-bold text-slate-800 tracking-tight">{title}</h3>
         </div>
         <div className="w-full flex flex-col items-stretch">
             {children}
@@ -77,3 +77,4 @@ export const FormSection = ({ title, icon, children }) => (
 );
 
 export default FormLayout;
+

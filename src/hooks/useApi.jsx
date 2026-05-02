@@ -1,6 +1,6 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { logout } from '../redux/slice/AuthSlice';
+import { logout } from "@/redux/slice/AuthSlice";
 import { useMemo } from 'react';
 import { store } from '../redux/Store';
 
@@ -67,3 +67,5 @@ const useApi = () => {
 };
 
 export default useApi;
+
+

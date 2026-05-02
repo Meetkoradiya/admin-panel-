@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ const NotFound = ({ type = "404" }) => {
     return (
         <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 animate-fade-in">
             <div className="relative mb-8">
-                <h1 className="text-[12rem] font-black text-slate-100 leading-none select-none">
+                <h1 className="text-[12rem] font-bold text-slate-100 leading-none select-none">
                     {type}
                 </h1>
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -23,7 +23,7 @@ const NotFound = ({ type = "404" }) => {
                 </div>
             </div>
             
-            <h2 className="text-3xl font-black text-slate-800 mb-4">
+            <h2 className="text-3xl font-bold text-slate-800 mb-4">
                 {type === "401" ? "Unauthorized Access" : "Page Not Found"}
             </h2>
             <p className="text-slate-500 max-w-md mx-auto mb-8 font-medium">
@@ -51,3 +51,4 @@ const NotFound = ({ type = "404" }) => {
 };
 
 export default NotFound;
+

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -73,11 +73,11 @@ const CreateNewPassword = () => {
               <circle cx="14" cy="10" r="1.5" fill="white" fillOpacity="0.4" />
             </svg>
           </div>
-          <span className="text-3xl font-black text-slate-800 tracking-tight">Amrut Water</span>
+          <span className="text-3xl font-bold text-slate-800 tracking-tight">Amrut Water</span>
         </div>
         <div className="flex items-center gap-1.5 mt-1">
           <div className="h-[2px] w-3 bg-blue-500 rounded-full" />
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600">Secure Reset</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-600">Secure Reset</span>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ const CreateNewPassword = () => {
       <div className="w-full max-w-[480px] bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
         <div className="p-10 md:p-12">
           <div className="mb-10 text-center lg:text-left">
-            <h1 className="text-2xl font-black text-slate-900 mb-2">Create New Password</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Create New Password</h1>
             <p className="text-sm font-medium text-slate-400 leading-relaxed">
               Ensure your account stays safe by creating a strong, unique password that you haven&apos;t used before.
             </p>
@@ -102,7 +102,7 @@ const CreateNewPassword = () => {
                   onChange={handleInputChange}
                   toggleMask
                   feedback={false}
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className="w-full"
                   inputClassName="w-full pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
                 />
@@ -119,7 +119,7 @@ const CreateNewPassword = () => {
                   onChange={handleInputChange}
                   toggleMask
                   feedback={false}
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className="w-full"
                   inputClassName="w-full pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
                 />
@@ -129,14 +129,14 @@ const CreateNewPassword = () => {
             <Button
               label="Update Password"
               onClick={handleUpdatePassword}
-              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-black text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] mt-2"
+              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-bold text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] mt-2"
             />
 
             <div className="pt-4 text-center">
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="text-sm font-black text-slate-400 hover:text-blue-600 flex items-center justify-center gap-2 transition-all mx-auto"
+                className="text-sm font-bold text-slate-400 hover:text-blue-600 flex items-center justify-center gap-2 transition-all mx-auto"
               >
                 <i className="pi pi-arrow-left text-xs" />
                 Back to Sign In
@@ -163,3 +163,5 @@ const CreateNewPassword = () => {
 };
 
 export default CreateNewPassword;
+
+

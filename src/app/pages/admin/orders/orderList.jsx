@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -37,13 +37,13 @@ const OrderList = () => {
     };
 
     const priceBodyTemplate = (rowData) => {
-        return <span className="font-black text-slate-800">₹{(rowData.price || rowData.amount || 0).toLocaleString()}</span>;
+        return <span className="font-bold text-slate-800">â‚¹{(rowData.price || rowData.amount || 0).toLocaleString()}</span>;
     };
 
     const customerBodyTemplate = (rowData) => (
         <div className="flex flex-col">
             <span className="font-bold text-slate-700 text-sm">{rowData.customer?.username || rowData.customerName || 'Walk-in'}</span>
-            <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{rowData.customer?.mobileNumber || '—'}</span>
+            <span className="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">{rowData.customer?.mobileNumber || 'â€”'}</span>
         </div>
     );
 
@@ -70,9 +70,9 @@ const OrderList = () => {
                 onAdd={null} // Usually orders are created via POS or Customer app
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column field="id" header="Order ID" body={(row) => <span className="font-black text-blue-500 text-xs">#{row.id || row._id}</span>} sortable />
+                <Column field="id" header="Order ID" body={(row) => <span className="font-bold text-blue-500 text-xs">#{row.id || row._id}</span>} sortable />
                 <Column header="Customer" body={customerBodyTemplate} sortable sortField="customer.username" />
-                <Column field="product.name" header="Commodity" body={(row) => <span className="text-slate-600 font-medium text-sm">{row.product?.name || '—'}</span>} />
+                <Column field="product.name" header="Commodity" body={(row) => <span className="text-slate-600 font-medium text-sm">{row.product?.name || 'â€”'}</span>} />
                 <Column field="qty" header="Units" body={(row) => <span className="font-bold text-slate-700">{row.qty || row.quantity || 0}</span>} sortable />
                 <Column header="Total" body={priceBodyTemplate} sortable sortField="price" />
                 <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
@@ -83,3 +83,4 @@ const OrderList = () => {
 };
 
 export default OrderList;
+

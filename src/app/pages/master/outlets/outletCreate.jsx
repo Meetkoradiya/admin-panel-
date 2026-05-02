@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
@@ -66,7 +66,7 @@ const OutletCreate = () => {
                 <FormSection title="Core Information" icon="pi pi-building">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Outlet Name</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Outlet Name</label>
                             <InputText 
                                 value={outlet.name} 
                                 onChange={(e) => setOutlet({...outlet, name: e.target.value})} 
@@ -75,7 +75,7 @@ const OutletCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Contact Number</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Contact Number</label>
                             <InputText 
                                 value={outlet.mobileNumber} 
                                 onChange={(e) => setOutlet({...outlet, mobileNumber: e.target.value})} 
@@ -89,7 +89,7 @@ const OutletCreate = () => {
                 <FormSection title="Geographic Data" icon="pi pi-map-marker">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">City / Region</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">City / Region</label>
                             <InputText 
                                 value={outlet.location} 
                                 onChange={(e) => setOutlet({...outlet, location: e.target.value})} 
@@ -98,7 +98,7 @@ const OutletCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Full Address</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Full Address</label>
                             <InputText 
                                 value={outlet.address} 
                                 onChange={(e) => setOutlet({...outlet, address: e.target.value})} 
@@ -114,3 +114,5 @@ const OutletCreate = () => {
 };
 
 export default OutletCreate;
+
+

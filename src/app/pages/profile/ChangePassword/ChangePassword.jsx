@@ -1,4 +1,4 @@
-import { Button } from "primereact/button";
+﻿import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
@@ -209,8 +209,8 @@ const ChangePassword = () => {
               <i className="pi pi-shield text-white text-base"></i>
             </div>
             <div>
-              <h1 className="text-xl font-black text-slate-800 tracking-tight leading-none">Security</h1>
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500 mt-1">Protection</p>
+              <h1 className="text-xl font-bold text-slate-800 tracking-tight leading-none">Security</h1>
+              <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-blue-500 mt-1">Protection</p>
             </div>
           </div>
           <button
@@ -227,13 +227,13 @@ const ChangePassword = () => {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Side */}
             <div className="lg:w-1/3">
-              <h2 className="text-lg font-black text-slate-800 mb-2 tracking-tight">Update Password</h2>
+              <h2 className="text-lg font-bold text-slate-800 mb-2 tracking-tight">Update Password</h2>
               <p className="text-slate-500 text-[12px] font-medium leading-relaxed mb-6">
                 Keep your account secure with a strong password.
               </p>
               
               <div className="bg-blue-50/50 border border-blue-100 p-5 rounded-2xl">
-                <h3 className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-3">Rules</h3>
+                <h3 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-3">Rules</h3>
                 <ul className="space-y-2">
                   {["8+ characters", "Numbers/Symbols", "Unique"].map((req, idx) => (
                     <li key={idx} className="flex items-center gap-2 text-[11px] font-bold text-slate-600">
@@ -296,7 +296,7 @@ const ChangePassword = () => {
               <div className="flex justify-between items-center mt-4 pt-6 border-t border-slate-100">
                 <button
                   type="button"
-                  className="text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-blue-600 transition-colors"
+                  className="text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-blue-600 transition-colors"
                   onClick={() => navigate("/forgot-password")}
                 >
                   Forgot?
@@ -307,7 +307,7 @@ const ChangePassword = () => {
                   loading={isLoading}
                   onClick={handleSubmit}
                   disabled={!isFormValid() || isLoading}
-                  className="px-8 py-3 bg-blue-600 border-none rounded-xl font-black text-white hover:bg-blue-700 shadow-lg shadow-blue-500/10 text-xs uppercase tracking-widest active:scale-95"
+                  className="px-8 py-3 bg-blue-600 border-none rounded-xl font-bold text-white hover:bg-blue-700 shadow-lg shadow-blue-500/10 text-xs uppercase tracking-widest active:scale-95"
                 />
               </div>
             </div>
@@ -319,3 +319,6 @@ const ChangePassword = () => {
 };
 
 export default ChangePassword;
+
+
+

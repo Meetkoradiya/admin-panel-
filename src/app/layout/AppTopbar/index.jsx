@@ -15,6 +15,7 @@ import { User } from "./user";
 import { Notification } from "./notification";
 import { QuickSearch } from "./QuickSearch";
 import QuickSearchInput from "../../../components/shared/QuickSearchInput";
+import Button from "@/components/ui/Button";
 
 const AppTopbar = forwardRef((props, ref) => {
   const navigate = useNavigate();
@@ -44,23 +45,20 @@ const AppTopbar = forwardRef((props, ref) => {
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
       <div className="layout-menus flex items-center gap-6">
         {/* Menu Toggle Button */}
-        <button
-          ref={menubuttonRef}
-          type="button"
-          className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 border border-slate-100"
-          onClick={onMenuToggle}
-        >
-          <i className="pi pi-align-left text-[1.2rem] text-slate-800" />
-        </button>
+        <Button
+            variant="icon"
+            icon="pi pi-align-left text-lg"
+            onClick={onMenuToggle}
+            className="w-12 h-12 bg-slate-50/80 border-slate-100 text-slate-800 rounded-2xl hover:bg-white hover:shadow-sm transition-all"
+        />
 
         {/* Search Button */}
-        <button 
-          type="button" 
-          className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-full hover:bg-slate-100 transition-all active:scale-95 border border-slate-100"
-          onClick={() => setSearchVisible(true)}
-        >
-          <i className="pi pi-search text-[1.2rem] text-slate-800" />
-        </button>
+        <Button 
+            variant="icon"
+            icon="pi pi-search text-lg"
+            onClick={() => setSearchVisible(true)}
+            className="w-12 h-12 bg-slate-50/80 border-slate-100 text-slate-800 rounded-full hover:bg-white hover:shadow-sm transition-all"
+        />
       </div>
 
       <div className="layout-menus">
@@ -73,4 +71,5 @@ const AppTopbar = forwardRef((props, ref) => {
 
 AppTopbar.displayName = "AppTopbar";
 
-export default AppTopbar;   // ✅ THIS IS IMPORTANT
+export default AppTopbar;   // âœ… THIS IS IMPORTANT
+

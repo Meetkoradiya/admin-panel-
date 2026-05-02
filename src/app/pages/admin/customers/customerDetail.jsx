@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+﻿import React, { useEffect, useState, useRef, useCallback } from "react";
 import dayjs from "dayjs";
 import { Button } from "primereact/button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -123,11 +123,11 @@ const CustomerDetail = () => {
               <Avatar
                 label={customer?.username?.charAt(0) || "U"}
                 size="xlarge"
-                className="mb-6 h-24 w-24 rounded-3xl bg-blue-50 text-4xl font-black text-blue-500"
+                className="mb-6 h-24 w-24 rounded-3xl bg-blue-50 text-4xl font-bold text-blue-500"
               />
             )}
 
-            <h2 className="text-xl font-black text-slate-800">
+            <h2 className="text-xl font-bold text-slate-800">
               {loading ? (
                 <Skeleton width="8rem" height="1.5rem" />
               ) : (
@@ -135,7 +135,7 @@ const CustomerDetail = () => {
               )}
             </h2>
 
-            <p className="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">
+            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
               {loading ? (
                 <Skeleton width="5rem" height="1rem" />
               ) : (
@@ -204,7 +204,7 @@ const CustomerDetail = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <StatCard
               label="Monthly Spend"
-              value={`₹${totalSpend.toLocaleString()}`}
+              value={`â‚¹${totalSpend.toLocaleString()}`}
               icon="pi pi-wallet"
               color="text-emerald-500"
               bg="bg-emerald-50"
@@ -230,7 +230,7 @@ const CustomerDetail = () => {
           {/* TABLE */}
           <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-slate-100 px-8 py-8">
-              <h3 className="text-lg font-black text-slate-800">
+              <h3 className="text-lg font-bold text-slate-800">
                 Order Timeline
               </h3>
 
@@ -255,7 +255,7 @@ const CustomerDetail = () => {
                 field="id"
                 header="Order ID"
                 body={(row) => (
-                  <span className="text-xs font-black text-blue-500">
+                  <span className="text-xs font-bold text-blue-500">
                     #{row.id}
                   </span>
                 )}
@@ -282,7 +282,7 @@ const CustomerDetail = () => {
                 sortable
                 body={(row) => (
                   <span className="font-bold">
-                    ₹{row.price?.toLocaleString()}
+                    â‚¹{row.price?.toLocaleString()}
                   </span>
                 )}
               />
@@ -309,7 +309,7 @@ const DetailRow = ({
 }) => {
   return (
     <div className="flex flex-col gap-1">
-      <span className="ml-1 text-xs font-black uppercase tracking-widest text-slate-400">
+      <span className="ml-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
         {label}
       </span>
 
@@ -349,11 +349,11 @@ const StatCard = ({
       </div>
 
       <div className="flex flex-col">
-        <span className="mb-1 text-xs font-black uppercase tracking-widest text-slate-400">
+        <span className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
           {label}
         </span>
 
-        <span className="text-xl font-black text-slate-800">
+        <span className="text-xl font-bold text-slate-800">
           {value}
         </span>
       </div>
@@ -362,3 +362,4 @@ const StatCard = ({
 };
 
 export default CustomerDetail;
+

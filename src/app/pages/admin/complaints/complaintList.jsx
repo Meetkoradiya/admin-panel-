@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import useApi from '@/hooks/useApi';
@@ -70,7 +70,7 @@ const ComplaintList = () => {
     const emptyTemplate = () => (
         <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
             <img src={noComplaintsImg} alt="No Complaints" className="w-64 h-auto opacity-80" />
-            <h3 className="text-xl font-black text-slate-800 mt-6 tracking-tight">No Complaints Available</h3>
+            <h3 className="text-xl font-bold text-slate-800 mt-6 tracking-tight">No Complaints Available</h3>
             <p className="text-slate-400 font-medium text-sm mt-2 text-center max-w-xs">No complaints have been registered yet. New complaints will be displayed here once submitted.</p>
         </div>
     );
@@ -79,8 +79,8 @@ const ComplaintList = () => {
         <div className="bg-white p-6 rounded-3xl border border-slate-50 shadow-sm flex flex-col gap-4 min-w-[240px]">
             <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{title}</span>
-                    <span className="text-3xl font-black text-slate-800">{count}</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">{title}</span>
+                    <span className="text-3xl font-bold text-slate-800">{count}</span>
                 </div>
                 <div className={`w-12 h-12 rounded-2xl ${bgColor} flex items-center justify-center ${color} shadow-sm`}>
                     <i className={`pi ${icon} text-xl`} />
@@ -108,10 +108,10 @@ const ComplaintList = () => {
                 >
                     <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                     <Column header="Status" body={(row) => <StatusTag status={row.status || 'PENDING'} />} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
-                    <Column field="complainer" header="Complainer" body={(row) => <span className="font-bold text-slate-700">{row.complainer || row.customerName || '—'}</span>} sortable />
-                    <Column field="type" header="Type" body={(row) => <span className="text-xs font-black uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{row.type || 'SERVICE'}</span>} sortable />
+                    <Column field="complainer" header="Complainer" body={(row) => <span className="font-bold text-slate-700">{row.complainer || row.customerName || 'â€”'}</span>} sortable />
+                    <Column field="type" header="Type" body={(row) => <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{row.type || 'SERVICE'}</span>} sortable />
                     <Column field="complaint" header="Complaint" className="text-slate-600 text-sm max-w-xs truncate" />
-                    <Column field="createdAt" header="Date" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : '—'}</span>} sortable />
+                    <Column field="createdAt" header="Date" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'â€”'}</span>} sortable />
                     <Column header="Actions" body={(rowData) => (
                         <ActionButtons
                             onEdit={() => toast.current?.show({ severity: 'info', summary: 'Details', detail: 'Complaint detail view coming soon' })}
@@ -161,3 +161,5 @@ const ComplaintList = () => {
 };
 
 export default ComplaintList;
+
+

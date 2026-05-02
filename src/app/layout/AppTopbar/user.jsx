@@ -2,9 +2,9 @@ import { OverlayPanel } from "primereact/overlaypanel";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { logout } from "../../../redux/slice/AuthSlice";
+import { logout } from "@/redux/slice/AuthSlice";
 import useApi from "../../../hooks/useApi";
-import { showConfirmDialog } from "../../../utils/confirmUtils";
+import { showConfirmDialog } from "@/utils/confirmUtils";
 
 export const User = () => {
     const navigate = useNavigate();
@@ -107,13 +107,13 @@ export const User = () => {
                             type="button"
                             className="p-link layout-topbar-button flex items-center p-2 hover:bg-slate-50 rounded-lg transition-colors"
                             onClick={() => {
-                                const path = user?.role === "MASTER_ADMIN" ? "/master/change-password" : "/admin/change-password";
+                                const path = user?.role === "MASTER_ADMIN" ? "/master/settings" : "/admin/settings";
                                 navigate(path);
                                 op.current.hide();
                             }}
                         >
                             <i className="pi pi-cog mr-2 text-slate-400"></i>
-                            <span className="text-sm font-medium">Change Password</span>
+                            <span className="text-sm font-medium">Settings</span>
                         </button>
 
                         <button
@@ -133,3 +133,4 @@ export const User = () => {
         </>
     );
 };
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import useApi from '@/hooks/useApi';
@@ -62,7 +62,7 @@ const DeviceVerificationList = () => {
     };
 
     const roleBodyTemplate = (rowData) => (
-        <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider border border-slate-200">
+        <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider border border-slate-200">
             {rowData.role || 'DRIVER'}
         </span>
     );
@@ -77,7 +77,7 @@ const DeviceVerificationList = () => {
     const emptyTemplate = () => (
         <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
             <img src={noDevicesImg} alt="No Devices" className="w-64 h-auto opacity-80" />
-            <h3 className="text-xl font-black text-slate-800 mt-6 tracking-tight">No Device Requests</h3>
+            <h3 className="text-xl font-bold text-slate-800 mt-6 tracking-tight">No Device Requests</h3>
             <p className="text-slate-400 font-medium text-sm mt-2">There are currently no devices waiting for approval.</p>
         </div>
     );
@@ -97,11 +97,11 @@ const DeviceVerificationList = () => {
             >
                 <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Role" body={roleBodyTemplate} sortable sortField="role" />
-                <Column field="fullName" header="Full Name" body={(row) => <span className="font-bold text-slate-700">{row.fullName || row.username || '—'}</span>} sortable />
-                <Column field="mobileNumber" header="Mobile Number" body={(row) => <span className="font-black text-slate-400 text-xs tracking-widest">{row.mobileNumber || '—'}</span>} />
-                <Column field="deviceId" header="Device Id" body={(row) => <span className="font-black text-blue-500 text-xs tracking-tighter">#{row.deviceId || row.id || '—'}</span>} />
+                <Column field="fullName" header="Full Name" body={(row) => <span className="font-bold text-slate-700">{row.fullName || row.username || 'â€”'}</span>} sortable />
+                <Column field="mobileNumber" header="Mobile Number" body={(row) => <span className="font-bold text-slate-400 text-xs tracking-widest">{row.mobileNumber || 'â€”'}</span>} />
+                <Column field="deviceId" header="Device Id" body={(row) => <span className="font-bold text-blue-500 text-xs tracking-tighter">#{row.deviceId || row.id || 'â€”'}</span>} />
                 <Column header="Device" body={deviceBodyTemplate} sortable sortField="deviceType" />
-                <Column field="createdAt" header="Created at" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : '—'}</span>} sortable />
+                <Column field="createdAt" header="Created at" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'â€”'}</span>} sortable />
                 <Column header="Actions" body={(rowData) => (
                     <ActionButtons
                         onEdit={() => approveDevice(rowData)} // Using Edit as Approve for direct icon action
@@ -115,3 +115,5 @@ const DeviceVerificationList = () => {
 };
 
 export default DeviceVerificationList;
+
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataTable } from 'primereact/datatable';
-import { Button } from 'primereact/button';
+import Button from "@/components/ui/Button";
 import { Page } from './Page';
 import QuickSearchInput from './QuickSearchInput';
 
@@ -18,22 +18,25 @@ const ListLayout = ({
     ...props
 }) => {
     const header = (
-        <div className="px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30 border-b border-slate-100/50">
-            <div>
-                <h2 className="text-xl font-black text-slate-800 tracking-tight">{title}</h2>
-                {subtitle && <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">{subtitle}</p>}
+        <div className="flex flex-col">
+            <div className="px-6 py-4 bg-white">
+                <h2 className="text-xl font-bold text-slate-800 tracking-tight">{title}</h2>
             </div>
-            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
-                <QuickSearchInput
-                    value={globalFilter}
-                    onInput={(e) => setGlobalFilter(e.target.value)}
-                />
+            <div className="px-6 py-5 bg-blue-50/50 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="w-full md:w-80">
+                    <QuickSearchInput
+                        value={globalFilter}
+                        onInput={(e) => setGlobalFilter(e.target.value)}
+                        placeholder="Search records..."
+                    />
+                </div>
                 {onAdd && (
                     <Button
                         label={addLabel}
-                        icon="pi pi-plus"
-                        className="btn-primary btn-responsive h-10 px-6 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-500/10"
+                        variant="primary"
+                        size="md"
                         onClick={onAdd}
+                        className="px-8 shadow-lg shadow-blue-500/20"
                     />
                 )}
             </div>
@@ -42,13 +45,14 @@ const ListLayout = ({
 
     return (
         <Page title={title}>
-            <div className="w-full bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.02)] border border-slate-100 overflow-hidden animate-slide-up">
+            <div className="w-full bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.02)] border border-slate-100 overflow-hidden animate-slide-up mt-2">
                 <DataTable
                     value={data}
                     header={header}
                     loading={loading}
                     globalFilter={globalFilter}
                     paginator
+                    showGridlines
                     rows={10}
                     rowsPerPageOptions={[10, 20, 50]}
                     className="p-datatable-minimal"
@@ -64,7 +68,7 @@ const ListLayout = ({
                                     e.target.className = "w-32 h-auto mb-6 opacity-20";
                                 }}
                             />
-                            <div className="text-sm font-bold uppercase tracking-widest text-slate-400">{emptyMessage}</div>
+                            <div className="text-sm font-semibold uppercase tracking-widest text-slate-400">{emptyMessage}</div>
                             <p className="text-xs text-slate-300 mt-2 font-medium">Try adjusting your filters or adding a new record</p>
                         </div>
                     }
@@ -82,3 +86,5 @@ const ListLayout = ({
 };
 
 export default ListLayout;
+
+

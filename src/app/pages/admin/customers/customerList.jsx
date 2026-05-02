@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -106,12 +106,12 @@ const CustomerManagement = () => {
 
     const customerBodyTemplate = (rowData) => (
         <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 font-black text-xs border border-blue-100">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 font-bold text-xs border border-blue-100">
                 {rowData.username?.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
                 <span className="font-bold text-slate-800 text-sm">{rowData.username}</span>
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
+                <span className="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
             </div>
         </div>
     );
@@ -140,3 +140,5 @@ const CustomerManagement = () => {
 };
 
 export default CustomerManagement;
+
+

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
+import Button from '@/components/ui/Button';
 import { Toast } from 'primereact/toast';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 import { Tag } from 'primereact/tag';
@@ -57,11 +57,11 @@ const AdminList = () => {
         <div className="flex items-center gap-3">
             <Avatar
                 label={rowData.username?.charAt(0)?.toUpperCase() || 'A'}
-                style={{ backgroundColor: '#eff6ff', color: '#3b82f6', width: '36px', height: '36px', fontSize: '14px', fontWeight: '800', borderRadius: '12px' }}
+                style={{ backgroundColor: '#eff6ff', color: '#3b82f6', width: '36px', height: '36px', fontSize: '14px', fontWeight: '700', borderRadius: '50%' }}
             />
             <div className="flex flex-col">
-                <p className="font-bold text-slate-800 text-sm leading-tight">{rowData.username || '—'}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{rowData.email || '—'}</p>
+                <p className="font-bold text-slate-800 text-sm leading-tight">{rowData.username || 'â€”'}</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">{rowData.email || 'â€”'}</p>
             </div>
         </div>
     );
@@ -74,7 +74,7 @@ const AdminList = () => {
     const roleBodyTemplate = (rowData) => {
         const isMaster = rowData.role === 'MASTER_ADMIN' || rowData.masterAdmin;
         return (
-            <span className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border ${isMaster ? 'bg-violet-50 text-violet-600 border-violet-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+            <span className={`px-3 py-1 rounded-xl text-[10px] font-semibold uppercase tracking-widest border ${isMaster ? 'bg-violet-50 text-violet-600 border-violet-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
                 {isMaster ? 'Master' : 'Admin'}
             </span>
         );
@@ -84,10 +84,11 @@ const AdminList = () => {
         <div className="flex gap-2 justify-center">
             <Button
                 icon="pi pi-pencil"
-                rounded text
+                variant="icon"
+                size="sm"
                 tooltip="Edit Account"
                 tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-blue-500"
+                className="text-blue-500"
                 onClick={() => {
                     showConfirmDialog({
                         title: 'Edit Account',
@@ -100,10 +101,11 @@ const AdminList = () => {
             />
             <Button
                 icon="pi pi-trash"
-                rounded text
+                variant="icon"
+                size="sm"
                 tooltip="Delete Account"
                 tooltipOptions={{ position: 'top' }}
-                className="btn-icon text-rose-500"
+                className="text-rose-500"
                 onClick={() => handleDelete(rowData)}
             />
         </div>
@@ -134,3 +136,4 @@ const AdminList = () => {
 };
 
 export default AdminList;
+

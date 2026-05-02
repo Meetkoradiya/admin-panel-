@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
@@ -111,13 +111,13 @@ const AdminCreate = () => {
                 sidebar={
                     <FormSection title="Account Security" icon="pi pi-shield">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Access Password</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Access Password</label>
                             <InputText
                                 type="password"
                                 value={admin.password}
                                 onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
                                 className={fieldClass(isEditMode || admin.password)}
-                                placeholder={isEditMode ? "Leave blank to keep same" : "••••••••"}
+                                placeholder={isEditMode ? "Leave blank to keep same" : "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"}
                             />
                         </div>
                     </FormSection>
@@ -126,7 +126,7 @@ const AdminCreate = () => {
                 <FormSection title="Identity Details" icon="pi pi-user">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Username</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Username</label>
                             <InputText
                                 value={admin.username}
                                 onChange={(e) => setAdmin({ ...admin, username: e.target.value })}
@@ -135,7 +135,7 @@ const AdminCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Mobile Number</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Mobile Number</label>
                             <InputText
                                 value={admin.mobileNumber}
                                 maxLength={10}
@@ -145,7 +145,7 @@ const AdminCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Email Address</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Email Address</label>
                             <InputText
                                 value={admin.email}
                                 onChange={(e) => setAdmin({ ...admin, email: e.target.value })}
@@ -158,7 +158,7 @@ const AdminCreate = () => {
 
                 <FormSection title="Assignment" icon="pi pi-building">
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Assigned Outlet</label>
+                        <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Assigned Outlet</label>
                         <Dropdown
                             value={admin.outletId}
                             options={outlets}
@@ -174,3 +174,5 @@ const AdminCreate = () => {
 };
 
 export default AdminCreate;
+
+

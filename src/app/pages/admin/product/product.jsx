@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+﻿import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -151,7 +151,7 @@ const ProductList = () => {
             <Dialog
                 visible={productDialog}
                 style={{ width: "450px" }}
-                header={<div className="text-xl font-black text-slate-800 tracking-tight">{productId ? "Edit Product" : "Create Product"}</div>}
+                header={<div className="text-xl font-bold text-slate-800 tracking-tight">{productId ? "Edit Product" : "Create Product"}</div>}
                 modal
                 className="p-fluid rounded-3xl overflow-hidden shadow-2xl"
                 onHide={() => setProductDialog(false)}
@@ -170,7 +170,7 @@ const ProductList = () => {
 
                 <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-50">
                     <Button label="Cancel" icon="pi pi-times" onClick={() => setProductDialog(false)} className="p-button-text text-slate-400 hover:bg-slate-50 rounded-xl px-5 font-bold transition-all text-sm" />
-                    <Button label={productId ? "Update" : "Create"} icon="pi pi-check" onClick={saveProduct} className="bg-blue-600 hover:bg-blue-700 border-none text-white rounded-xl px-8 py-3 font-black shadow-lg shadow-blue-500/20 transition-all text-sm" />
+                    <Button label={productId ? "Update" : "Create"} icon="pi pi-check" onClick={saveProduct} className="bg-blue-600 hover:bg-blue-700 border-none text-white rounded-xl px-8 py-3 font-bold shadow-lg shadow-blue-500/20 transition-all text-sm" />
                 </div>
             </Dialog>
         </div>
@@ -178,3 +178,4 @@ const ProductList = () => {
 };
 
 export default ProductList;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -107,7 +107,7 @@ const DriverList = () => {
             />
             <div className="flex flex-col">
                 <span className="font-bold text-slate-700 text-sm">{rowData.username}</span>
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
+                <span className="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
             </div>
         </div>
     );
@@ -139,8 +139,8 @@ const DriverList = () => {
                 <Column field="mobileNumber" header="Contact" className="text-slate-500 text-sm font-medium" />
                 <Column header="Vehicle" body={(row) => (
                     <div className="flex flex-col">
-                        <span className="text-slate-700 font-bold text-xs">{row.vehicleName || '—'}</span>
-                        <span className="text-xs text-slate-400 font-bold mt-0.5">{row.vehicleNumber || '—'}</span>
+                        <span className="text-slate-700 font-bold text-xs">{row.vehicleName || 'â€”'}</span>
+                        <span className="text-xs text-slate-400 font-bold mt-0.5">{row.vehicleNumber || 'â€”'}</span>
                     </div>
                 )} />
                 <Column field="route.routeName" header="Assigned Route" body={(row) => <span className="text-blue-500 font-bold text-xs uppercase tracking-wider">{row.route?.routeName || 'Unassigned'}</span>} />
