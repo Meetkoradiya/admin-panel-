@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { InputOtp } from "primereact/inputotp";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -22,30 +22,11 @@ const VerifyOtp = () => {
         <div className="flex items-center gap-3 mb-2">
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full" />
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-12 h-12 relative z-10"
-            >
-              <defs>
-                <linearGradient id="logo-grad-verify" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#3b82f6" />
-                  <stop offset="100%" stopColor="#1d4ed8" />
-                </linearGradient>
-              </defs>
-              <circle cx="12" cy="13" r="9" stroke="url(#logo-grad-verify)" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.4" />
-              <path
-                d="M12 3C12 3 6 10 6 14.5C6 18.0899 8.68629 21 12 21C15.3137 21 18 18.0899 18 14.5C18 10 12 3 12 3Z"
-                fill="url(#logo-grad-verify)"
-              />
-              <path
-                d="M12 6C12 6 8.5 10.5 8.5 14C8.5 15.933 10.067 17.5 12 17.5C13.933 17.5 15.5 15.933 15.5 14C15.5 10.5 12 6 12 6Z"
-                fill="white"
-                fillOpacity="0.25"
-              />
-              <circle cx="14" cy="10" r="1.5" fill="white" fillOpacity="0.4" />
-            </svg>
+            <img
+              src="/images/logo2.webp"
+              alt="Amrut Water"
+              className="w-12 h-12 relative z-10 object-contain"
+            />
           </div>
           <span className="text-3xl font-bold text-slate-800 tracking-tight">Amrut Water</span>
         </div>

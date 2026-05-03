@@ -1,4 +1,4 @@
-﻿import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useEventListener, useUnmountEffect } from "primereact/hooks";
 import { classNames } from "primereact/utils";
@@ -146,8 +146,8 @@ function HomeLayout() {
         </div>
 
         <footer className="py-6 px-8 border-t border-slate-100 flex items-center justify-center mt-auto bg-white/50">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em] text-center">
-            Developed by <a href="https://www.horizontechserv.in/" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-cyan-600 transition-colors">Horizon Tech serv</a>
+          <p className="text-xs font-medium text-slate-400 text-center">
+           @ Developed by <a href="https://www.horizontechserv.in/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-600 transition-colors font-bold">Horizon Tech Serv</a>
           </p>
         </footer>
       </div>

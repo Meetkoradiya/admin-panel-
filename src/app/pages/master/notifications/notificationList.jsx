@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
@@ -64,7 +64,7 @@ const NotificationList = () => {
     }, [userId, apiPut]);
 
     const formatTime = (timeStr) => {
-        if (!timeStr) return "â€”";
+        if (!timeStr) return "—";
         try {
             const date = new Date(timeStr);
             return date.toLocaleString('en-IN', {
@@ -120,7 +120,7 @@ const NotificationList = () => {
                             </div>
                             <div>
                                 <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">{s.label}</p>
-                                <p className="text-2xl font-bold text-slate-800">{loading ? 'â€”' : s.value}</p>
+                                <p className="text-2xl font-bold text-slate-800">{loading ? '—' : s.value}</p>
                             </div>
                         </div>
                     ))}

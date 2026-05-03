@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -111,17 +111,7 @@ const ProductList = () => {
 
     const actionBodyTemplate = (rowData) => (
         <ActionButtons
-            onEdit={() => {
-                const id = rowData?.id || rowData?._id;
-                const name = rowData?.name || rowData?.productName || "";
-                setProductId(id);
-                setProductName(name);
-                setSubmitted(false);
-                setProductDialog(true);
-            }}
             onDelete={() => deleteProduct(rowData)}
-            onDeactivate={() => toggleStatus(rowData)}
-            isDeactivated={rowData.status === 'INACTIVE'}
         />
     );
 
@@ -145,7 +135,7 @@ const ProductList = () => {
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column field="name" header="Product Title" sortable className="font-bold text-slate-700 text-sm" />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '6rem', textAlign: 'center' }} />
             </ListLayout>
 
             <Dialog

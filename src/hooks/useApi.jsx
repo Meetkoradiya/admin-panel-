@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { logout } from "@/redux/slice/AuthSlice";
 import { useMemo } from 'react';
@@ -42,6 +42,7 @@ const useApi = () => {
                 if (status === 401) {
                     if (!isSilent) {
                         console.warn(`401 Unauthorized: ${error.config.url}`);
+                        // dispatch(logout()); // Commented out to prevent login loop during debugging
                     }
                 } else if (status === 403) {
                     if (!isSilent) {

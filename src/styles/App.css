@@ -211,18 +211,23 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Premium PrimeReact Overrides */
-.p-datatable.p-datatable-minimal {
-    border: none;
+.p-datatable.p-datatable-minimal table {
+    border-collapse: collapse !important;
 }
 
 .p-datatable.p-datatable-minimal .p-datatable-thead>tr>th {
     background: #f8fafc !important;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e2e8f0 !important;
     padding: 1.25rem 1.5rem;
     color: #475569;
     font-size: 0.7rem;
@@ -243,9 +248,9 @@
     cursor: pointer;
 }
 
-.p-datatable.p-datatable-minimal .p-datatable-tbody>tr>td {
-    padding: 1rem 1.5rem;
-    border: 1px solid #e2e8f0;
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid #e2e8f0 !important;
     vertical-align: middle;
     color: #334155;
     font-size: 0.875rem;
@@ -284,10 +289,30 @@
     color: #3b82f6;
 }
 
+.p-dropdown.p-paginator-rpp-options,
+.p-dropdown.p-paginator-rpp-options *,
+.p-dropdown.p-paginator-rpp-options *::before,
+.p-dropdown.p-paginator-rpp-options *::after,
+.p-dropdown.p-paginator-rpp-options .p-dropdown-label,
+.p-dropdown.p-paginator-rpp-options .p-dropdown-trigger,
+.p-dropdown.p-paginator-rpp-options .p-inputtext,
+.p-dropdown.p-paginator-rpp-options:not(.p-disabled).p-focus,
+.p-dropdown.p-paginator-rpp-options:not(.p-disabled):hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
 .p-dropdown.p-paginator-rpp-options {
-    border-radius: 12px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.p-dropdown.p-paginator-rpp-options .p-dropdown-label {
+    padding: 0.5rem 0.75rem !important;
 }
 
 /* Action Button Polishing */
@@ -381,6 +406,10 @@
 .p-toast {
     font-family: 'Poppins', sans-serif;
     z-index: 9999 !important;
+}
+
+.p-toast {
+    top: 6rem !important;
 }
 
 .p-toast .p-toast-message {

@@ -52,7 +52,6 @@ const ListLayout = ({
                     loading={loading}
                     globalFilter={globalFilter}
                     paginator
-                    showGridlines
                     rows={10}
                     rowsPerPageOptions={[10, 20, 50]}
                     className="p-datatable-minimal"

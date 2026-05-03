@@ -1,4 +1,4 @@
-﻿import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApi from "@/hooks/useApi";
@@ -9,9 +9,9 @@ const MasterDashboard = () => {
   const { apiGet } = useApi();
 
   const [stats, setStats] = useState({
-    totalAdmins: 'â€”',
-    activeAdmins: 'â€”',
-    pendingDevices: 'â€”',
+    totalAdmins: '—',
+    activeAdmins: '—',
+    pendingDevices: '—',
   });
   const [loadingStats, setLoadingStats] = useState(true);
 
@@ -74,7 +74,7 @@ const MasterDashboard = () => {
         <div className="flex justify-between items-center flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-extrabold bg-linear-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
-              {greeting}, Master Admin ðŸ‘‹
+              {greeting}, Master Admin 👋
             </h1>
             <p className="text-slate-500 font-medium mt-1">Here&apos;s a quick overview of your water management system.</p>
           </div>
@@ -99,7 +99,7 @@ const MasterDashboard = () => {
             </div>
             <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">{s.label}</p>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-3xl font-extrabold text-slate-800">{loadingStats ? 'â€”' : s.value}</h2>
+              <h2 className="text-3xl font-extrabold text-slate-800">{loadingStats ? '—' : s.value}</h2>
               <p className="text-slate-400 text-xs font-medium">{s.sub}</p>
             </div>
           </div>

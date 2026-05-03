@@ -1,7 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import Button from "@/components/ui/Button";
 
-const ActionButtons = ({ onEdit, onDelete, editTooltip = "Edit", deleteTooltip = "Delete" }) => {
+const ActionButtons = ({ onEdit, onDelete, onDeactivate, isDeactivated, editTooltip = "Edit", deleteTooltip = "Delete" }) => {
     return (
         <div className="flex items-center justify-center gap-3">
             {/* Edit Button */}
@@ -17,6 +17,22 @@ const ActionButtons = ({ onEdit, onDelete, editTooltip = "Edit", deleteTooltip =
                         onEdit();
                     }}
                     className="text-sky-500 hover:bg-sky-50"
+                />
+            )}
+
+            {/* Deactivate/Activate Button */}
+            {onDeactivate && (
+                <Button
+                    variant="icon"
+                    size="sm"
+                    icon={isDeactivated ? "pi pi-check-circle" : "pi pi-ban"}
+                    tooltip={isDeactivated ? "Activate" : "Deactivate"}
+                    tooltipOptions={{ position: 'top' }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDeactivate();
+                    }}
+                    className={isDeactivated ? "text-emerald-500 hover:bg-emerald-50" : "text-amber-500 hover:bg-amber-50"}
                 />
             )}
 
