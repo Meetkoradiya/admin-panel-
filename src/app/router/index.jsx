@@ -31,7 +31,7 @@ const AppRoutes = () => {
             {MasterRoutes.map((route) => (
               <Route key={route.name} path={route.path} element={route.element} />
             ))}
-            <Route path="*" element={<NotFound />} />
+            
           </Route>
         </Route>
 
@@ -41,7 +41,7 @@ const AppRoutes = () => {
             {AdminRoutes.map((route) => (
               <Route key={route.name} path={route.path} element={route.element} />
             ))}
-            <Route path="*" element={<NotFound />} />
+            
           </Route>
         </Route>
 
