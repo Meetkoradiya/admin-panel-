@@ -5,7 +5,7 @@ import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
 import useApi from '@/hooks/useApi';
-import FormLayout, { FormSection } from '@/components/shared/FormLayout';
+import { SimpleLayout, SimpleSection, SimpleField } from '@/components/shared/SimpleLayout';
 
 const AdminCreate = () => {
     const navigate = useNavigate();
@@ -18,13 +18,15 @@ const AdminCreate = () => {
     const { apiPost, apiPut, apiGet } = useApi();
 
     const [outlets, setOutlets] = useState([]);
-
     const [admin, setAdmin] = useState({
         username: '',
         mobileNumber: '',
         email: '',
         password: '',
         outletId: null,
+        city: '',
+        postalCode: '',
+        address: ''
     });
 
     useEffect(() => {
@@ -37,142 +39,181 @@ const AdminCreate = () => {
     }, [apiGet]);
 
     useEffect(() => {
-        const existingAdmin = location.state?.admin;
-        if (isEditMode && existingAdmin) {
+        const fetchAdminDetails = async () => {
+            setLoading(true);
+            try {
+                const response = await apiGet('/admin/admins');
+                const data = response?.data || response || [];
+                const found = data.find(a => (a.id?.toString() === id?.toString()) || (a._id?.toString() === id?.toString()));
+                
+                if (found) {
+                    setAdmin({
+                        username: found.username || '',
+                        mobileNumber: found.mobileNumber || '',
+                        email: found.email || '',
+                        password: '',
+                        outletId: found.outletId || null,
+                        city: found.city || '',
+                        postalCode: found.postalCode || '',
+                        address: found.address || ''
+                    });
+                } else {
+                    toast.current?.show({ severity: 'warn', summary: 'Not Found', detail: 'Administrator not found. Redirecting...' });
+                    setTimeout(() => navigate('/master/admins'), 1500);
+                }
+            } catch (error) {
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch administrator details' });
+                navigate('/master/admins');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isEditMode && location.state?.admin) {
+            const existingAdmin = location.state.admin;
             setAdmin({
                 username: existingAdmin.username || '',
                 mobileNumber: existingAdmin.mobileNumber || '',
                 email: existingAdmin.email || '',
                 password: '',
                 outletId: existingAdmin.outletId || null,
+                city: existingAdmin.city || '',
+                postalCode: existingAdmin.postalCode || '',
+                address: existingAdmin.address || ''
             });
+        } else if (isEditMode) {
+            fetchAdminDetails();
         }
-    }, [id, location.state, isEditMode]);
+    }, [id, location.state, isEditMode, apiGet, navigate]);
 
     const handleSave = async () => {
         setSubmitted(true);
         const isValid = admin.username.trim() && admin.mobileNumber.trim() && admin.mobileNumber.length === 10
             && (isEditMode || admin.password.trim());
 
-        if (!isValid) {
-            toast.current?.show({ severity: 'warn', summary: 'Validation', detail: 'Please fill all required fields correctly', life: 3000 });
-            return;
-        }
+        if (!isValid) return;
 
         setLoading(true);
         try {
             if (isEditMode) {
-                const updatePayload = {
-                    username: admin.username,
-                    mobileNumber: admin.mobileNumber,
-                    email: admin.email,
-                };
-                await apiPut('/admin/update-profile', updatePayload);
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully', life: 3000 });
+                await apiPut(`/admin/admins/${id}`, admin);
+                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully' });
             } else {
-                const createPayload = {
-                    username: admin.username,
-                    mobileNumber: admin.mobileNumber,
-                    email: admin.email,
-                    password: admin.password,
-                };
+                const createPayload = { ...admin };
                 if (admin.outletId) createPayload.outletId = Number(admin.outletId);
-
                 await apiPost('/admin/register-admin', createPayload);
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Created Successfully', life: 3000 });
+                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Created Successfully' });
             }
-
-            setTimeout(() => navigate('/master/admins'), 1200);
+            setTimeout(() => navigate('/master/admins'), 1000);
         } catch (error) {
-            toast.current?.show({
-                severity: 'error', summary: 'Error',
-                detail: error?.response?.data?.message || 'Operation failed. Please try again.',
-                life: 4000
-            });
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Operation failed' });
         } finally {
             setLoading(false);
         }
     };
 
-    const fieldClass = (isValid) => classNames(
-        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-[15px] transition-all outline-none font-medium text-slate-700 shadow-inner',
+    const inputClass = (isValid) => classNames(
+        'w-full p-4 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-50 text-[15px] transition-all outline-none font-medium text-slate-700 placeholder:text-slate-400',
         { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
     );
+
+    const dropdownClass = "w-full bg-white border border-slate-200 rounded-xl h-[54px] flex items-center px-2 focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all";
 
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
-            <FormLayout
-                title={isEditMode ? 'Edit Administrator' : 'Register New Admin'}
-                loading={loading}
-                isEditMode={isEditMode}
+            <SimpleLayout
+                title={isEditMode ? 'Edit Admin' : 'Create Admin'}
                 onSave={handleSave}
-                onDiscard={() => navigate('/master/admins')}
-                sidebar={
-                    <FormSection title="Account Security" icon="pi pi-shield">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-bold text-slate-500">Access Password</label>
-                            <InputText
-                                type="password"
-                                value={admin.password}
-                                onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
-                                className={fieldClass(isEditMode || admin.password)}
-                                placeholder={isEditMode ? "Leave blank to keep same" : "••••••••"}
-                            />
-                            <div className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                                <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1">Security Tip</p>
-                                <p className="text-[11px] text-blue-500 leading-relaxed">Ensure passwords are complex and unique for each administrator account.</p>
-                            </div>
-                        </div>
-                    </FormSection>
-                }
+                loading={loading}
+                saveLabel={isEditMode ? 'Update Admin' : 'Create Admin'}
             >
-                <FormSection title="Identity Details" icon="pi pi-user">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-bold text-slate-500">Username</label>
+                <SimpleSection title="Overview">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                        <SimpleField label="Full Name">
                             <InputText
                                 value={admin.username}
                                 onChange={(e) => setAdmin({ ...admin, username: e.target.value })}
-                                className={fieldClass(admin.username)}
-                                placeholder="e.g. john_doe"
+                                className={inputClass(admin.username)}
+                                placeholder="Enter admin name"
                             />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-bold text-slate-500">Mobile Number</label>
+                        </SimpleField>
+                        <SimpleField label="Mobile Number">
                             <InputText
                                 value={admin.mobileNumber}
                                 maxLength={10}
                                 onChange={(e) => setAdmin({ ...admin, mobileNumber: e.target.value })}
-                                className={fieldClass(admin.mobileNumber && admin.mobileNumber.length === 10)}
-                                placeholder="10-digit mobile"
+                                className={inputClass(admin.mobileNumber && admin.mobileNumber.length === 10)}
+                                placeholder="Enter mobile number"
                             />
+                        </SimpleField>
+                    </div>
+                </SimpleSection>
+
+                <SimpleSection title="Additional Information">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                        <SimpleField label="City">
+                            <InputText
+                                value={admin.city}
+                                onChange={(e) => setAdmin({ ...admin, city: e.target.value })}
+                                className={inputClass(true)}
+                                placeholder="Enter city"
+                            />
+                        </SimpleField>
+                        <SimpleField label="Postal Code">
+                            <InputText
+                                value={admin.postalCode}
+                                onChange={(e) => setAdmin({ ...admin, postalCode: e.target.value })}
+                                className={inputClass(true)}
+                                placeholder="Enter postal code"
+                            />
+                        </SimpleField>
+                        <div className="md:col-span-2">
+                            <SimpleField label="Address">
+                                <InputText
+                                    value={admin.address}
+                                    onChange={(e) => setAdmin({ ...admin, address: e.target.value })}
+                                    className={inputClass(true)}
+                                    placeholder="Enter permanent address"
+                                />
+                            </SimpleField>
                         </div>
-                        <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-[13px] font-bold text-slate-500">Email Address</label>
+                    </div>
+                </SimpleSection>
+
+                <SimpleSection title="Credentials & Access">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                        <SimpleField label="Email Address">
                             <InputText
                                 value={admin.email}
                                 onChange={(e) => setAdmin({ ...admin, email: e.target.value })}
-                                className={fieldClass(true)}
-                                placeholder="admin@example.com"
+                                className={inputClass(true)}
+                                placeholder="Enter email address"
                             />
+                        </SimpleField>
+                        <SimpleField label="Login Password">
+                            <InputText
+                                type="password"
+                                value={admin.password}
+                                onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
+                                className={inputClass(isEditMode || admin.password)}
+                                placeholder={isEditMode ? "Leave blank to keep same" : "Create password"}
+                            />
+                        </SimpleField>
+                        <div className="md:col-span-2">
+                            <SimpleField label="Assigned Outlet (Optional)">
+                                <Dropdown
+                                    value={admin.outletId}
+                                    options={outlets}
+                                    onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
+                                    className={dropdownClass}
+                                    placeholder="Select an outlet"
+                                />
+                            </SimpleField>
                         </div>
                     </div>
-                </FormSection>
-
-                <FormSection title="Assignment" icon="pi pi-building">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[13px] font-bold text-slate-500">Assigned Outlet</label>
-                        <Dropdown
-                            value={admin.outletId}
-                            options={outlets}
-                            onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-12 flex items-center px-2 shadow-inner"
-                            placeholder="Select an outlet (optional)"
-                        />
-                    </div>
-                </FormSection>
-            </FormLayout>
+                </SimpleSection>
+            </SimpleLayout>
         </div>
     );
 };

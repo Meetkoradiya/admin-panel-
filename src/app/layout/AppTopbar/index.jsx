@@ -49,7 +49,7 @@ const AppTopbar = forwardRef((props, ref) => {
             variant="icon"
             icon="pi pi-align-left text-lg"
             onClick={onMenuToggle}
-            className="w-12 h-12 bg-slate-50/80 border-slate-100 text-slate-800 rounded-2xl hover:bg-white hover:shadow-sm transition-all"
+            className="w-12 h-12 bg-slate-50/80 border-slate-100 text-slate-800 rounded-2xl hover:bg-white"
         />
 
         {/* Search Button */}
@@ -57,7 +57,7 @@ const AppTopbar = forwardRef((props, ref) => {
             variant="icon"
             icon="pi pi-search text-lg"
             onClick={() => setSearchVisible(true)}
-            className="w-12 h-12 bg-slate-50/80 border-slate-100 text-slate-800 rounded-full hover:bg-white hover:shadow-sm transition-all"
+            className="w-12 h-12 bg-slate-50/80 border-slate-100 text-slate-800 rounded-full hover:bg-white"
         />
       </div>
 

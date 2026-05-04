@@ -10,6 +10,7 @@ import { classNames } from 'primereact/utils';
 import ListLayout from '@/components/shared/ListLayout';
 import ActionButtons from '@/components/shared/ActionButtons';
 import useApi from '@/hooks/useApi';
+import useUrlFilters from '@/hooks/useUrlFilters';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const InventoryList = () => {
@@ -17,6 +18,10 @@ const InventoryList = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
+
+    // Sync filter with URL
+    useUrlFilters(globalFilter, setGlobalFilter);
+
     const toast = useRef(null);
 
     const [stockDialog, setStockDialog] = useState(false);

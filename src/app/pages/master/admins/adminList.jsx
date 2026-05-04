@@ -8,14 +8,19 @@ import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
 import ActionButtons from '@/components/shared/ActionButtons';
+import useUrlFilters from '@/hooks/useUrlFilters';
 
 const AdminList = () => {
     const [admins, setAdmins] = useState([]);
     const [globalFilter, setGlobalFilter] = useState('');
     const [loading, setLoading] = useState(false);
+    
+    // Sync filter with URL
+    useUrlFilters(globalFilter, setGlobalFilter);
+
     const toast = useRef(null);
     const navigate = useNavigate();
-    const { apiGet, apiDelete } = useApi();
+    const { apiGet, apiPut, apiDelete } = useApi();
 
     const fetchAdmins = useCallback(async () => {
         setLoading(true);
@@ -72,15 +77,35 @@ const AdminList = () => {
         </div>
     );
 
+    const toggleStatus = async (rowData) => {
+        const currentStatus = (rowData.status === 'ACTIVE' || rowData.status === true) ? 'ACTIVE' : 'INACTIVE';
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        
+        try {
+            const id = rowData.id || rowData._id;
+            await apiPut(`/admin/admins/${id}`, { status: newStatus });
+            toast.current?.show({ severity: 'success', summary: 'Success', detail: `Admin set to ${newStatus}` });
+            fetchAdmins();
+        } catch (error) {
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to update status' });
+        }
+    };
+
     const statusBodyTemplate = (rowData) => {
         const statusValue = (rowData.status === 'ACTIVE' || rowData.status === true) ? 'ACTIVE' : 'INACTIVE';
-        return <StatusTag status={statusValue} />;
+        return (
+            <div onClick={() => toggleStatus(rowData)} className="cursor-pointer hover:opacity-80 transition-all">
+                <StatusTag status={statusValue} />
+            </div>
+        );
     };
 
     const actionBodyTemplate = (rowData) => (
         <ActionButtons 
             onEdit={() => navigate(`/master/admins/edit/${rowData.id || rowData._id}`, { state: { admin: rowData } })}
             onDelete={() => handleDelete(rowData)}
+            onDeactivate={() => toggleStatus(rowData)}
+            isDeactivated={(rowData.status === 'INACTIVE' || rowData.status === false)}
         />
     );
 

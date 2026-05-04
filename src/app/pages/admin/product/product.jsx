@@ -152,7 +152,7 @@ const ProductList = () => {
                         <InputText
                             value={productName || ""}
                             onChange={(e) => setProductName(e.target.value)}
-                            placeholder="Product name"
+                            placeholder="Enter product name"
                             className={classNames('w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 text-[15px] focus:ring-4 focus:ring-blue-50 transition-all', { 'border-rose-400 bg-rose-50/50': submitted && !productName })}
                         />
                     </div>

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -8,11 +8,16 @@ import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
 import ActionButtons from '@/components/shared/ActionButtons';
 import useApi from '@/hooks/useApi';
+import useUrlFilters from '@/hooks/useUrlFilters';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const CustomerManagement = () => {
     const [customers, setCustomers] = useState([]);
     const [globalFilter, setGlobalFilter] = useState("");
+    
+    // Sync filter with URL
+    useUrlFilters(globalFilter, setGlobalFilter);
+
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const navigate = useNavigate();
