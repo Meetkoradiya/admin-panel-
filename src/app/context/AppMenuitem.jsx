@@ -90,7 +90,7 @@ const AppMenuitem = (props) => {
           tabIndex={0}
         >
           {Icon ? (
-            <Icon className="layout-menuitem-icon size-7" />
+            <Icon className="layout-menuitem-icon size-2" />
           ) : item?.icon ? (
             <i className={classNames("layout-menuitem-icon", item.icon)} />
           ) : null}
@@ -115,7 +115,7 @@ const AppMenuitem = (props) => {
           tabIndex={0}
         >
           {Icon ? (
-            <Icon className="layout-menuitem-icon size-7" />
+            <Icon className="layout-menuitem-icon size-2" />
           ) : item?.icon ? (
             <i className={classNames("layout-menuitem-icon", item.icon)} />
           ) : null}

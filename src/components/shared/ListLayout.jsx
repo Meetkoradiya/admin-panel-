@@ -11,6 +11,7 @@ const ListLayout = ({
     loading,
     onAdd,
     addLabel = "New Item",
+    extraActions,
     globalFilter,
     setGlobalFilter,
     children,
@@ -31,15 +32,18 @@ const ListLayout = ({
                         placeholder="Search records..."
                     />
                 </div>
-                {onAdd && (
-                    <Button
-                        label={addLabel}
-                        variant="primary"
-                        size="md"
-                        onClick={onAdd}
-                        className="px-8 shadow-lg shadow-blue-500/20"
-                    />
-                )}
+                <div className="flex items-center gap-3">
+                    {extraActions}
+                    {onAdd && (
+                        <Button
+                            label={addLabel}
+                            variant="primary"
+                            size="md"
+                            onClick={onAdd}
+                            className="px-8 shadow-lg shadow-blue-500/20"
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

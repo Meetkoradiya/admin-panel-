@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,45 +6,38 @@ const NotFound = ({ type = "404" }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 animate-fade-in">
+        <div className="min-h-[85vh] flex flex-col items-center justify-center bg-white px-4 text-center animate-fade-in">
             <div className="relative mb-8">
-                <h1 className="text-[12rem] font-bold text-slate-100 leading-none select-none">
-                    {type}
-                </h1>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <img 
-                        src="/images/no-data.png" 
-                        alt="Not Found" 
-                        className="w-64 h-auto opacity-90 select-none pointer-events-none animate-bounce-slow"
-                        onError={(e) => {
-                            e.target.src = 'https://cdn-icons-png.flaticon.com/512/7486/7486744.png';
-                        }}
-                    />
-                </div>
+                {/* Reference-style Illustration */}
+                <img 
+                    src="/images/404-illustration-clean.png" 
+                    alt="Not Found" 
+                    className="w-full max-w-lg h-auto select-none pointer-events-none"
+                />
             </div>
             
-            <h2 className="text-3xl font-bold text-slate-800 mb-4">
-                {type === "401" ? "Unauthorized Access" : "Page Not Found"}
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
+                Oops. This Page Not Found.
             </h2>
-            <p className="text-slate-500 max-w-md mx-auto mb-8 font-medium">
-                {type === "401" 
-                    ? "Sorry, you don't have permission to access this page. Please contact your administrator if you think this is a mistake."
-                    : "The page you are looking for might have been moved, deleted, or never existed in the first place."}
+            <p className="text-slate-500 font-medium text-lg max-w-md mx-auto mb-10 leading-relaxed">
+                Sorry, the page you&apos;re looking for isn&apos;t available. Let&apos;s get you back on track.
             </p>
             
-            <div className="flex gap-4">
-                <Button 
-                    label="Go Back" 
-                    icon="pi pi-arrow-left" 
-                    className="btn-secondary"
+            <div className="flex flex-wrap items-center justify-center gap-4">
+                <button 
+                    className="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-xl px-8 py-3.5 font-bold shadow-sm transition-all active:scale-95 flex items-center gap-2"
                     onClick={() => navigate(-1)}
-                />
-                <Button 
-                    label="Back to Dashboard" 
-                    icon="pi pi-home" 
-                    className="btn-primary"
+                >
+                    <i className="pi pi-arrow-left" />
+                    Go Back
+                </button>
+                <button 
+                    className="bg-cyan-500 hover:bg-cyan-600 text-white border-none rounded-xl px-10 py-3.5 font-bold shadow-lg shadow-cyan-500/20 transition-all hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
                     onClick={() => navigate('/')}
-                />
+                >
+                    <i className="pi pi-home" />
+                    Back to Dashboard
+                </button>
             </div>
         </div>
     );

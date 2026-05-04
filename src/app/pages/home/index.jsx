@@ -23,7 +23,7 @@ export default function UnifiedDashboard() {
       setLoading(true);
       try {
         const [ordersRes, customersRes] = await Promise.allSettled([
-          apiGet('/admin/orders'),
+          apiGet('/orders/all'),
           apiGet('/admin/customers'),
         ]);
 
@@ -71,7 +71,7 @@ export default function UnifiedDashboard() {
   return (
     <Page title="Dashboard">
       <div className="flex flex-col gap-8 animate-fade-in pb-12">
-        
+
         {/* HEADER */}
         <div className="bg-white/70 backdrop-blur-xl rounded-4xl p-8 shadow-sm hover:shadow-md transition-all border border-white/50">
           <div className="flex justify-between items-center flex-wrap gap-4">
