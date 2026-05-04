@@ -46,7 +46,7 @@ const AdminSidebar = () => {
           <div className="logo-container">
             <div className="logo-icon relative">
               <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-xl" />
-              <Logo className="relative z-10 h-10 w-10 object-contain" />
+              <Logo className="relative z-10 h-10 w-10 object-contain text-slate-800" />
             </div>
             {!isCollapsed && (
               <div className="logo-text">
@@ -55,7 +55,7 @@ const AdminSidebar = () => {
                 </span>
                 <div className="mt-1.5 flex items-center gap-1.5">
                   <span className="brand-tagline text-[9px] font-semibold tracking-[0.25em] text-blue-500/80 uppercase">
-                    Premium Quality
+                    Trust in Every Drop
                   </span>
                 </div>
               </div>

@@ -201,7 +201,7 @@ const Login = () => {
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="h-[1.5px] w-6 bg-blue-500/40 rounded-full" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-600/80">Premium Quality</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-600/80">Trust in Every Drop</span>
           <div className="h-[1.5px] w-6 bg-blue-500/40 rounded-full" />
         </div>
       </div>
