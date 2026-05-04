@@ -4,15 +4,6 @@ import { useSelector } from "react-redux";
 
 // imports
 // import logo from "@/assets/logo.svg?react";
-import AppMenuitem from "@/app/context/AppMenuitem";
-import AppMenuIcon from "@/app/context/AppMenuIcons";
-import { MenuProvider } from "@/app/context/menucontext";
-import { LayoutContext } from "@/app/context/layoutcontent";
-import { menuModel } from "./modals";
-import { masterMenuModel } from "./masterModals";
-import { APP_NAME } from "@/constants/app.constant";
-import "./AppSidebar.scss";
-
 const Logo = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -29,6 +20,12 @@ const Logo = ({ className }) => (
     <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97" />
   </svg>
 );
+import AppMenuitem from "@/app/context/AppMenuitem";
+import { MenuProvider } from "@/app/context/menucontext";
+import { LayoutContext } from "@/app/context/layoutcontent";
+import { menuModel } from "./modals";
+import { masterMenuModel } from "./masterModals";
+import "./AppSidebar.scss";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();

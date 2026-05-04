@@ -99,7 +99,7 @@ export const User = () => {
                                 navigate(path);
                             }}
                         >
-                            <i className="pi pi-user mr-2 text-blue-500"></i>
+                            <i className="pi pi-user mr-2 text-gray-500"></i>
                             <span className="text-sm font-medium">User Profile</span>
                         </button>
 
@@ -112,7 +112,7 @@ export const User = () => {
                                 op.current.hide();
                             }}
                         >
-                            <i className="pi pi-cog mr-2 text-slate-400"></i>
+                            <i className="pi pi-cog mr-2 text-gray-500"></i>
                             <span className="text-sm font-medium">Settings</span>
                         </button>
 
