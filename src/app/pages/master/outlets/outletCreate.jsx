@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
@@ -49,7 +49,7 @@ const OutletCreate = () => {
     };
 
     const fieldClass = (isValid) => classNames(
-        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner',
+        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-400 text-[15px] transition-all outline-none font-medium text-slate-700 shadow-inner',
         { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
     );
 
@@ -62,11 +62,19 @@ const OutletCreate = () => {
                 isEditMode={!!id}
                 onSave={handleSave}
                 onDiscard={() => navigate('/master/outlets')}
+                sidebar={
+                    <FormSection title="Franchise Meta" icon="pi pi-info-circle">
+                        <div className="mt-2 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider mb-1">Outlet Status</p>
+                            <p className="text-[11px] text-indigo-500 leading-relaxed">Registered outlets will be immediately available for administrator assignment.</p>
+                        </div>
+                    </FormSection>
+                }
             >
                 <FormSection title="Core Information" icon="pi pi-building">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Outlet Name</label>
+                            <label className="text-[13px] font-bold text-slate-500">Outlet Name</label>
                             <InputText 
                                 value={outlet.name} 
                                 onChange={(e) => setOutlet({...outlet, name: e.target.value})} 
@@ -75,11 +83,12 @@ const OutletCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Contact Number</label>
+                            <label className="text-[13px] font-bold text-slate-500">Contact Number</label>
                             <InputText 
                                 value={outlet.mobileNumber} 
+                                maxLength={10}
                                 onChange={(e) => setOutlet({...outlet, mobileNumber: e.target.value})} 
-                                className={fieldClass(outlet.mobileNumber)}
+                                className={fieldClass(outlet.mobileNumber && outlet.mobileNumber.length === 10)}
                                 placeholder="Phone number"
                             />
                         </div>
@@ -89,7 +98,7 @@ const OutletCreate = () => {
                 <FormSection title="Geographic Data" icon="pi pi-map-marker">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">City / Region</label>
+                            <label className="text-[13px] font-bold text-slate-500">City / Region</label>
                             <InputText 
                                 value={outlet.location} 
                                 onChange={(e) => setOutlet({...outlet, location: e.target.value})} 
@@ -98,7 +107,7 @@ const OutletCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Full Address</label>
+                            <label className="text-[13px] font-bold text-slate-500">Full Address</label>
                             <InputText 
                                 value={outlet.address} 
                                 onChange={(e) => setOutlet({...outlet, address: e.target.value})} 
@@ -114,5 +123,3 @@ const OutletCreate = () => {
 };
 
 export default OutletCreate;
-
-

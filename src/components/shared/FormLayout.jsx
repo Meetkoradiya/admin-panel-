@@ -21,8 +21,8 @@ const FormLayout = ({
     return (
         <Page title={title}>
             <div className="w-full flex flex-col items-stretch animate-fade-in pb-24 pt-4">
-                <div className="w-full mb-6 px-1">
-                    <h1 className="text-2xl font-bold text-slate-800 tracking-tight">{title}</h1>
+                <div className="w-full mb-8 px-1">
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{title}</h1>
                 </div>
 
                 <div className={classNames("w-full flex flex-col items-stretch gap-6", { "lg:grid lg:grid-cols-4": sidebar })}>
@@ -67,8 +67,9 @@ const FormLayout = ({
 
 export const FormSection = ({ title, icon, children }) => (
     <div className="w-full bg-white rounded-3xl shadow-sm border border-slate-100 p-8 hover:shadow-md transition-all">
-        <div className="flex items-center gap-3 mb-8">
-            <h3 className="text-xl font-bold text-slate-800 tracking-tight">{title}</h3>
+        <div className="flex items-center gap-4 mb-8">
+            {icon && <i className={`${icon} text-slate-400 text-lg`} />}
+            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{title}</h3>
         </div>
         <div className="w-full flex flex-col items-stretch">
             {children}

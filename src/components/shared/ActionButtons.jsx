@@ -20,21 +20,6 @@ const ActionButtons = ({ onEdit, onDelete, onDeactivate, isDeactivated, editTool
                 />
             )}
 
-            {/* Deactivate/Activate Button */}
-            {onDeactivate && (
-                <Button
-                    variant="icon"
-                    size="sm"
-                    icon={isDeactivated ? "pi pi-check-circle" : "pi pi-ban"}
-                    tooltip={isDeactivated ? "Activate" : "Deactivate"}
-                    tooltipOptions={{ position: 'top' }}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDeactivate();
-                    }}
-                    className={isDeactivated ? "text-emerald-500 hover:bg-emerald-50" : "text-amber-500 hover:bg-amber-50"}
-                />
-            )}
 
             {/* Delete Button */}
             {onDelete && (

@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import useApi from '@/hooks/useApi';
 import FormLayout, { FormSection } from '@/components/shared/FormLayout';
 
 const AddCustomer = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const location = useLocation();
-    const passedCustomer = location.state?.customer;
+    const toast = useRef(null);
+    const [loading, setLoading] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const { apiGet, apiPost, apiPut } = useApi();
 
     const [customer, setCustomer] = useState({
         username: '',
@@ -27,13 +29,6 @@ const AddCustomer = () => {
         product: ''
     });
 
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const toast = useRef(null);
-
-    const token = useSelector((state) => state.auth.token);
-    const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
-
     const [productsData, setProductsData] = useState([]);
     const [routesData, setRoutesData] = useState([]);
 
@@ -43,65 +38,58 @@ const AddCustomer = () => {
         { label: 'Monthly', value: 'MONTHLY' }
     ];
 
-    const fetchDependencies = async () => {
+    const fetchDependencies = useCallback(async () => {
         try {
             const [prodRes, routeRes] = await Promise.all([
-                axios.get(`${BASE_URL}/admin/products`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${BASE_URL}/admin/routes`, { headers: { Authorization: `Bearer ${token}` } })
+                apiGet('/admin/products'),
+                apiGet('/admin/routes')
             ]);
-            setProductsData(prodRes.data?.data || prodRes.data || []);
-            setRoutesData(routeRes.data?.data || routeRes.data || []);
+            
+            const prodList = prodRes?.data || prodRes || [];
+            const routeList = routeRes?.data || routeRes || [];
+            
+            setProductsData(Array.isArray(prodList) ? prodList : []);
+            setRoutesData(Array.isArray(routeList) ? routeList : []);
         } catch (error) {
             console.error("Failed to load options", error);
         }
-    };
+    }, [apiGet]);
 
     useEffect(() => {
-        if (token) fetchDependencies();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+        fetchDependencies();
+    }, [fetchDependencies]);
 
     useEffect(() => {
-        if (id) {
-            if (passedCustomer) {
-                setCustomer(c => ({
-                    ...c,
-                    ...passedCustomer,
-                    price: passedCustomer.pricePerBottle || passedCustomer.price || '',
-                    quantity: passedCustomer.defaultQty || passedCustomer.qty || passedCustomer.quantity || '',
-                    product: passedCustomer.productId || passedCustomer.product?.id || passedCustomer.product || ''
-                }));
-            } else {
-                fetchCustomerDetails(id);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, passedCustomer]);
-
-    const fetchCustomerDetails = async (customerId) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/admin/customers`, {
-                headers: { Authorization: `Bearer ${token}` }
+        const passedCustomer = location.state?.customer;
+        if (id && passedCustomer) {
+            setCustomer({
+                ...passedCustomer,
+                price: passedCustomer.pricePerBottle || passedCustomer.price || '',
+                quantity: passedCustomer.defaultQty || passedCustomer.qty || passedCustomer.quantity || '',
+                product: passedCustomer.productId || passedCustomer.product?.id || passedCustomer.product || '',
+                route: passedCustomer.routeId || passedCustomer.route?.id || passedCustomer.route || ''
             });
-            const allCustomers = Array.isArray(response.data) ? response.data : (response.data?.data || []);
-            const found = allCustomers.find(c => c.id === parseInt(customerId) || c.id === customerId || c.userId === parseInt(customerId) || c.userId === customerId);
-            if (found) {
-                setCustomer(c => ({
-                    ...c,
-                    ...found,
-                    price: found.pricePerBottle || found.price || '',
-                    quantity: found.defaultQty || found.qty || found.quantity || '',
-                    product: found.productId || found.product?.id || found.product || ''
-                }));
-            }
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch customer details' });
+        } else if (id) {
+            // If ID exists but no passed data, fetch from list (since there's no single fetch endpoint typically)
+            apiGet('/admin/customers').then(res => {
+                const list = res?.data || res || [];
+                const found = list.find(c => String(c.id) === String(id) || String(c.userId) === String(id));
+                if (found) {
+                    setCustomer({
+                        ...found,
+                        price: found.pricePerBottle || found.price || '',
+                        quantity: found.defaultQty || found.qty || found.quantity || '',
+                        product: found.productId || found.product?.id || found.product || '',
+                        route: found.routeId || found.route?.id || found.route || ''
+                    });
+                }
+            });
         }
-    };
+    }, [id, location.state, apiGet]);
 
     const handleSave = async () => {
         setSubmitted(true);
-        if (customer.username.trim() && customer.mobileNumber.trim() && customer.mobileNumber.length === 10) {
+        if (customer.username?.trim() && customer.mobileNumber?.trim() && customer.mobileNumber?.length === 10) {
             setLoading(true);
             try {
                 const payload = {
@@ -119,36 +107,21 @@ const AddCustomer = () => {
                     productId: customer.product
                 };
 
-                const updateId = id || customer.userId;
+                const updateId = id || customer.userId || customer.id;
                 if (updateId) {
-                    await axios.put(`${BASE_URL}/admin/customers/${updateId}`, payload, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    toast.current?.show({ 
-                        severity: 'success', 
-                        summary: 'Account Updated', 
-                        detail: 'Customer profile has been successfully modified.', 
-                        life: 3000 
-                    });
+                    await apiPut(`/admin/customers/${updateId}`, payload);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Updated' });
                 } else {
-                    await axios.post(`${BASE_URL}/admin/register-customer`, payload, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    toast.current?.show({ 
-                        severity: 'success', 
-                        summary: 'Customer Added', 
-                        detail: 'A new customer account has been created successfully.', 
-                        life: 3000 
-                    });
+                    await apiPost('/admin/register-customer', payload);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Customer Registered' });
                 }
                 setTimeout(() => navigate('/admin/customers'), 1000);
             } catch (error) {
                 toast.current?.show({ 
-                    severity: 'error', 
-                    summary: 'Save Failed', 
-                    detail: error?.response?.data?.message || 'There was an error saving the customer profile. Please verify the details.', 
-                    life: 5000 
+                    severity: 'error', summary: 'Error', 
+                    detail: error?.response?.data?.message || 'Failed to save customer' 
                 });
+            } finally {
                 setLoading(false);
             }
         }
@@ -163,13 +136,13 @@ const AddCustomer = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <FormLayout
-                title={id ? "Edit Customer" : "Create Customer"}
+                title={id ? "Edit Customer" : "Register Customer"}
                 loading={loading}
                 isEditMode={!!id}
                 onSave={handleSave}
                 onDiscard={() => navigate('/admin/customers')}
             >
-                <FormSection title="Overview">
+                <FormSection title="Core Profile" icon="pi pi-user">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
                             <label className="text-[13px] font-bold text-slate-500">Full Name</label>
@@ -202,7 +175,7 @@ const AddCustomer = () => {
                     </div>
                 </FormSection>
 
-                <FormSection title="Pricing & Subscription">
+                <FormSection title="Subscription Settings" icon="pi pi-tag">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
                             <label className="text-[13px] font-bold text-slate-500">Price Per Bottle (₹)</label>
@@ -215,7 +188,7 @@ const AddCustomer = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-bold text-slate-500">Default Daily Quantity</label>
+                            <label className="text-[13px] font-bold text-slate-500">Daily Quantity</label>
                             <InputText
                                 type="number"
                                 value={customer.quantity}
@@ -235,7 +208,7 @@ const AddCustomer = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-bold text-slate-500">Status</label>
+                            <label className="text-[13px] font-bold text-slate-500">Account Status</label>
                             <Dropdown
                                 value={customer.status}
                                 options={[
@@ -243,13 +216,13 @@ const AddCustomer = () => {
                                     { label: 'Blocked', value: 'INACTIVE' }
                                 ]}
                                 onChange={(e) => setCustomer({ ...customer, status: e.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-13 flex items-center px-2 shadow-inner"
                             />
                         </div>
                     </div>
                 </FormSection>
 
-                <FormSection title="Route & Logistics">
+                <FormSection title="Logistics" icon="pi pi-map">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <div className="flex flex-col gap-2">
                             <label className="text-[13px] font-bold text-slate-500">Assigned Route</label>
@@ -257,7 +230,7 @@ const AddCustomer = () => {
                                 value={customer.route}
                                 options={routesData.map(r => ({ label: r.routeName || r.name, value: r.id }))}
                                 onChange={(e) => setCustomer({ ...customer, route: e.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-13 flex items-center px-2 shadow-inner"
                                 placeholder="Select route"
                             />
                         </div>
@@ -267,7 +240,7 @@ const AddCustomer = () => {
                                 value={customer.deliveryType}
                                 options={deliveryOptions}
                                 onChange={(e) => setCustomer({ ...customer, deliveryType: e.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-13 flex items-center px-2 shadow-inner"
                             />
                         </div>
                         <div className="flex flex-col gap-2 md:col-span-2">
@@ -276,7 +249,7 @@ const AddCustomer = () => {
                                 value={customer.product}
                                 options={productsData.map(p => ({ label: p.name, value: p.id }))}
                                 onChange={(e) => setCustomer({ ...customer, product: e.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-[52px] flex items-center px-2 shadow-inner"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-13 flex items-center px-2 shadow-inner"
                                 placeholder="Select product"
                             />
                         </div>

@@ -1,10 +1,10 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import ActionButtons from '@/components/shared/ActionButtons';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
 const DeviceList = () => {
@@ -45,7 +45,6 @@ const DeviceList = () => {
             acceptLabel: 'Remove',
             onAccept: async () => {
                 try {
-                    // Assuming delete endpoint, fallback if missing
                     // await apiDelete(`/master/devices/${rowData.id}`);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Device Removed' });
                     fetchDevices();
@@ -60,25 +59,20 @@ const DeviceList = () => {
         return <StatusTag status={rowData.isVerified ? 'VERIFIED' : 'PENDING'} />;
     };
 
-    const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            {!rowData.isVerified && (
-                <Button 
-                    icon="pi pi-shield" 
-                    rounded text
-                    tooltip="Verify Hardware"
-                    className="btn-icon text-emerald-500" 
-                    onClick={() => verifyDevice(rowData)}
-                />
-            )}
-            <Button 
-                icon="pi pi-trash" 
-                rounded text
-                tooltip="Remove Device"
-                className="btn-icon text-rose-500" 
-                onClick={() => deleteDevice(rowData)}
-            />
+    const deviceIdTemplate = (rowData) => (
+        <div className="flex flex-col gap-1 py-1">
+            <span className="text-slate-800 font-bold text-sm">#{rowData.deviceId || 'UNK-000'}</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400 bg-slate-50 w-fit px-2 py-0.5 rounded-md border border-slate-100">
+                Hardware ID
+            </span>
         </div>
+    );
+
+    const actionBodyTemplate = (rowData) => (
+        <ActionButtons 
+            onDeactivate={!rowData.isVerified ? () => verifyDevice(rowData) : null}
+            onDelete={() => deleteDevice(rowData)}
+        />
     );
 
     return (
@@ -93,16 +87,15 @@ const DeviceList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={null}
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column field="deviceId" header="Hardware ID" body={(row) => <span className="font-bold text-slate-800 text-xs">#{row.deviceId || 'UNK-000'}</span>} sortable />
-                <Column field="outlet.name" header="Assigned Outlet" body={(row) => <span className="font-bold text-slate-700">{row.outlet?.name || 'â€”'}</span>} sortable />
-                <Column field="lastLogin" header="Last Seen" className="text-slate-400 text-xs font-medium" />
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column header="Hardware Identity" body={deviceIdTemplate} sortable sortField="deviceId" />
+                <Column field="outlet.name" header="Assigned Outlet" body={(row) => <span className="font-bold text-slate-700 text-sm">{row.outlet?.name || '—'}</span>} sortable />
+                <Column field="lastLogin" header="Last Seen" body={(row) => <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{row.lastLogin || '—'}</span>} />
                 <Column header="Status" body={statusBodyTemplate} sortable sortField="isVerified" style={{ width: '10rem', textAlign: 'center' }} />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
     );
 };
 
 export default DeviceList;
-

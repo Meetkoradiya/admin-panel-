@@ -1,14 +1,13 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import Button from '@/components/ui/Button';
 import { Toast } from 'primereact/toast';
 import { showConfirmDialog } from '@/utils/confirmUtils';
-import { Tag } from 'primereact/tag';
 import { Avatar } from 'primereact/avatar';
 import { useNavigate } from 'react-router-dom';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import ActionButtons from '@/components/shared/ActionButtons';
 
 const AdminList = () => {
     const [admins, setAdmins] = useState([]);
@@ -23,7 +22,10 @@ const AdminList = () => {
         try {
             const data = await apiGet('/admin/admins');
             const adminList = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
-            setAdmins(adminList);
+            
+            // Filter out Master Admins to show only regular admins
+            const regularAdmins = adminList.filter(a => !(a.role === 'MASTER_ADMIN' || a.masterAdmin));
+            setAdmins(regularAdmins);
         } catch (error) {
             console.error('Fetch Admins Error:', error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch administrators' });
@@ -54,14 +56,18 @@ const AdminList = () => {
     };
 
     const nameBodyTemplate = (rowData) => (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 py-1">
             <Avatar
                 label={rowData.username?.charAt(0)?.toUpperCase() || 'A'}
-                style={{ backgroundColor: '#eff6ff', color: '#3b82f6', width: '36px', height: '36px', fontSize: '14px', fontWeight: '700', borderRadius: '50%' }}
+                style={{ backgroundColor: '#eff6ff', color: '#3b82f6', width: '38px', height: '38px', fontSize: '14px', fontWeight: '700', borderRadius: '12px', border: '1px solid #dbeafe' }}
             />
             <div className="flex flex-col">
-                <p className="font-bold text-slate-800 text-sm leading-tight">{rowData.username || 'â€”'}</p>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">{rowData.email || 'â€”'}</p>
+                <p className="font-bold text-slate-800 text-sm leading-tight">{rowData.username || '—'}</p>
+                <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                        {rowData.email || '—'}
+                    </span>
+                </div>
             </div>
         </div>
     );
@@ -71,44 +77,11 @@ const AdminList = () => {
         return <StatusTag status={statusValue} />;
     };
 
-    const roleBodyTemplate = (rowData) => {
-        const isMaster = rowData.role === 'MASTER_ADMIN' || rowData.masterAdmin;
-        return (
-            <span className={`px-3 py-1 rounded-xl text-[10px] font-semibold uppercase tracking-widest border ${isMaster ? 'bg-violet-50 text-violet-600 border-violet-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
-                {isMaster ? 'Master' : 'Admin'}
-            </span>
-        );
-    };
-
     const actionBodyTemplate = (rowData) => (
-        <div className="flex gap-2 justify-center">
-            <Button
-                icon="pi pi-pencil"
-                variant="icon"
-                size="sm"
-                tooltip="Edit Account"
-                tooltipOptions={{ position: 'top' }}
-                className="text-blue-500"
-                onClick={() => {
-                    showConfirmDialog({
-                        title: 'Edit Account',
-                        message: `Modify details for ${rowData.username}?`,
-                        type: 'edit',
-                        acceptLabel: 'Edit',
-                        onAccept: () => navigate(`/master/admins/edit/${rowData.id || rowData._id}`, { state: { admin: rowData } })
-                    });
-                }}
-            />
-            <Button
-                icon="pi pi-trash"
-                variant="icon"
-                size="sm"
-                tooltip="Delete Account"
-                tooltipOptions={{ position: 'top' }}
-                className="text-rose-500"
-                onClick={() => handleDelete(rowData)}
-            />
-        </div>
+        <ActionButtons 
+            onEdit={() => navigate(`/master/admins/edit/${rowData.id || rowData._id}`, { state: { admin: rowData } })}
+            onDelete={() => handleDelete(rowData)}
+        />
     );
 
     return (
@@ -116,7 +89,7 @@ const AdminList = () => {
             <Toast ref={toast} />
             <ListLayout
                 title="Admin Management"
-                subtitle="System administrators and role management"
+                subtitle="Manage system administrators and outlet assignments"
                 data={admins}
                 loading={loading}
                 globalFilter={globalFilter}
@@ -124,16 +97,14 @@ const AdminList = () => {
                 onAdd={() => navigate('/master/admins/add')}
                 addLabel="New Admin"
             >
-                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
                 <Column header="Administrator" body={nameBodyTemplate} sortField="username" sortable />
-                <Column field="mobileNumber" header="Mobile Number" className="text-slate-600 font-medium text-sm" />
-                <Column header="Role" body={roleBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
+                <Column field="mobileNumber" header="Mobile Number" body={(row) => <span className="text-slate-600 font-bold text-xs tracking-wider">{row.mobileNumber || '—'}</span>} />
                 <Column header="Status" body={statusBodyTemplate} sortField="status" sortable style={{ width: '8rem', textAlign: 'center' }} />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
     );
 };
 
 export default AdminList;
-

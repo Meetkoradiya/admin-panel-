@@ -3,8 +3,8 @@
 
 
 @layer base {
-    body {
-        font-family: 'Poppins', sans-serif;
+    body, html, #root, .p-component, .p-inputtext, .p-button, h1, h2, h3, h4, h5, h6 {
+        font-family: 'Poppins', sans-serif !important;
     }
 
     *,

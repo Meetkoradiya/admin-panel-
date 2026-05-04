@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
@@ -95,7 +95,7 @@ const AdminCreate = () => {
     };
 
     const fieldClass = (isValid) => classNames(
-        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-sm transition-all outline-none font-medium text-slate-700 shadow-inner',
+        'w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 text-[15px] transition-all outline-none font-medium text-slate-700 shadow-inner',
         { 'border-rose-400 bg-rose-50/50': submitted && !isValid }
     );
 
@@ -111,14 +111,18 @@ const AdminCreate = () => {
                 sidebar={
                     <FormSection title="Account Security" icon="pi pi-shield">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Access Password</label>
+                            <label className="text-[13px] font-bold text-slate-500">Access Password</label>
                             <InputText
                                 type="password"
                                 value={admin.password}
                                 onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
                                 className={fieldClass(isEditMode || admin.password)}
-                                placeholder={isEditMode ? "Leave blank to keep same" : "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"}
+                                placeholder={isEditMode ? "Leave blank to keep same" : "••••••••"}
                             />
+                            <div className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                                <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1">Security Tip</p>
+                                <p className="text-[11px] text-blue-500 leading-relaxed">Ensure passwords are complex and unique for each administrator account.</p>
+                            </div>
                         </div>
                     </FormSection>
                 }
@@ -126,7 +130,7 @@ const AdminCreate = () => {
                 <FormSection title="Identity Details" icon="pi pi-user">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Username</label>
+                            <label className="text-[13px] font-bold text-slate-500">Username</label>
                             <InputText
                                 value={admin.username}
                                 onChange={(e) => setAdmin({ ...admin, username: e.target.value })}
@@ -135,7 +139,7 @@ const AdminCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Mobile Number</label>
+                            <label className="text-[13px] font-bold text-slate-500">Mobile Number</label>
                             <InputText
                                 value={admin.mobileNumber}
                                 maxLength={10}
@@ -145,7 +149,7 @@ const AdminCreate = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Email Address</label>
+                            <label className="text-[13px] font-bold text-slate-500">Email Address</label>
                             <InputText
                                 value={admin.email}
                                 onChange={(e) => setAdmin({ ...admin, email: e.target.value })}
@@ -158,12 +162,12 @@ const AdminCreate = () => {
 
                 <FormSection title="Assignment" icon="pi pi-building">
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Assigned Outlet</label>
+                        <label className="text-[13px] font-bold text-slate-500">Assigned Outlet</label>
                         <Dropdown
                             value={admin.outletId}
                             options={outlets}
                             onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-52px flex items-center px-2 shadow-inner"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl h-12 flex items-center px-2 shadow-inner"
                             placeholder="Select an outlet (optional)"
                         />
                     </div>
@@ -174,5 +178,3 @@ const AdminCreate = () => {
 };
 
 export default AdminCreate;
-
-

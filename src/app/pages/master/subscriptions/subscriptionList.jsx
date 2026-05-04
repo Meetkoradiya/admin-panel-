@@ -1,11 +1,10 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { Tag } from 'primereact/tag';
 import useApi from '@/hooks/useApi';
 import ListLayout from '@/components/shared/ListLayout';
 import StatusTag from '@/components/shared/StatusTag';
+import ActionButtons from '@/components/shared/ActionButtons';
 
 const SubscriptionList = () => {
     const [subscriptions, setSubscriptions] = useState([]);
@@ -33,7 +32,16 @@ const SubscriptionList = () => {
     };
 
     const priceBodyTemplate = (rowData) => (
-        <span className="font-bold text-slate-800">â‚¹{(rowData.price || 0).toLocaleString()}</span>
+        <span className="font-extrabold text-slate-800 text-sm">₹{(rowData.price || 0).toLocaleString()}</span>
+    );
+
+    const outletTemplate = (row) => (
+        <div className="flex flex-col gap-1 py-1">
+            <span className="text-slate-800 font-bold text-sm">{row.outlet?.name || '—'}</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-blue-500 bg-blue-50 w-fit px-2 py-0.5 rounded-md border border-blue-100">
+                {row.planName || 'STANDARD'}
+            </span>
+        </div>
     );
 
     return (
@@ -48,16 +56,15 @@ const SubscriptionList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={null}
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column field="outlet.name" header="Franchise / Outlet" body={(row) => <span className="font-bold text-slate-700">{row.outlet?.name || 'â€”'}</span>} sortable />
-                <Column field="planName" header="Plan Tier" body={(row) => <span className="text-blue-500 font-bold text-[10px] uppercase tracking-widest">{row.planName || 'STANDARD'}</span>} />
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column header="Franchise / Outlet" body={outletTemplate} sortable sortField="outlet.name" />
                 <Column header="Subscription Fee" body={priceBodyTemplate} sortable sortField="price" />
-                <Column field="expiryDate" header="Next Renewal" body={(row) => <span className="text-slate-500 text-sm font-medium">{row.expiryDate || 'â€”'}</span>} sortable />
+                <Column field="expiryDate" header="Next Renewal" body={(row) => <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">{row.expiryDate || '—'}</span>} sortable />
                 <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
+                <Column header="Actions" body={() => <ActionButtons onEdit={() => {}} />} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
     );
 };
 
 export default SubscriptionList;
-

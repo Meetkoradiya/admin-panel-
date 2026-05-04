@@ -19,8 +19,9 @@ const ListLayout = ({
 }) => {
     const header = (
         <div className="flex flex-col">
-            <div className="px-6 py-4 bg-white">
-                <h2 className="text-xl font-bold text-slate-800 tracking-tight">{title}</h2>
+            <div className="px-6 py-6 bg-white flex flex-col gap-1">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h2>
+                {subtitle && <p className="text-sm font-medium text-slate-400">{subtitle}</p>}
             </div>
             <div className="px-6 py-5 bg-blue-50/50 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="w-full md:w-80">
