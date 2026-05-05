@@ -40,10 +40,14 @@ const InventoryList = () => {
         setLoading(true);
         try {
             const response = await apiGet('/admin/inventory');
-            const data = response?.data || response || [];
-            setStocks(Array.isArray(data) ? data : []);
+            // Robustly extract and normalize the array
+            const data = response?.data || response?.stocks || response?.inventory || (Array.isArray(response) ? response : []);
+            const normalized = Array.isArray(data) ? data.map(s => ({ ...s, id: s.id || s._id })) : [];
+            setStocks(normalized);
         } catch (error) {
+            console.error("Fetch Stocks Error:", error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch inventory' });
+            setStocks([]);
         } finally {
             setLoading(false);
         }
@@ -52,8 +56,10 @@ const InventoryList = () => {
     const fetchProducts = useCallback(async () => {
         try {
             const response = await apiGet('/admin/products');
-            const data = response?.data || response || [];
-            setProducts(data);
+            const data = response?.data || response?.products || (Array.isArray(response) ? response : []);
+            // Ensure every product has an 'id' for lookup
+            const normalized = Array.isArray(data) ? data.map(p => ({ ...p, id: p.id || p._id })) : [];
+            setProducts(normalized);
         } catch (error) {
             console.error("Failed to fetch products:", error);
         }
@@ -66,7 +72,8 @@ const InventoryList = () => {
 
     const enrichedStocks = useMemo(() => {
         return stocks.map(s => {
-            const prod = products.find(p => p.id === s.productId);
+            // Use string comparison for robust matching
+            const prod = products.find(p => String(p.id) === String(s.productId));
             return {
                 ...s,
                 resolvedProductName: prod ? prod.name : (s.productName || s.product?.name || 'Unknown Product')
@@ -88,28 +95,68 @@ const InventoryList = () => {
 
     const saveStock = async () => {
         setSubmitted(true);
-        if (editStock.productId) {
-            try {
-                const payload = {
-                    productId: editStock.productId,
-                    available: Number(editStock.available || 0),
-                    damaged: Number(editStock.damaged || 0),
-                    empty: Number(editStock.empty || 0),
-                    quantity: Number(editStock.available || 0) // Fallback for backend
-                };
+        if (!editStock.productId) return;
 
-                if (editStock.id) {
-                    await apiPut(`/admin/inventory/${editStock.id}`, payload);
-                    toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Stock updated successfully' });
-                } else {
-                    await apiPost(`/admin/inventory`, payload);
-                    toast.current?.show({ severity: 'Success', summary: 'Created', detail: 'Stock record created' });
-                }
-                setStockDialog(false);
-                fetchStocks();
-            } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save stock' });
+        try {
+            const valAvailable = Number(editStock.available || 0);
+            const valDamaged = Number(editStock.damaged || 0);
+            const valEmpty = Number(editStock.empty || 0);
+            
+            const payload = {
+                productId: editStock.productId,
+                product: editStock.productId, // Some backends expect 'product'
+                available: valAvailable,
+                damaged: valDamaged,
+                empty: valEmpty,
+                // Redundant fields for maximum backend compatibility
+                quantity: valAvailable,
+                availableStock: valAvailable,
+                stock: valAvailable,
+                avail: valAvailable,
+                qty: valAvailable,
+                damagedStock: valDamaged,
+                emptyBottles: valEmpty
+            };
+
+            let response;
+            if (editStock.id) {
+                // Try to update existing record
+                response = await apiPut(`/admin/inventory/${editStock.id}`, payload);
+                toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Stock updated successfully' });
+            } else {
+                // Create new record
+                response = await apiPost(`/admin/inventory`, payload);
+                toast.current?.show({ severity: 'success', summary: 'Created', detail: 'Stock record created' });
             }
+
+            const updatedItem = response?.data || response;
+            const finalItemData = { 
+                ...payload, 
+                ...(updatedItem?.data || (typeof updatedItem === 'object' ? updatedItem : {}))
+            };
+
+            setStocks(prev => {
+                if (editStock.id) {
+                    const editIdStr = String(editStock.id);
+                    return prev.map(s => {
+                        const sIdStr = String(s.id || s._id || '');
+                        if (sIdStr === editIdStr) {
+                            return { ...s, ...finalItemData };
+                        }
+                        return s;
+                    });
+                } else {
+                    const newItem = { 
+                        ...finalItemData, 
+                        id: updatedItem?.id || updatedItem?._id || updatedItem?.data?.id || updatedItem?.data?._id || `temp_${Date.now()}`
+                    };
+                    return [newItem, ...prev];
+                }
+            });
+
+            setStockDialog(false);
+        } catch (error) {
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save stock' });
         }
     };
 
@@ -182,7 +229,7 @@ const InventoryList = () => {
                             onChange={(e) => setEditStock({ ...editStock, productId: e.value })}
                             placeholder="Select product"
                             disabled={!!editStock.id}
-                            className={classNames('w-full rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 text-[15px] h-[52px] flex items-center px-2 focus:ring-4 focus:ring-blue-50 transition-all shadow-inner', { 'border-rose-400 bg-rose-50/50': submitted && !editStock.productId })}
+                            className={classNames('w-full rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-700 text-[15px] h-13 flex items-center px-2 focus:ring-4 focus:ring-blue-50 transition-all shadow-inner', { 'border-rose-400 bg-rose-50/50': submitted && !editStock.productId })}
                         />
                     </div>
 

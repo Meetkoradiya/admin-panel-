@@ -207,7 +207,7 @@ const Login = () => {
       </div>
 
       {/* Main Login Card */}
-      <div className="w-full max-w-[440px] bg-white rounded-4xl shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
+      <div className="w-full max-w-110 bg-white rounded-4xl shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
         <div className="p-10 md:p-14">
           <div className="mb-12">
             <h1 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Welcome back</h1>
@@ -263,7 +263,7 @@ const Login = () => {
                 onClick={handleLogin}
                 variant="primary"
                 size="lg"
-                className="w-full h-[58px] text-lg font-bold bg-[#3b82f6] hover:bg-[#2563eb] rounded-full shadow-lg shadow-blue-500/20 transition-all border-none"
+                className="w-full h-14.5 text-lg font-bold bg-[#3b82f6] hover:bg-[#2563eb] rounded-full shadow-lg shadow-blue-500/20 transition-all border-none"
                 />
             </div>
           </div>
@@ -279,7 +279,7 @@ const Login = () => {
       {/* Page Bottom Footer Links */}
       <div className="mt-12 flex items-center gap-6">
         <Link to="/privacy-policy" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Privacy policy</Link>
-        <div className="w-[1px] h-3 bg-slate-300" />
+        <div className="w-px h-3 bg-slate-300" />
         <Link to="/terms" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms &amp; condition</Link>
       </div>
     </div>

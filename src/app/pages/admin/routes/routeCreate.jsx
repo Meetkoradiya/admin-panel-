@@ -55,7 +55,7 @@ const RouteCreate = () => {
         } else if (id) {
             fetchRouteDetails();
         }
-    }, [id, location.state, apiGet]);
+    }, [id, location.state, apiGet, navigate]);
 
     const handleSave = async () => {
         setSubmitted(true);

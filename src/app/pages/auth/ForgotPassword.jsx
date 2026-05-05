@@ -55,13 +55,13 @@ const ForgotPassword = () => {
           <span className="text-3xl font-bold text-slate-800 tracking-tight">Amrut Water</span>
         </div>
         <div className="flex items-center gap-1.5 mt-1">
-          <div className="h-[2px] w-3 bg-blue-500 rounded-full" />
+          <div className="h-0.5 w-3 bg-blue-500 rounded-full" />
           <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-600">Recovery Center</span>
         </div>
       </div>
 
       {/* Main Card */}
-      <div className="w-full max-w-[480px] bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
+      <div className="w-full max-w-120 bg-white rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
         <div className="p-10 md:p-12">
           <div className="mb-10 text-center lg:text-left">
             <h1 className="text-2xl font-bold text-slate-900 mb-2">Forgot Password?</h1>
@@ -113,7 +113,7 @@ const ForgotPassword = () => {
       {/* Page Bottom Footer Links */}
       <div className="mt-12 flex items-center gap-6">
         <button onClick={() => navigate("/privacy-policy")} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Privacy policy</button>
-        <div className="w-[1px] h-3 bg-slate-300" />
+        <div className="w-px h-3 bg-slate-300" />
         <button onClick={() => navigate("/terms")} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Terms &amp; condition</button>
       </div>
     </div>
