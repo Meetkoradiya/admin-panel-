@@ -5,93 +5,7 @@
     display: flex;
     flex-direction: column;
     font-family: 'Poppins', sans-serif;
-
-    &.sidebar-collapsed {
-        .logo-text, .brand-tagline, .layout-menuitem-root-text, .layout-submenu-toggler {
-            display: none;
-        }
-
-        .side-nav-header {
-            justify-content: center;
-            padding: 1.5rem 0;
-        }
-
-        /* Center icons and hide text in collapsed state */
-        ul li > a {
-            justify-content: center;
-            padding: 1rem 0;
-            
-            span.layout-menuitem-text, 
-            i.layout-submenu-toggler { 
-                display: none; 
-            }
-        }
-
-        /* Hover submenu logic for collapsed state */
-        ul li {
-            position: relative;
-
-            &:hover {
-                > a {
-                    background: #f8fafc;
-                    
-                    /* Tooltip for simple items (no sub-items) */
-                    /* Note: Avoiding :has selector for better compatibility */
-                    span.layout-menuitem-text {
-                        display: block !important;
-                        position: absolute;
-                        left: 70px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        background: #ffffff;
-                        padding: 0.5rem 1rem;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                        border: 1px solid #f1f5f9;
-                        z-index: 9999;
-                        white-space: nowrap;
-                        font-size: 0.85rem;
-                        color: #0f172a;
-                    }
-                }
-                
-                /* Submenu floating box */
-                > ul {
-                    display: block !important;
-                    max-height: none !important;
-                    overflow: visible !important;
-                    position: absolute;
-                    left: 70px;
-                    top: 0;
-                    width: 220px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-                    border-radius: 12px;
-                    padding: 0.5rem;
-                    z-index: 9999;
-                    border: 1px solid #f1f5f9;
-
-                    li {
-                        padding-left: 0;
-                        &::before { display: none; }
-                        
-                        a {
-                            padding: 0.75rem 1rem;
-                            span.layout-menuitem-text { 
-                                display: inline !important; 
-                                position: static !important;
-                                background: transparent !important;
-                                padding: 0 !important;
-                                box-shadow: none !important;
-                                border: none !important;
-                            } 
-                            justify-content: flex-start;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    border-right: 1px solid #f1f5f9;
 }
 
 .side-nav-header {
@@ -133,6 +47,11 @@
     padding: 0.5rem 0;
 }
 
+.layout-menu {
+    padding: 0.5rem 0;
+    list-style: none;
+}
+
 .layout-menuitem-root-text {
     padding: 1.5rem 1.75rem 0.75rem;
     font-size: 0.625rem;
@@ -155,9 +74,16 @@
         text-decoration: none;
         gap: 0.875rem;
         border-radius: 1rem;
+        transition: all 0.2s ease;
 
-        i {
+        .layout-menuitem-icon {
             font-size: 1.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: inherit;
         }
 
         &:hover {
@@ -166,11 +92,11 @@
         }
 
         &.active-route {
-            color: #3b82f6;
-            background: #eff6ff;
+            color: #06b6d4;
+            background: #ecfeff;
             
-            i {
-                color: #3b82f6;
+            .layout-menuitem-icon {
+                color: #06b6d4;
             }
         }
     }
@@ -191,9 +117,12 @@
                 font-size: 0.875rem;
                 font-weight: 600;
                 border-radius: 0.75rem;
+                transition: all 0.2s ease;
                 
-                i {
-                    font-size: 1rem;
+                .layout-menuitem-icon {
+                    font-size: 1.1rem;
+                    width: 1.25rem;
+                    height: 1.25rem;
                 }
 
                 &:hover {
@@ -207,5 +136,122 @@
                 }
             }
         }
+    }
+}
+
+.layout-wrapper.layout-static-inactive {
+    .sidebar {
+        .side-nav-header {
+            padding: 1rem 0.5rem;
+            justify-content: center;
+            
+            .logo-container {
+                gap: 0;
+                justify-content: center;
+                
+                .logo-text {
+                    display: none;
+                }
+            }
+        }
+
+        .layout-menuitem-root-text {
+            display: none;
+        }
+
+        .layout-menu-item {
+            padding: 0.125rem 0.25rem;
+
+            > a {
+                padding: 0.875rem 0;
+                gap: 0;
+                justify-content: center;
+
+                .layout-menuitem-text,
+                .layout-submenu-toggler {
+                    display: none;
+                }
+
+                .layout-menuitem-icon {
+                    margin-right: 0;
+                    font-size: 1.25rem;
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+            }
+
+            ul {
+                display: none;
+            }
+        }
+    }
+}
+
+// ─── Mini Sidebar Flyout Popup ──────────────────────────────────────────────
+.mini-sidebar-popup {
+    position: fixed;
+    z-index: 9999;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    min-width: 190px;
+    padding: 0.4rem;
+    animation: miniPopupIn 0.15s ease-out;
+
+    .mini-sidebar-popup-title {
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 0.5rem 0.75rem 0.3rem;
+    }
+
+    .mini-sidebar-popup-item {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        padding: 0.6rem 0.75rem;
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background 0.15s ease, color 0.15s ease;
+
+        .mini-sidebar-popup-icon {
+            font-size: 1rem;
+            width: 1.1rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        &:hover {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        &.active-route {
+            background: #ecfeff;
+            color: #06b6d4;
+
+            .mini-sidebar-popup-icon {
+                color: #06b6d4;
+            }
+        }
+    }
+}
+
+@keyframes miniPopupIn {
+    from {
+        opacity: 0;
+        transform: translateX(-8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
     }
 }

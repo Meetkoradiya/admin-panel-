@@ -18,7 +18,8 @@
   left: 0;
   transition:
     transform vars.$transitionDuration,
-    left vars.$transitionDuration;
+    left vars.$transitionDuration,
+    width vars.$transitionDuration;
   background-color: #fff;
   padding: 0.5rem 0.6rem;
   border-right: 1px solid var(--surface-200);
@@ -181,4 +182,43 @@
   overflow: hidden;
   max-height: 0 !important;
   transition: max-height 0.45s cubic-bezier(0, 1, 0, 1);
+}
+
+.layout-wrapper.layout-static-inactive {
+  .layout-sidebar {
+    padding: 0.5rem 0;
+
+    .layout-menuitem-root-text {
+      display: none;
+    }
+
+    .layout-menu {
+      // Hide all 2nd-level submenus (e.g. Create Route, Route List)
+      li li ul {
+        display: none !important;
+        max-height: 0 !important;
+      }
+
+      li {
+        a, a.p-ripple {
+          padding: 0.75rem 0;
+          justify-content: center;
+          gap: 0;
+
+          .layout-menuitem-text,
+          .layout-submenu-toggler {
+            display: none !important;
+          }
+
+          .layout-menuitem-icon {
+            margin-right: 0 !important;
+            font-size: 1.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+  }
 }

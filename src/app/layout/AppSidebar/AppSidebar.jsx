@@ -35,31 +35,27 @@ const AdminSidebar = () => {
   const currentMenuModel =
     user?.role === "MASTER_ADMIN" ? masterMenuModel : menuModel;
 
-  const isCollapsed = layoutState.staticMenuDesktopInactive;
-
   const handleLogoClick = () => navigate("/");
 
   return (
     <MenuProvider>
-      <aside className={`sidebar ${isCollapsed ? "sidebar-collapsed" : ""}`}>
+      <aside className="sidebar">
         <div className="side-nav-header" onClick={handleLogoClick}>
           <div className="logo-container">
             <div className="logo-icon relative">
               <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-xl" />
               <Logo className="relative z-10 h-10 w-10 object-contain text-slate-800" />
             </div>
-            {!isCollapsed && (
-              <div className="logo-text">
-                <span className="brand-name font-bold tracking-tight text-slate-800">
-                  Amrut Water
+            <div className="logo-text">
+              <span className="brand-name font-bold tracking-tight text-slate-800">
+                Amrut Water
+              </span>
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <span className="brand-tagline text-[9px] font-semibold tracking-[0.25em] text-blue-500/80 uppercase">
+                  Trust in Every Drop
                 </span>
-                <div className="mt-1.5 flex items-center gap-1.5">
-                  <span className="brand-tagline text-[9px] font-semibold tracking-[0.25em] text-blue-500/80 uppercase">
-                    Trust in Every Drop
-                  </span>
-                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
 

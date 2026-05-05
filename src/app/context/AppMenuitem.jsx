@@ -1,21 +1,32 @@
-import React, { useEffect, useContext, useRef } from "react";
+import React, { useEffect, useContext, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Ripple } from "primereact/ripple";
 import { classNames } from "primereact/utils";
 import { CSSTransition } from "react-transition-group";
 import { MenuContext } from "./menucontext";
+import { LayoutContext } from "./layoutcontent";
 import { Link, useLocation } from "react-router-dom";
 
 const AppMenuitem = (props) => {
   const location = useLocation();
   const { activeMenu, setActiveMenu } = useContext(MenuContext);
+  const { layoutState } = useContext(LayoutContext);
   const item = props.item;
   const Icon = item?.Icon;
   const submenuRef = useRef(null);
+  const itemRef = useRef(null);
   const key = props.parentKey
     ? props.parentKey + "-" + props.index
     : String(props.index);
   const isActiveRoute = item?.to && location.pathname === item.to;
   const active = activeMenu === key || activeMenu.startsWith(key + "-");
+
+  // Flyout popup state for mini sidebar
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupTop, setPopupTop] = useState(0);
+
+  const isMiniMode = layoutState.staticMenuDesktopInactive;
+
   const onRouteChange = (url) => {
     if (item?.to && item.to === url) {
       setActiveMenu(key);
@@ -27,6 +38,26 @@ const AppMenuitem = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
+  // Close popup when route changes
+  useEffect(() => {
+    setShowPopup(false);
+  }, [location.pathname]);
+
+  // Close popup on outside click
+  useEffect(() => {
+    if (!showPopup) return;
+    const handleOutside = (e) => {
+      if (itemRef.current && !itemRef.current.contains(e.target)) {
+        // Also allow clicks inside the popup portal
+        const popup = document.querySelector(".mini-sidebar-popup");
+        if (popup && popup.contains(e.target)) return;
+        setShowPopup(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [showPopup]);
+
   const itemClick = (event) => {
     //avoid processing disabled items
     if (item?.disabled) {
@@ -37,6 +68,15 @@ const AppMenuitem = (props) => {
     //execute command
     if (item?.command) {
       item?.command({ originalEvent: event, item: item });
+    }
+
+    // If mini mode and item has sub-items → show flyout popup
+    if (item?.items && isMiniMode) {
+      event.preventDefault();
+      const rect = itemRef.current?.getBoundingClientRect();
+      setPopupTop(rect?.top ?? 0);
+      setShowPopup((prev) => !prev);
+      return;
     }
 
     // toggle active state
@@ -71,8 +111,42 @@ const AppMenuitem = (props) => {
     </CSSTransition>
   );
 
+  // Flyout popup rendered via portal (so it's not clipped by sidebar overflow)
+  const flyoutPopup =
+    showPopup &&
+    isMiniMode &&
+    item?.items &&
+    createPortal(
+      <div
+        className="mini-sidebar-popup"
+        style={{ top: popupTop, left: 82 }}
+      >
+        <div className="mini-sidebar-popup-title">{item.label}</div>
+        {item.items.map((child, i) => (
+          <Link
+            key={i}
+            to={child.to || "#"}
+            className={classNames("mini-sidebar-popup-item", {
+              "active-route": child.to && location.pathname === child.to,
+            })}
+            onClick={() => {
+              setShowPopup(false);
+              setActiveMenu(key + "-" + i);
+            }}
+          >
+            {child.icon && (
+              <i className={classNames("mini-sidebar-popup-icon", child.icon)} />
+            )}
+            <span>{child.label}</span>
+          </Link>
+        ))}
+      </div>,
+      document.body
+    );
+
   return (
     <li
+      ref={itemRef}
       className={classNames({
         "layout-root-menuitem": props.root,
         "active-menuitem": active,
@@ -85,7 +159,9 @@ const AppMenuitem = (props) => {
         <a
           href={item?.url}
           onClick={(e) => itemClick(e)}
-          className={classNames(item?.class, "p-ripple")}
+          className={classNames(item?.class, "p-ripple", {
+            "mini-active": showPopup && isMiniMode,
+          })}
           target={item?.target}
           tabIndex={0}
         >
@@ -128,6 +204,7 @@ const AppMenuitem = (props) => {
       ) : null}
 
       {subMenu}
+      {flyoutPopup}
     </li>
   );
 };
