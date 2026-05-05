@@ -97,9 +97,10 @@ const CreateNewPassword = () => {
                   onChange={handleInputChange}
                   toggleMask
                   feedback={false}
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="••••••••"
                   className="w-full"
-                  inputClassName="w-full pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
+                  inputClassName="w-full !pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
+                  inputStyle={{ paddingLeft: '3.5rem' }}
                 />
               </div>
             </div>
@@ -114,9 +115,10 @@ const CreateNewPassword = () => {
                   onChange={handleInputChange}
                   toggleMask
                   feedback={false}
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="••••••••"
                   className="w-full"
-                  inputClassName="w-full pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
+                  inputClassName="w-full !pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
+                  inputStyle={{ paddingLeft: '3.5rem' }}
                 />
               </div>
             </div>

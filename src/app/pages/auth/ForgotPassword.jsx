@@ -74,12 +74,13 @@ const ForgotPassword = () => {
             <div className="flex flex-col gap-2">
               <label className="text-sm font-bold text-slate-500 ml-1">Email Address</label>
               <div className="relative group">
-                <i className="pi pi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+                <i className="pi pi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10 transition-colors group-focus-within:text-blue-500" />
                 <InputText
                   value={email}
                   onChange={(e) => setEmail(e.target.value.toLowerCase())}
                   placeholder="name@example.com"
-                  className="w-full pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
+                  className="w-full !pl-12 p-4 rounded-xl bg-slate-50 border-slate-200 text-slate-700 font-bold focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"
+                  style={{ paddingLeft: '3.5rem' }}
                 />
               </div>
             </div>
