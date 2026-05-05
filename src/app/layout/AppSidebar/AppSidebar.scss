@@ -181,35 +181,21 @@
         
         li {
             position: relative;
-            padding-left: 1.5rem;
-
-            &::before {
-                content: '';
-                position: absolute;
-                left: 0.5rem;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: #cbd5e1;
-            }
-
-            &:has(a.active-route)::before {
-                background: #06b6d4;
-                box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
-                width: 10px;
-                height: 10px;
-            }
 
             a {
-                display: block;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
                 padding: 0.625rem 1rem;
                 color: #64748b;
                 font-size: 0.875rem;
                 font-weight: 600;
                 border-radius: 0.75rem;
                 
+                i {
+                    font-size: 1rem;
+                }
+
                 &:hover {
                     color: #0f172a;
                     background: #f8fafc;
