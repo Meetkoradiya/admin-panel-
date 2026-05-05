@@ -36,8 +36,7 @@ const RouteCreate = () => {
                         status: found.status || 'Active'
                     });
                 } else {
-                    toast.current?.show({ severity: 'warn', summary: 'Not Found', detail: 'Route not found. Redirecting...' });
-                    setTimeout(() => navigate('/admin/routes'), 1500);
+                    navigate('/admin/routes');
                 }
             } catch (error) {
                 toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch route details' });

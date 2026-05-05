@@ -58,8 +58,7 @@ const AdminCreate = () => {
                         address: found.address || ''
                     });
                 } else {
-                    toast.current?.show({ severity: 'warn', summary: 'Not Found', detail: 'Administrator not found. Redirecting...' });
-                    setTimeout(() => navigate('/master/admins'), 1500);
+                    navigate('/master/admins');
                 }
             } catch (error) {
                 toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch administrator details' });

@@ -17,7 +17,7 @@ export const SimpleLayout = ({
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-grow px-10 pb-32">
+            <div className="grow px-10 pb-32">
                 <div className="space-y-6">
                     {children}
                 </div>
@@ -36,7 +36,7 @@ export const SimpleLayout = ({
                 <Button 
                     label={saveLabel} 
                     icon={loading ? "pi pi-spin pi-spinner" : "pi pi-check"} 
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none font-medium rounded-xl px-12 shadow-lg shadow-blue-500/30 text-white transition-all text-sm h-11 flex items-center gap-2 transform active:scale-95" 
+                    className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none font-medium rounded-xl px-12 shadow-lg shadow-blue-500/30 text-white transition-all text-sm h-11 flex items-center gap-2 transform active:scale-95" 
                     onClick={onSave}
                     disabled={loading}
                 />

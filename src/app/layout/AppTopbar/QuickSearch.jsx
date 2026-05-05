@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +40,7 @@ export const QuickSearch = ({ visible, onHide }) => {
             onHide={onHide} 
             showHeader={false} 
             closable={false}
-            className="quick-search-dialog overflow-hidden rounded-[24px] shadow-2xl border-none"
+            className="quick-search-dialog overflow-hidden rounded-3xl shadow-2xl border-none"
             contentClassName="!p-0"
             style={{ width: '500px' }}
             maskClassName="backdrop-blur-sm bg-slate-900/40"
@@ -54,7 +54,7 @@ export const QuickSearch = ({ visible, onHide }) => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search menu..." 
-                            className="w-full !border-none !shadow-none !ring-0 !outline-none text-[15px] font-medium text-slate-700 py-1 bg-transparent"
+                            className="w-full border-none! shadow-none! ring-0! outline-none! text-[15px] font-medium text-slate-700 py-1 bg-transparent"
                             style={{ paddingLeft: '2.5rem' }}
                             autoFocus
                         />
@@ -82,7 +82,7 @@ export const QuickSearch = ({ visible, onHide }) => {
                                             onClick={() => handleItemClick(item.to)}
                                             className="flex items-center gap-4 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all"
                                         >
-                                            <div className="w-10 h-10 rounded-[12px] bg-white flex items-center justify-center border border-slate-200 shadow-sm">
+                                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-slate-200 shadow-sm">
                                                 <i className={`${item.icon || 'pi pi-circle-fill'} text-slate-600 text-[15px]`} />
                                             </div>
                                             <span className="text-[14px] font-medium text-slate-700">

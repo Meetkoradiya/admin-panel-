@@ -52,8 +52,7 @@ const DriverCreate = () => {
                         vehicleNumber: found.vehicleNumber || ''
                     });
                 } else {
-                    toast.current?.show({ severity: 'warn', summary: 'Not Found', detail: 'Driver not found. Redirecting...' });
-                    setTimeout(() => navigate('/admin/drivers'), 1500);
+                    navigate('/admin/drivers');
                 }
             } catch (error) {
                 toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch driver details' });

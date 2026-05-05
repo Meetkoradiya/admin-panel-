@@ -74,8 +74,7 @@ const AddCustomer = () => {
                         route: found.routeId || found.route?.id || found.route || ''
                     });
                 } else {
-                    toast.current?.show({ severity: 'warn', summary: 'Not Found', detail: 'Customer not found. Redirecting...' });
-                    setTimeout(() => navigate('/admin/customers'), 1500);
+                    navigate('/admin/customers');
                 }
             } catch (error) {
                 toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch customer details' });
