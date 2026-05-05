@@ -34,15 +34,21 @@ const InventoryList = () => {
         empty: 0
     });
 
-    const { apiGet, apiPost, apiPut, apiDelete } = useApi();
+    const { apiGet, apiPost, apiPut, apiPatch, apiDelete } = useApi();
 
     const fetchStocks = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await apiGet('/admin/inventory');
+            // Added cache busting parameter
+            const response = await apiGet(`/admin/inventory?t=${Date.now()}`);
+            console.log("📥 Raw Inventory Data from backend:", response);
             // Robustly extract and normalize the array
             const data = response?.data || response?.stocks || response?.inventory || (Array.isArray(response) ? response : []);
-            const normalized = Array.isArray(data) ? data.map(s => ({ ...s, id: s.id || s._id })) : [];
+            const normalized = Array.isArray(data) ? data.map(s => ({ 
+                ...s, 
+                id: s.id || s._id || s.productId || s.product_id || (typeof s.product === 'string' ? s.product : s.product?.id || s.product?._id)
+            })) : [];
+
             setStocks(normalized);
         } catch (error) {
             console.error("Fetch Stocks Error:", error);
@@ -82,12 +88,20 @@ const InventoryList = () => {
     }, [stocks, products]);
 
     const openEdit = (rowData = null) => {
+        // Try multiple field names that backend might use for productId
+        const resolvedProductId = rowData
+            ? (rowData.productId || rowData.product_id || rowData.productID
+                || (typeof rowData.product === 'string' ? rowData.product : null)
+                || (typeof rowData.product === 'object' ? rowData.product?.id || rowData.product?._id : null)
+                || null)
+            : null;
+
         setEditStock({
             id: rowData ? (rowData.id || rowData._id) : null,
-            productId: rowData ? rowData.productId : null,
-            available: rowData ? (rowData.available || rowData.quantity || rowData.qty || 0) : 0,
-            damaged: rowData ? (rowData.damaged || 0) : 0,
-            empty: rowData ? (rowData.empty || 0) : 0
+            productId: resolvedProductId,
+            available: rowData ? (rowData.availableStock ?? rowData.available ?? rowData.quantity ?? rowData.qty ?? 0) : 0,
+            damaged: rowData ? (rowData.damagedStock ?? rowData.damaged ?? 0) : 0,
+            empty: rowData ? (rowData.emptyStock ?? rowData.empty ?? 0) : 0
         });
         setSubmitted(false);
         setStockDialog(true);
@@ -95,68 +109,68 @@ const InventoryList = () => {
 
     const saveStock = async () => {
         setSubmitted(true);
-        if (!editStock.productId) return;
+        // For new records, require productId. For existing records (id exists), allow update without productId.
+        if (!editStock.id && !editStock.productId) return;
 
         try {
             const valAvailable = Number(editStock.available || 0);
             const valDamaged = Number(editStock.damaged || 0);
             const valEmpty = Number(editStock.empty || 0);
             
+            // Payload according to Swagger InventoryRequestDTO
             const payload = {
                 productId: editStock.productId,
-                product: editStock.productId, // Some backends expect 'product'
-                available: valAvailable,
-                damaged: valDamaged,
-                empty: valEmpty,
-                // Redundant fields for maximum backend compatibility
-                quantity: valAvailable,
                 availableStock: valAvailable,
-                stock: valAvailable,
-                avail: valAvailable,
-                qty: valAvailable,
                 damagedStock: valDamaged,
-                emptyBottles: valEmpty
+                emptyStock: valEmpty
             };
 
             let response;
             if (editStock.id) {
-                // Try to update existing record
                 response = await apiPut(`/admin/inventory/${editStock.id}`, payload);
-                toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Stock updated successfully' });
             } else {
-                // Create new record
                 response = await apiPost(`/admin/inventory`, payload);
-                toast.current?.show({ severity: 'success', summary: 'Created', detail: 'Stock record created' });
             }
 
-            const updatedItem = response?.data || response;
-            const finalItemData = { 
-                ...payload, 
-                ...(updatedItem?.data || (typeof updatedItem === 'object' ? updatedItem : {}))
-            };
+            if (response?.success === false || response?.status === false) {
+                throw new Error(response?.message || 'Save failed');
+            }
 
-            setStocks(prev => {
-                if (editStock.id) {
-                    const editIdStr = String(editStock.id);
-                    return prev.map(s => {
-                        const sIdStr = String(s.id || s._id || '');
-                        if (sIdStr === editIdStr) {
-                            return { ...s, ...finalItemData };
-                        }
-                        return s;
-                    });
-                } else {
-                    const newItem = { 
-                        ...finalItemData, 
-                        id: updatedItem?.id || updatedItem?._id || updatedItem?.data?.id || updatedItem?.data?._id || `temp_${Date.now()}`
-                    };
-                    return [newItem, ...prev];
-                }
+            // Update local state IMMEDIATELY
+            if (editStock.id) {
+                const editIdStr = String(editStock.id);
+                setStocks(prev => prev.map(s => {
+                    if (String(s.id || s._id || '') === editIdStr) {
+                        return {
+                            ...s,
+                            availableStock: valAvailable,
+                            available: valAvailable, // Keep for UI compatibility
+                            damagedStock: valDamaged,
+                            damaged: valDamaged,
+                            emptyStock: valEmpty,
+                            empty: valEmpty,
+                        };
+                    }
+                    return s;
+                }));
+            } else {
+                await fetchStocks();
+            }
+
+            toast.current?.show({
+                severity: 'success',
+                summary: editStock.id ? 'Updated' : 'Created',
+                detail: editStock.id ? 'Inventory updated successfully' : 'Inventory record created'
             });
 
             setStockDialog(false);
         } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'Failed to save stock' });
+            console.error("Save stock error:", error);
+            toast.current?.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: error?.response?.data?.message || error?.message || 'Failed to save inventory'
+            });
         }
     };
 
@@ -200,13 +214,13 @@ const InventoryList = () => {
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Product Details" body={productBodyTemplate} sortField="resolvedProductName" />
-                <Column field="available" header="Available" body={(row) => <span className="font-bold text-emerald-600">{row.available || row.quantity || row.qty || 0}</span>} />
-                <Column field="damaged" header="Damaged" body={(row) => <span className="font-bold text-rose-600">{row.damaged || 0}</span>} />
-                <Column field="empty" header="Empty" body={(row) => <span className="font-bold text-slate-500">{row.empty || 0}</span>} />
+                <Column field="availableStock" header="Available" body={(row) => <span className="font-bold text-emerald-600">{row.availableStock || row.available || row.quantity || row.qty || 0}</span>} />
+                <Column field="damagedStock" header="Damaged" body={(row) => <span className="font-bold text-rose-600">{row.damagedStock || row.damaged || 0}</span>} />
+                <Column field="emptyStock" header="Empty" body={(row) => <span className="font-bold text-slate-500">{row.emptyStock || row.empty || 0}</span>} />
                 <Column header="Total" body={(row) => {
-                    const avail = Number(row.available || row.quantity || row.qty || 0);
-                    const dam = Number(row.damaged || 0);
-                    const emp = Number(row.empty || 0);
+                    const avail = Number(row.availableStock || row.available || row.quantity || row.qty || 0);
+                    const dam = Number(row.damagedStock || row.damaged || 0);
+                    const emp = Number(row.emptyStock || row.empty || 0);
                     return <span className="font-bold text-slate-900">{avail + dam + emp}</span>;
                 }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />

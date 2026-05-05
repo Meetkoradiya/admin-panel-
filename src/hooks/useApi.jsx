@@ -62,6 +62,7 @@ const useApi = () => {
         apiGet: (url, config = {}) => apiClient.get(url, config),
         apiPost: (url, data = {}, config = {}) => apiClient.post(url, data, config),
         apiPut: (url, data = {}, config = {}) => apiClient.put(url, data, config),
+        apiPatch: (url, data = {}, config = {}) => apiClient.patch(url, data, config),
         apiDelete: (url, config = {}) => apiClient.delete(url, config),
         apiClient
     }), [apiClient]);
