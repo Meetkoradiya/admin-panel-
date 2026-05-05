@@ -10,7 +10,7 @@ import { Link, useLocation } from "react-router-dom";
 const AppMenuitem = (props) => {
   const location = useLocation();
   const { activeMenu, setActiveMenu } = useContext(MenuContext);
-  const { layoutState } = useContext(LayoutContext);
+  const { layoutState, onMenuToggle } = useContext(LayoutContext);
   const item = props.item;
   const Icon = item?.Icon;
   const submenuRef = useRef(null);
@@ -122,24 +122,27 @@ const AppMenuitem = (props) => {
         style={{ top: popupTop, left: 82 }}
       >
         <div className="mini-sidebar-popup-title">{item.label}</div>
-        {item.items.map((child, i) => (
-          <Link
-            key={i}
-            to={child.to || "#"}
-            className={classNames("mini-sidebar-popup-item", {
-              "active-route": child.to && location.pathname === child.to,
-            })}
-            onClick={() => {
-              setShowPopup(false);
-              setActiveMenu(key + "-" + i);
-            }}
-          >
-            {child.icon && (
-              <i className={classNames("mini-sidebar-popup-icon", child.icon)} />
-            )}
-            <span>{child.label}</span>
-          </Link>
-        ))}
+        {item.items.map((child, i) => {
+          const isChildActive = child.to && location.pathname === child.to;
+          return (
+            <Link
+              key={i}
+              to={child.to || "#"}
+              className={classNames("mini-sidebar-popup-item", {
+                "active-route": isChildActive,
+              })}
+              onClick={() => {
+                setShowPopup(false);
+                setActiveMenu(key + "-" + i);
+              }}
+            >
+              {child.icon && (
+                <i className={classNames("mini-sidebar-popup-icon", child.icon)} />
+              )}
+              <span>{child.label}</span>
+            </Link>
+          );
+        })}
       </div>,
       document.body
     );
