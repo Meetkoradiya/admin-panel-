@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Password } from "primereact/password";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { useNavigate } from "react-router-dom";
 const Logo = ({ className }) => (
   <svg
@@ -125,8 +125,11 @@ const CreateNewPassword = () => {
 
             <Button
               label="Update Password"
+              icon="pi pi-check"
               onClick={handleUpdatePassword}
-              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-bold text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] mt-2"
+              variant="primary"
+              size="lg"
+              className="w-full mt-2"
             />
 
             <div className="pt-4 text-center">

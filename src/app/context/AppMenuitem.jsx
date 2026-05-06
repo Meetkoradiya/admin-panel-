@@ -24,8 +24,26 @@ const AppMenuitem = (props) => {
   // Flyout popup state for mini sidebar
   const [showPopup, setShowPopup] = useState(false);
   const [popupTop, setPopupTop] = useState(0);
+  const timeoutRef = useRef(null);
 
   const isMiniMode = layoutState.staticMenuDesktopInactive;
+
+  const onMouseEnter = () => {
+    if (isMiniMode && item?.items && !props.root) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      const rect = itemRef.current?.getBoundingClientRect();
+      setPopupTop(rect?.top ?? 0);
+      setShowPopup(true);
+    }
+  };
+
+  const onMouseLeave = () => {
+    if (isMiniMode && item?.items && !props.root) {
+      timeoutRef.current = setTimeout(() => {
+        setShowPopup(false);
+      }, 100);
+    }
+  };
 
   const onRouteChange = (url) => {
     if (item?.to && item.to === url) {
@@ -71,7 +89,7 @@ const AppMenuitem = (props) => {
     }
 
     // If mini mode and item has sub-items → show flyout popup
-    if (item?.items && isMiniMode) {
+    if (item?.items && isMiniMode && !props.root) {
       event.preventDefault();
       const rect = itemRef.current?.getBoundingClientRect();
       setPopupTop(rect?.top ?? 0);
@@ -120,6 +138,8 @@ const AppMenuitem = (props) => {
       <div
         className="mini-sidebar-popup"
         style={{ top: popupTop, left: 82 }}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <div className="mini-sidebar-popup-title">{item.label}</div>
         {item.items.map((child, i) => {
@@ -154,6 +174,8 @@ const AppMenuitem = (props) => {
         "layout-root-menuitem": props.root,
         "active-menuitem": active,
       })}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {props.root && item?.visible !== false && (
         <div className="layout-menuitem-root-text">{item?.label}</div>

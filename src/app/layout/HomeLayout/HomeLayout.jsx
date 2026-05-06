@@ -145,7 +145,7 @@ function HomeLayout() {
           <Outlet />
         </div>
 
-        <footer className="py-6 px-8 border-t border-slate-100 flex items-center justify-center mt-auto bg-white/50">
+        <footer className="py-6 px-6 border-t border-slate-100 flex items-center justify-center mt-auto bg-white/50">
           <p className="text-xs font-medium text-slate-400 text-center">
            @ Developed by <a href="https://www.horizontechserv.in/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-600 transition-colors font-bold">Horizon Tech Serv</a>
           </p>

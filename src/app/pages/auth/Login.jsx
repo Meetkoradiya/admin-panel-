@@ -259,11 +259,12 @@ const Login = () => {
             <div className="pt-4">
                 <Button
                 label="Sign In"
+               
                 loading={isLoading}
                 onClick={handleLogin}
                 variant="primary"
                 size="lg"
-                className="w-full h-14.5 text-lg font-bold bg-[#3b82f6] hover:bg-[#2563eb] rounded-full shadow-lg shadow-blue-500/20 transition-all border-none"
+                className="w-full h-14.5 text-lg font-bold shadow-lg shadow-blue-500/20 transition-all border-none"
                 />
             </div>
           </div>

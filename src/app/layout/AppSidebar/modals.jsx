@@ -12,8 +12,8 @@ export const menuModel = [
         label: "Routes",
         icon: "pi pi-map text-violet-500",
         items: [
-          { label: "Create Route", to: "/admin/routes/add", icon: "pi pi-plus-circle text-violet-400" },
-          { label: "Route List", to: "/admin/routes", icon: "pi pi-list text-violet-400" },
+          { label: "Create Route", to: "/admin/routes/add", icon: "pi pi-plus text-violet-400" },
+          { label: "Route List", to: "/admin/routes", icon: "pi pi-map text-violet-400" },
         ],
       },
       {
@@ -30,16 +30,16 @@ export const menuModel = [
         label: "Drivers",
         icon: "pi pi-id-card text-sky-500",
         items: [
-          { label: "Create Driver", to: "/admin/drivers/add", icon: "pi pi-plus-circle text-sky-400" },
-          { label: "Driver List", to: "/admin/drivers", icon: "pi pi-list text-sky-400" },
+          { label: "Create Driver", to: "/admin/drivers/add", icon: "pi pi-user-plus text-sky-400" },
+          { label: "Driver List", to: "/admin/drivers", icon: "pi pi-id-card text-sky-400" },
         ],
       },
       {
         label: "Customers",
         icon: "pi pi-users text-indigo-500",
         items: [
-          { label: "Create Customer", to: "/admin/customers/add", icon: "pi pi-plus-circle text-indigo-400" },
-          { label: "Customer List", to: "/admin/customers", icon: "pi pi-list text-indigo-400" },
+          { label: "Create Customer", to: "/admin/customers/add", icon: "pi pi-user-plus text-indigo-400" },
+          { label: "Customer List", to: "/admin/customers", icon: "pi pi-users text-indigo-400" },
         ],
       },
       {

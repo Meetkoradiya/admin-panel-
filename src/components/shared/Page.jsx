@@ -13,7 +13,7 @@ const Page = ({ title = "", children }) => {
   }, [title]);
 
   return (
-    <div className="w-full bg-[#f4f7fa] min-h-[calc(100vh-4rem)] p-4 md:p-5 lg:p-6 animate-fade-in">
+    <div className="w-full bg-[#f8fafc] min-h-[calc(100vh-5rem)] p-4 md:p-6 animate-fade-in">
       {children}
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button as PrimeButton } from 'primereact/button';
+import { classNames } from 'primereact/utils';
 import { motion } from 'motion/react';
 
 /**
@@ -16,6 +17,7 @@ const Button = ({
     className = '', 
     loading = false,
     disabled = false,
+    icon,
     children,
     ...props 
 }) => {
@@ -25,23 +27,37 @@ const Button = ({
     
     // Variant styles
     const variants = {
-        primary: "bg-cyan-500 text-white border-none shadow-[0_10px_20px_-5px_rgba(6,182,212,0.3)] hover:bg-cyan-600 hover:shadow-[0_15px_25px_-5px_rgba(6,182,212,0.4)]",
+        primary: "bg-blue-600 text-white border-none shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:shadow-blue-500/30",
         secondary: "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm",
-        danger: "bg-rose-500 text-white border-none shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] hover:bg-rose-600 hover:shadow-[0_15px_25px_-5px_rgba(244,63,94,0.4)]",
+        danger: "bg-rose-500 text-white border-none shadow-lg shadow-rose-500/20 hover:bg-rose-600 hover:shadow-rose-500/30",
         ghost: "bg-transparent text-slate-600 border-none hover:bg-slate-100",
-        link: "bg-transparent text-cyan-600 border-none underline-offset-4 hover:underline p-0",
-        icon: "p-2 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300"
+        link: "bg-transparent text-blue-600 border-none underline-offset-4 hover:underline p-0",
+        icon: "p-0 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm flex items-center justify-center"
     };
 
-    // Size styles
+    // Size styles (for regular buttons)
     const sizes = {
         sm: "px-3 py-1.5 text-xs rounded-lg gap-1.5 h-8",
         md: "px-5 py-2.5 text-sm rounded-xl gap-2 h-10",
-        lg: "px-8 py-3.5 text-base rounded-2xl gap-3 h-12"
+        lg: "px-8 py-3.5 text-base rounded-2xl gap-3 h-12.5"
+    };
+
+    // Size styles (for circular icon buttons)
+    const iconSizes = {
+        sm: "w-8 h-8 text-sm",
+        md: "w-10 h-10 text-base",
+        lg: "w-12 h-12 text-lg"
     };
 
     // Combine classes
-    const buttonClasses = `${baseStyles} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`;
+    const isIconOnly = variant === 'icon';
+    const buttonClasses = classNames(
+        baseStyles,
+        variants[variant] || variants.primary,
+        isIconOnly ? (iconSizes[size] || iconSizes.md) : (sizes[size] || sizes.md),
+        className
+    );
+    
     const isFullWidth = className.includes('w-full');
 
     return (
@@ -54,6 +70,7 @@ const Button = ({
                 className={buttonClasses}
                 disabled={disabled || loading}
                 loading={loading}
+                icon={icon}
                 {...props}
             >
                 {children}

@@ -284,8 +284,22 @@ const InventoryList = () => {
                 </div>
 
                 <div className="flex justify-end gap-3 mt-10 pt-6 border-t border-slate-50">
-                    <Button label="Cancel" icon="pi pi-times" onClick={() => setStockDialog(false)} className="p-button-text text-slate-400 hover:bg-slate-50 rounded-xl px-5 font-bold transition-all text-sm" />
-                    <Button label={editStock.id ? "Update" : "Create"} icon="pi pi-check" onClick={saveStock} className="bg-blue-600 hover:bg-blue-700 border-none text-white rounded-xl px-8 py-3 font-bold shadow-lg shadow-blue-500/20 transition-all text-sm" />
+                    <Button 
+                        label="Cancel" 
+                        icon="pi pi-times" 
+                        onClick={() => setStockDialog(false)} 
+                        variant="ghost"
+                        size="md"
+                        className="text-slate-400"
+                    />
+                    <Button 
+                        label={editStock.id ? "Update" : "Create"} 
+                        icon="pi pi-check" 
+                        onClick={saveStock} 
+                        variant="primary"
+                        size="md"
+                        className="px-10"
+                    />
                 </div>
             </Dialog>
         </div>
