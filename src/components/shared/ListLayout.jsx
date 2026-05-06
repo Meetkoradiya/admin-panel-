@@ -12,13 +12,14 @@ const ListLayout = ({
     data,
     loading,
     onAdd,
-    addLabel = "New Item",
+    addLabel = "Add",
     extraActions,
     globalFilter,
     setGlobalFilter,
     children,
     emptyMessage = "No records found",
     emptyImage,
+    stats,
     ...props
 }) => {
     const header = (
@@ -54,7 +55,30 @@ const ListLayout = ({
 
     return (
         <Page title={title}>
-            <div className="w-full bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.02)] border border-slate-100 overflow-hidden animate-slide-up mt-2">
+            <div className="flex flex-col gap-8 animate-fade-in pb-10">
+                {/* 1. SUMMARY CARDS (OPTIONAL) */}
+                {stats && stats.length > 0 && (
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 px-1`}>
+                        {stats.map((s, i) => (
+                            <div key={i} className="bg-white rounded-[2rem] p-7 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[145px] relative group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div className="flex flex-col gap-1.5">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
+                                    <h2 className="text-4xl font-black text-slate-900 tracking-tight">{s.value}</h2>
+                                </div>
+                                <div className={`text-[10px] font-bold ${s.textColor || 'text-blue-500'} mt-5 flex items-center gap-2`}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
+                                    {s.sub}
+                                </div>
+                                <div className={`absolute right-7 top-1/2 -translate-y-1/2 w-14 h-14 rounded-2xl ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-inner shadow-white/20`}>
+                                    <i className={`pi ${s.icon || 'pi-file'} text-2xl`} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* 2. MAIN TABLE */}
+                <div className="w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
                 <DataTable
                     value={data}
                     header={header}
@@ -62,7 +86,6 @@ const ListLayout = ({
                     globalFilter={globalFilter}
                     paginator
                     rows={10}
-                    rowsPerPageOptions={[10, 20, 50]}
                     className="p-datatable-minimal"
                     responsiveLayout="scroll"
                     emptyMessage={
@@ -81,15 +104,16 @@ const ListLayout = ({
                     }
                     dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
                     rowHover
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     {...props}
                 >
                     {children}
                 </DataTable>
             </div>
-        </Page>
-    );
+        </div>
+    </Page>
+);
 };
 
 export default ListLayout;

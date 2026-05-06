@@ -46,23 +46,25 @@ const AppTopbar = forwardRef((props, ref) => {
       
       <div className="flex items-center gap-2">
         {/* Menu Toggle Button */}
-        <Button
-            variant="icon"
-            icon="pi pi-bars text-[15px]"
+        <button
+            type="button"
             onClick={onMenuToggle}
-            className="w-10 h-10 bg-sky-50 text-sky-600 border-none rounded-xl hover:bg-sky-100 transition-all shadow-none hover:shadow-sm"
-        />
+            className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+        >
+            <i className="pi pi-bars text-lg" />
+        </button>
 
         {/* Search Button */}
-        <Button 
-            variant="icon"
-            icon="pi pi-search text-[15px]"
+        <button
+            type="button"
             onClick={() => setSearchVisible(true)}
-            className="w-10 h-10 bg-sky-50 text-sky-600 border-none rounded-xl hover:bg-sky-100 transition-all shadow-none hover:shadow-sm"
-        />
+            className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+        >
+            <i className="pi pi-search text-lg" />
+        </button>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-6">
         <Notification />
         <Instruction />
         <User />

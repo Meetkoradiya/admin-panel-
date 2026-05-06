@@ -63,60 +63,27 @@ const DeviceVerificationList = () => {
         });
     };
 
-    const StatCard = ({ title, count, icon, color, bgColor }) => (
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs flex items-center justify-between flex-1">
-            <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-medium text-slate-400">{title}</span>
-                <span className="text-3xl font-bold text-slate-900 leading-none my-1">{count}</span>
-                <span className={`text-[10px] font-semibold ${color}`}>Active Requests</span>
-            </div>
-            <div className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center`}>
-                <i className={`pi ${icon} text-lg ${color}`} />
-            </div>
-        </div>
-    );
+    const statsConfig = [
+        { label: 'Pending Requests', value: stats.total, sub: 'Active Requests', icon: 'pi-clock', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
+        { label: 'Android Devices', value: stats.android, sub: 'Active Requests', icon: 'pi-android', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'iOS Devices', value: stats.ios, sub: 'Active Requests', icon: 'pi-apple', iconColor: 'text-blue-500', bg: 'bg-blue-50' },
+    ];
 
     return (
-        <div className="flex flex-col gap-6 animate-fade-in">
+        <div className="animate-fade-in">
             <Toast ref={toast} />
 
-            {/* Top: Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <StatCard 
-                    title="Pending Requests" 
-                    count={stats.total} 
-                    icon="pi-clock" 
-                    color="text-amber-500" 
-                    bgColor="bg-amber-50" 
-                />
-                <StatCard 
-                    title="Android Devices" 
-                    count={stats.android} 
-                    icon="pi-android" 
-                    color="text-emerald-500" 
-                    bgColor="bg-emerald-50" 
-                />
-                <StatCard 
-                    title="iOS Devices" 
-                    count={stats.ios} 
-                    icon="pi-apple" 
-                    color="text-blue-500" 
-                    bgColor="bg-blue-50" 
-                />
-            </div>
-
-            {/* Bottom: Device Table (Full Width) */}
-            <div className="w-full">
-                <ListLayout
-                    title="Device Verification"
-                    subtitle=""
-                    data={devices}
-                    loading={loading}
-                    globalFilter={globalFilter}
-                    setGlobalFilter={setGlobalFilter}
-                    onAdd={null}
-                    emptyMessage="No pending verifications found"
-                >
+            <ListLayout
+                title="Device Verification"
+                subtitle="Manage hardware access approvals"
+                data={devices}
+                loading={loading}
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+                onAdd={null}
+                emptyMessage="No pending verifications found"
+                stats={statsConfig}
+            >
                     <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                     <Column field="deviceName" header="Device Name" body={(row) => <span className="font-bold text-slate-700">{row.deviceName || 'Unknown'}</span>} />
                     <Column field="os" header="Platform" body={(row) => (
@@ -136,7 +103,6 @@ const DeviceVerificationList = () => {
                         />
                     )} style={{ width: '8rem', textAlign: 'center' }} />
                 </ListLayout>
-            </div>
         </div>
     );
 };

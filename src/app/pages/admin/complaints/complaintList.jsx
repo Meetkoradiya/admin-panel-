@@ -87,72 +87,29 @@ const ComplaintList = () => {
         { label: 'Set Resolved', icon: 'pi pi-check', command: () => updateStatus(selectedComplaint.id || selectedComplaint._id, 'RESOLVED') },
     ];
 
-    const StatCard = ({ title, count, subtitle, icon, color, bgColor }) => (
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs flex items-center justify-between flex-1">
-            <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-medium text-slate-400">{title}</span>
-                <span className="text-3xl font-bold text-slate-900 leading-none my-1">{count}</span>
-                <span className={`text-[10px] font-semibold ${color}`}>{subtitle}</span>
-            </div>
-            <div className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center`}>
-                <i className={`pi ${icon} text-lg ${color}`} />
-            </div>
-        </div>
-    );
+    const statsConfig = [
+        { label: 'Total Complaints', value: stats.total, sub: 'All registered', icon: 'pi-file', iconColor: 'text-blue-500', bg: 'bg-blue-50' },
+        { label: 'Resolved', value: stats.resolved, sub: 'Successfully closed', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Pending', value: stats.pending, sub: 'Awaiting action', icon: 'pi-clock', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
+        { label: 'In-progress', value: stats.inProgress, sub: 'Currently handling', icon: 'pi-spinner pi-spin', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
+    ];
 
     return (
-        <div className="flex flex-col gap-6 animate-fade-in">
+        <div className="animate-fade-in">
             <Toast ref={toast} />
             <Menu model={menuItems} popup ref={menu} id="status_menu" />
 
-            {/* Top: Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard 
-                    title="Total Complaints" 
-                    count={stats.total} 
-                    subtitle="All registered" 
-                    icon="pi-file" 
-                    color="text-blue-500" 
-                    bgColor="bg-blue-50" 
-                />
-                <StatCard 
-                    title="Resolved" 
-                    count={stats.resolved} 
-                    subtitle="Successfully closed" 
-                    icon="pi-check-circle" 
-                    color="text-emerald-500" 
-                    bgColor="bg-emerald-50" 
-                />
-                <StatCard 
-                    title="Pending" 
-                    count={stats.pending} 
-                    subtitle="Awaiting action" 
-                    icon="pi-clock" 
-                    color="text-rose-500" 
-                    bgColor="bg-rose-50" 
-                />
-                <StatCard 
-                    title="In-progress" 
-                    count={stats.inProgress} 
-                    subtitle="Currently handling" 
-                    icon="pi-spinner pi-spin" 
-                    color="text-amber-500" 
-                    bgColor="bg-amber-50" 
-                />
-            </div>
-
-            {/* Bottom: Complaints Table (Full Width) */}
-            <div className="w-full">
-                <ListLayout
-                    title="Complaints Management"
-                    subtitle="Track and resolve customer issues"
-                    data={complaints}
-                    loading={loading}
-                    globalFilter={globalFilter}
-                    setGlobalFilter={setGlobalFilter}
-                    onAdd={null}
-                    emptyMessage="No complaints recorded yet"
-                >
+            <ListLayout
+                title="Complaints Management"
+                subtitle="Track and resolve customer issues"
+                data={complaints}
+                loading={loading}
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+                onAdd={null}
+                emptyMessage="No complaints recorded yet"
+                stats={statsConfig}
+            >
                     <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                     <Column header="Status" body={(row) => <StatusTag status={row.status || 'PENDING'} />} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
                     <Column field="complainer" header="Complainer" body={(row) => <span className="font-bold text-slate-700">{row.complainer || row.customerName || '—'}</span>} />
@@ -170,7 +127,6 @@ const ComplaintList = () => {
                         />
                     )} style={{ width: '10rem', textAlign: 'center' }} />
                 </ListLayout>
-            </div>
         </div>
     );
 };

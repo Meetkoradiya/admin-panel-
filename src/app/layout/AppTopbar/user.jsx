@@ -49,7 +49,7 @@ export const User = () => {
                 className="p-link w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-all active:scale-95 ml-2"
                 onClick={(e) => op.current.toggle(e)}
             >
-                <div className="rounded-full bg-blue-100 ring-2 ring-blue-50 size-9 overflow-hidden">
+                <div className="rounded-full bg-sky-100 ring-2 ring-sky-50 size-9 overflow-hidden flex items-center justify-center">
                     <img
                         src={profile || "/images/User.webp"}
                         alt="User"

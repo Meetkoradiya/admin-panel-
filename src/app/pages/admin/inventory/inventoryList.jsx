@@ -22,6 +22,13 @@ const InventoryList = () => {
     // Sync filter with URL
     useUrlFilters(globalFilter, setGlobalFilter);
 
+    const [stats, setStats] = useState({
+        total: 0,
+        available: 0,
+        damaged: 0,
+        empty: 0
+    });
+
     const toast = useRef(null);
 
     const [stockDialog, setStockDialog] = useState(false);
@@ -50,6 +57,14 @@ const InventoryList = () => {
             })) : [];
 
             setStocks(normalized);
+
+            // Calculate Stats
+            setStats({
+                total: normalized.length,
+                available: normalized.reduce((acc, curr) => acc + (Number(curr.availableStock || curr.available || 0)), 0),
+                damaged: normalized.reduce((acc, curr) => acc + (Number(curr.damagedStock || curr.damaged || 0)), 0),
+                empty: normalized.reduce((acc, curr) => acc + (Number(curr.emptyStock || curr.empty || 0)), 0),
+            });
         } catch (error) {
             console.error("Fetch Stocks Error:", error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch inventory' });
@@ -199,6 +214,13 @@ const InventoryList = () => {
         />
     );
 
+    const statsConfig = [
+        { label: 'Stock Items', value: stats.total, sub: 'Product Varieties', icon: 'pi-box', iconColor: 'text-violet-500', bg: 'bg-violet-50' },
+        { label: 'Available', value: stats.available, sub: 'Ready for Delivery', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Damaged', value: stats.damaged, sub: 'Needs Attention', icon: 'pi-exclamation-triangle', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
+        { label: 'Empty Bottles', value: stats.empty, sub: 'Awaiting Refill', icon: 'pi-history', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
+    ];
+
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
@@ -211,6 +233,7 @@ const InventoryList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={() => openEdit()}
                 addLabel="Add Stock"
+                stats={statsConfig}
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Product Details" body={productBodyTemplate} sortField="resolvedProductName" />
