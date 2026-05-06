@@ -7,31 +7,47 @@
         font-family: 'Poppins', sans-serif !important;
     }
 
+    body {
+        background-color: #f8fafc;
+        color: #334155;
+    }
+
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: #f1f5f9;
     }
 }
 
 @layer components {
-
     h2,
     .h2 {
-        font-size: 1.875rem;
+        font-size: 1.75rem;
         line-height: 2.25rem;
-        font-weight: 700;
+        font-weight: 800;
         color: #0f172a;
         letter-spacing: -0.025em;
     }
 
+    .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    }
+
     .form-label {
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #64748b;
         display: flex;
         align-items: center;
         margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .form-item.vertical {
@@ -40,7 +56,7 @@
     }
 
     .form-item {
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.5rem;
         position: relative;
     }
 }

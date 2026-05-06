@@ -86,7 +86,7 @@ export const QuickSearch = ({ visible, onHide }) => {
                                             className="flex items-center gap-4 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all"
                                         >
                                             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-slate-200 shadow-sm">
-                                                <i className={`${item.icon || 'pi pi-circle-fill'} text-slate-600 text-[15px]`} />
+                                                <i className={`${item.icon || 'pi pi-circle-fill'} text-[15px]`} />
                                             </div>
                                             <span className="text-[14px] font-medium text-slate-700">
                                                 {item.label}

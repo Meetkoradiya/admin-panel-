@@ -138,16 +138,19 @@ function HomeLayout() {
         <AppSidebar />
       </div>
 
-      <div className="layout-main-container">
+      <div className="layout-main-container bg-slate-50/30">
         <div className="layout-main">
           <AppTopbar ref={topbarRef} />
 
           <Outlet />
         </div>
 
-        <footer className="py-6 px-6 border-t border-slate-100 flex items-center justify-center mt-auto bg-white/50">
-          <p className="text-xs font-medium text-slate-400 text-center">
-           @ Developed by <a href="https://www.horizontechserv.in/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-600 transition-colors font-bold">Horizon Tech Serv</a>
+        <footer className="py-8 px-6 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between mt-auto bg-white/60 backdrop-blur-sm gap-4">
+          <p className="text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase">
+           &copy; {new Date().getFullYear()} <span className="text-slate-900">AMRUT WATER</span> ADMIN PANEL
+          </p>
+          <p className="text-xs font-semibold text-slate-400">
+           Developed by <a href="https://www.horizontechserv.in/" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:text-sky-700 transition-colors font-bold border-b-2 border-sky-100 pb-0.5">Horizon Tech Serv</a>
           </p>
         </footer>
       </div>
