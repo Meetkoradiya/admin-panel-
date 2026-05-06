@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import useApi from '@/hooks/useApi';
@@ -18,7 +18,7 @@ const DeviceVerificationList = () => {
     const fetchDevices = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await apiGet('/admin/devices');
+            const data = await apiGet('/auth/device-approvals');
             const devicesList = data?.data || data || [];
             setDevices(Array.isArray(devicesList) ? devicesList : []);
         } catch (error) {
@@ -36,7 +36,7 @@ const DeviceVerificationList = () => {
 
     const approveDevice = async (rowData) => {
         try {
-            await apiPost(`/admin/devices/approve/${rowData.id || rowData._id}`);
+            await apiPost(`/auth/approve-device/${rowData.id || rowData._id}`);
             toast.current?.show({ severity: 'success', summary: 'Approved', detail: 'Device has been successfully verified' });
             fetchDevices();
         } catch (error) {
@@ -97,11 +97,11 @@ const DeviceVerificationList = () => {
             >
                 <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Role" body={roleBodyTemplate} sortable sortField="role" />
-                <Column field="fullName" header="Full Name" body={(row) => <span className="font-bold text-slate-700">{row.fullName || row.username || 'â€”'}</span>} sortable />
-                <Column field="mobileNumber" header="Mobile Number" body={(row) => <span className="font-bold text-slate-400 text-xs tracking-widest">{row.mobileNumber || 'â€”'}</span>} />
-                <Column field="deviceId" header="Device Id" body={(row) => <span className="font-bold text-blue-500 text-xs tracking-tighter">#{row.deviceId || row.id || 'â€”'}</span>} />
+                <Column field="fullName" header="Full Name" body={(row) => <span className="font-bold text-slate-700">{row.fullName || row.username || '—'}</span>} sortable />
+                <Column field="mobileNumber" header="Mobile Number" body={(row) => <span className="font-bold text-slate-400 text-xs tracking-widest">{row.mobileNumber || '—'}</span>} />
+                <Column field="deviceId" header="Device Id" body={(row) => <span className="font-bold text-blue-500 text-xs tracking-tighter">#{row.deviceId || row.id || '—'}</span>} />
                 <Column header="Device" body={deviceBodyTemplate} sortable sortField="deviceType" />
-                <Column field="createdAt" header="Created at" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'â€”'}</span>} sortable />
+                <Column field="createdAt" header="Created at" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : '—'}</span>} sortable />
                 <Column header="Actions" body={(rowData) => (
                     <ActionButtons
                         onEdit={() => approveDevice(rowData)} // Using Edit as Approve for direct icon action
@@ -115,5 +115,3 @@ const DeviceVerificationList = () => {
 };
 
 export default DeviceVerificationList;
-
-

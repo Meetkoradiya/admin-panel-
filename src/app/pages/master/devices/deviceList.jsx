@@ -17,8 +17,9 @@ const DeviceList = () => {
     const fetchDevices = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await apiGet('/master/devices');
-            setDevices(Array.isArray(data) ? data : (data?.data || []));
+            const data = await apiGet('/auth/master/device-approvals');
+            const devicesList = data?.data || data || [];
+            setDevices(Array.isArray(devicesList) ? devicesList : []);
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch device records' });
         } finally {
@@ -30,7 +31,7 @@ const DeviceList = () => {
 
     const verifyDevice = async (rowData) => {
         try {
-            await apiPost(`/master/devices/verify/${rowData.id}`);
+            await apiPost(`/auth/master/approve-device/${rowData.id || rowData._id}`);
             toast.current?.show({ severity: 'success', summary: 'Verified', detail: 'Device verification successful' });
             fetchDevices();
         } catch (error) {
@@ -69,7 +70,7 @@ const DeviceList = () => {
     );
 
     const actionBodyTemplate = (rowData) => (
-        <ActionButtons 
+        <ActionButtons
             onDeactivate={!rowData.isVerified ? () => verifyDevice(rowData) : null}
             onDelete={() => deleteDevice(rowData)}
         />
@@ -79,7 +80,7 @@ const DeviceList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Hardware Verification"
+                title="Device Verification"
                 subtitle="Manage registered POS terminals and delivery devices"
                 data={devices}
                 loading={loading}

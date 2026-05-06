@@ -55,6 +55,7 @@ const AppTopbar = forwardRef((props, ref) => {
         {/* Search Button */}
         <Button 
             variant="icon"
+            text
             icon="pi pi-search text-base"
             onClick={() => setSearchVisible(true)}
             className="w-10 h-10 bg-[#06b6d4] border-[#06b6d4] text-white rounded-xl hover:bg-[#0891b2] transition-colors"
