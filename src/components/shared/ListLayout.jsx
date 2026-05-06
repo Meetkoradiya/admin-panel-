@@ -4,6 +4,8 @@ import Button from "@/components/ui/Button";
 import { Page } from './Page';
 import QuickSearchInput from './QuickSearchInput';
 
+import noDataImg from '@/assets/illustrations/no-data.png';
+
 const ListLayout = ({
     title,
     subtitle,
@@ -16,6 +18,7 @@ const ListLayout = ({
     setGlobalFilter,
     children,
     emptyMessage = "No records found",
+    emptyImage,
     ...props
 }) => {
     const header = (
@@ -37,6 +40,7 @@ const ListLayout = ({
                     {onAdd && (
                         <Button
                             label={addLabel}
+                            icon="pi pi-plus"
                             variant="primary"
                             size="md"
                             onClick={onAdd}
@@ -62,18 +66,17 @@ const ListLayout = ({
                     className="p-datatable-minimal"
                     responsiveLayout="scroll"
                     emptyMessage={
-                        <div className="text-center py-24 flex flex-col items-center justify-center bg-slate-50/20">
+                        <div className="text-center py-24 flex flex-col items-center justify-center bg-white">
                             <img
-                                src="/images/no-data.png"
+                                src={emptyImage || noDataImg}
                                 alt="No Data"
-                                className="w-64 h-auto mb-6 opacity-80"
-                                onError={(e) => {
-                                    e.target.src = 'https://cdn-icons-png.flaticon.com/512/7486/7486744.png'; // Fallback
-                                    e.target.className = "w-32 h-auto mb-6 opacity-20";
-                                }}
+                                className="w-80 h-auto mb-6 opacity-90 pointer-events-none select-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                onDragStart={(e) => e.preventDefault()}
                             />
-                            <div className="text-sm font-semibold uppercase tracking-widest text-slate-400">{emptyMessage}</div>
-                            <p className="text-xs text-slate-300 mt-2 font-medium">Try adjusting your filters or adding a new record</p>
+                            <div className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{emptyMessage}</div>
+                            <p className="text-xs text-slate-300 font-medium tracking-wide">Try adjusting your filters or adding a new record</p>
                         </div>
                     }
                     dataKey={(data) => data.id || data._id || `row_${Math.random()}`}

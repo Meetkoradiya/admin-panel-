@@ -94,10 +94,10 @@ export const Notification = () => {
             <Toast ref={toast} />
             <button
                 type="button"
-                className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 border border-slate-100 relative"
+                className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600 relative"
                 onClick={(e) => op.current.toggle(e)}
             >
-                <i className="pi pi-bell text-[1.2rem] text-slate-800"></i>
+                <i className="pi pi-bell text-xl"></i>
                 <Badge 
                     value={unreadCount > 99 ? '99+' : unreadCount} 
                     severity={unreadCount > 0 ? "danger" : "info"} 

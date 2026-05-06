@@ -53,6 +53,9 @@ export const QuickSearch = ({ visible, onHide }) => {
                         <InputText 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Escape') onHide();
+                            }}
                             placeholder="Search menu..." 
                             className="w-full border-none! shadow-none! ring-0! outline-none! text-[15px] font-medium text-slate-700 py-1 bg-transparent"
                             style={{ paddingLeft: '2.5rem' }}

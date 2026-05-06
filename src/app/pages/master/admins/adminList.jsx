@@ -123,7 +123,7 @@ const AdminList = () => {
                 addLabel="New Admin"
             >
                 <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column header="Administrator" body={nameBodyTemplate} sortField="username" sortable />
+                <Column header="Administrator" body={nameBodyTemplate} sortField="username" />
                 <Column field="mobileNumber" header="Mobile Number" body={(row) => <span className="text-slate-600 font-bold text-xs tracking-wider">{row.mobileNumber || '—'}</span>} />
                 <Column header="Status" body={statusBodyTemplate} sortField="status" sortable style={{ width: '8rem', textAlign: 'center' }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />

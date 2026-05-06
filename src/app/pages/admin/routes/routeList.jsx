@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -106,9 +106,9 @@ const RouteList = () => {
                 addLabel="New Route"
             >
                 <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column header="Route Details" body={routeNameTemplate} sortable sortField="routeName" />
-                <Column field="startPoint" header="Start Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.startPoint || 'â€”'}</span>} sortable />
-                <Column field="endPoint" header="End Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.endPoint || 'â€”'}</span>} sortable />
+                <Column header="Route Details" body={routeNameTemplate} sortField="routeName" />
+                <Column field="startPoint" header="Start Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.startPoint || 'â€”'}</span>} />
+                <Column field="endPoint" header="End Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.endPoint || 'â€”'}</span>} />
                 <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '8rem', textAlign: 'center' }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>

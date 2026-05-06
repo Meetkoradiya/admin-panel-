@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LayoutContext } from "../../context/layoutcontent";
 import { logout } from "../../../redux/slice/AuthSlice";
-import { Setting } from "./setting";
-import { User } from "./user";
+import { Instruction } from "./instruction";
 import { Notification } from "./notification";
+import { User } from "./user";
 import { QuickSearch } from "./QuickSearch";
 import QuickSearchInput from "../../../components/shared/QuickSearchInput";
 import Button from "@/components/ui/Button";
@@ -41,29 +41,32 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar">
+    <div className="layout-topbar bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-6 py-4">
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
-      <div className="layout-menus flex items-center gap-4">
+      
+      <div className="flex items-center gap-2">
         {/* Menu Toggle Button */}
-        <Button
-            variant="icon"
-            icon="pi pi-bars text-base"
+        <button
+            type="button"
             onClick={onMenuToggle}
-            className="w-10 h-10 bg-[#06b6d4] border-[#06b6d4] text-white rounded-xl hover:bg-[#0891b2] transition-colors"
-        />
+            className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600"
+        >
+            <i className="pi pi-bars text-xl" />
+        </button>
 
         {/* Search Button */}
-        <Button 
-            variant="icon"
-            text
-            icon="pi pi-search text-base"
+        <button 
+            type="button"
             onClick={() => setSearchVisible(true)}
-            className="w-10 h-10 bg-[#06b6d4] border-[#06b6d4] text-white rounded-xl hover:bg-[#0891b2] transition-colors"
-        />
+            className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600"
+        >
+            <i className="pi pi-search text-xl" />
+        </button>
       </div>
 
-      <div className="layout-menus">
+      <div className="flex items-center gap-1">
         <Notification />
+        <Instruction />
         <User />
       </div>
     </div>

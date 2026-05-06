@@ -86,9 +86,9 @@ const OutletList = () => {
                 addLabel="New Outlet"
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column header="Outlet Details" body={nameBodyTemplate} sortable sortField="name" />
+                <Column header="Outlet Details" body={nameBodyTemplate} sortField="name" />
                 <Column field="mobileNumber" header="Contact" body={(row) => <span className="text-slate-600 font-bold text-xs tracking-wider">{row.mobileNumber || '—'}</span>} />
-                <Column field="status" header="Status" body={(row) => <StatusTag status={row.status || 'ACTIVE'} />} style={{ width: '8rem', textAlign: 'center' }} />
+                <Column field="status" header="Status" body={(row) => <StatusTag status={row.status || 'ACTIVE'} />} sortable sortField="status" style={{ width: '8rem', textAlign: 'center' }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>

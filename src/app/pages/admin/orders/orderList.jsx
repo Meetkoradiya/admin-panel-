@@ -12,6 +12,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import useUrlFilters from '@/hooks/useUrlFilters';
+import successImg from '@/assets/illustrations/success.png';
 
 const OrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -133,6 +134,8 @@ const OrderList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={() => setShowCustomOrderDialog(true)}
                 addLabel="Custom Order"
+                emptyImage={successImg}
+                emptyMessage="No Orders Found"
                 extraActions={
                     <Button 
                         label="Generate Today's Orders" 
@@ -144,11 +147,11 @@ const OrderList = () => {
                 }
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column field="id" header="Order ID" body={(row) => <span className="font-bold text-blue-500 text-xs">#{row.id || row._id}</span>} sortable />
-                <Column header="Customer" body={customerBodyTemplate} sortable sortField="customer.username" />
+                <Column field="id" header="Order ID" body={(row) => <span className="font-bold text-blue-500 text-xs">#{row.id || row._id}</span>} />
+                <Column header="Customer" body={customerBodyTemplate} sortField="customer.username" />
                 <Column field="product.name" header="Commodity" body={(row) => <span className="text-slate-600 font-medium text-sm">{row.product?.name || 'â€”'}</span>} />
-                <Column field="qty" header="Units" body={(row) => <span className="font-bold text-slate-700">{row.qty || row.quantity || 0}</span>} sortable />
-                <Column header="Total" body={priceBodyTemplate} sortable sortField="price" />
+                <Column field="qty" header="Units" body={(row) => <span className="font-bold text-slate-700">{row.qty || row.quantity || 0}</span>} />
+                <Column header="Total" body={priceBodyTemplate} sortField="price" />
                 <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
             </ListLayout>

@@ -57,9 +57,9 @@ const SubscriptionList = () => {
                 onAdd={null}
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column header="Franchise / Outlet" body={outletTemplate} sortable sortField="outlet.name" />
-                <Column header="Subscription Fee" body={priceBodyTemplate} sortable sortField="price" />
-                <Column field="expiryDate" header="Next Renewal" body={(row) => <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">{row.expiryDate || '—'}</span>} sortable />
+                <Column header="Franchise / Outlet" body={outletTemplate} sortField="outlet.name" />
+                <Column header="Subscription Fee" body={priceBodyTemplate} sortField="price" />
+                <Column field="expiryDate" header="Next Renewal" body={(row) => <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">{row.expiryDate || '—'}</span>} />
                 <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
                 <Column header="Actions" body={() => <ActionButtons onEdit={() => {}} />} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>

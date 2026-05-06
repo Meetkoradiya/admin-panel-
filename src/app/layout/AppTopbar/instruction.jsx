@@ -15,10 +15,10 @@ export const Instruction = () => {
     <>
       <button
         type="button"
-        className="p-link layout-topbar-button"
+        className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600"
         onClick={(e) => op.current.toggle(e)}
       >
-        <i className="pi pi-info-circle"></i>
+        <i className="pi pi-book text-xl"></i>
       </button>
 
       <OverlayPanel ref={op} dismissable className="mt-4">

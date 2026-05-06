@@ -10,6 +10,7 @@ import ActionButtons from '@/components/shared/ActionButtons';
 import useApi from '@/hooks/useApi';
 import useUrlFilters from '@/hooks/useUrlFilters';
 import { showConfirmDialog } from '@/utils/confirmUtils';
+import successImg from '@/assets/illustrations/success.png';
 
 const CustomerManagement = () => {
     const [customers, setCustomers] = useState([]);
@@ -133,9 +134,11 @@ const CustomerManagement = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={() => navigate('/admin/customers/add')}
                 addLabel="New Customer"
+                emptyImage={successImg}
+                emptyMessage="No Customers Found"
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column header="Customer Info" body={customerBodyTemplate} sortable sortField="username" />
+                <Column header="Customer Info" body={customerBodyTemplate} sortField="username" />
                 <Column field="address" header="Location" className="text-slate-500 font-medium text-sm" />
                 <Column field="status" header="Status" body={statusBodyTemplate} sortable style={{ width: '10rem', textAlign: 'center' }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />

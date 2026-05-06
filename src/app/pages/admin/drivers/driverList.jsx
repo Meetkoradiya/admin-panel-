@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -6,6 +6,7 @@ import { Avatar } from 'primereact/avatar';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
 import ActionButtons from '@/components/shared/ActionButtons';
+import StatusTag from '@/components/shared/StatusTag';
 import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
 
@@ -135,7 +136,7 @@ const DriverList = () => {
                 addLabel="New Driver"
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column header="Personnel" body={driverBodyTemplate} sortable sortField="username" />
+                <Column header="Personnel" body={driverBodyTemplate} sortField="username" />
                 <Column field="mobileNumber" header="Contact" className="text-slate-500 text-sm font-medium" />
                 <Column header="Vehicle" body={(row) => (
                     <div className="flex flex-col">
@@ -144,6 +145,7 @@ const DriverList = () => {
                     </div>
                 )} />
                 <Column field="route.routeName" header="Assigned Route" body={(row) => <span className="text-blue-500 font-bold text-xs uppercase tracking-wider">{row.route?.routeName || 'Unassigned'}</span>} />
+                <Column header="Status" body={(row) => <StatusTag status={row.status || 'ACTIVE'} />} sortable sortField="status" style={{ width: '8rem', textAlign: 'center' }} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
             </ListLayout>
         </div>

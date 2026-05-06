@@ -46,10 +46,10 @@ export const User = () => {
         <>
             <button
                 type="button"
-                className="p-link w-12 h-12 flex items-center justify-center bg-slate-50/80 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 ml-2 border border-slate-100"
+                className="p-link w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-all active:scale-95 ml-2"
                 onClick={(e) => op.current.toggle(e)}
             >
-                <div className="rounded-full bg-white shadow-sm size-9 overflow-hidden">
+                <div className="rounded-full bg-blue-100 ring-2 ring-blue-50 size-9 overflow-hidden">
                     <img
                         src={profile || "/images/User.webp"}
                         alt="User"
