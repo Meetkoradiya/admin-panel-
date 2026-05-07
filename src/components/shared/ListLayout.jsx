@@ -30,41 +30,39 @@ const ListLayout = ({
             <div className="flex flex-col gap-8 animate-fade-in pb-10">
                 {/* 1. HEADER & ACTIONS */}
                 <div className="layout-card">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 md:p-8 border-b border-slate-50">
-                        <div className="flex items-center gap-4">
-                            <div className="premium-badge">
-                                <i className={`pi ${icon} text-xl`}></i>
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 md:p-8">
+                        <div className="flex items-center gap-5">
+                            <div className="premium-badge h-14 w-14 rounded-2xl">
+                                <i className={`pi ${icon} text-2xl`}></i>
                             </div>
                             <div>
-                                <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight leading-tight">
+                                <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
                                     {title}
                                 </h1>
-                                {subtitle && <p className="text-slate-400 text-[10px] font-medium uppercase tracking-[0.15em] mt-1">{subtitle}</p>}
+                                {subtitle && <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.15em] mt-1.5">{subtitle}</p>}
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            {extraActions}
-                            {onAdd && (
-                                <Button
-                                    label={addLabel}
-                                    icon="pi pi-plus"
-                                    variant="primary"
-                                    size="md"
-                                    onClick={onAdd}
-                                    className="px-8"
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-10">
+                            <div className="w-full sm:w-72">
+                                <QuickSearchInput
+                                    value={globalFilter}
+                                    onInput={(e) => setGlobalFilter(e.target.value)}
+                                    placeholder="Search records..."
                                 />
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="px-6 py-4 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="w-full md:w-80">
-                            <QuickSearchInput
-                                value={globalFilter}
-                                onInput={(e) => setGlobalFilter(e.target.value)}
-                                placeholder="Search records..."
-                            />
+                            </div>
+                            <div className="flex items-center gap-5">
+                                {extraActions}
+                                {onAdd && (
+                                    <Button
+                                        label={addLabel}
+                                        icon="pi pi-plus"
+                                        variant="primary"
+                                        onClick={onAdd}
+                                        className="px-6 h-10 font-bold text-[13px] rounded-xl shadow-lg shadow-blue-500/20"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,7 +89,7 @@ const ListLayout = ({
                 )}
 
                 {/* 3. MAIN TABLE */}
-                <div className="w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+                <div className="layout-card">
                     <DataTable
                         value={data}
                         loading={loading}

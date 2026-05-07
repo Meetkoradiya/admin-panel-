@@ -47,6 +47,7 @@ const AppTopbar = forwardRef((props, ref) => {
       <div className="flex items-center gap-4">
         {/* Menu Toggle Button */}
         <button
+            ref={menubuttonRef}
             type="button"
             onClick={onMenuToggle}
             className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"

@@ -47,11 +47,11 @@ const AdminSidebar = () => {
               <Logo className="relative z-10 h-10 w-10 object-contain text-slate-800" />
             </div>
             <div className="logo-text">
-              <span className="brand-name font-bold tracking-tight text-slate-800">
+              <span className="brand-name font-bold tracking-tight text-blue-600">
                 Amrut Water
               </span>
               <div className="flex items-center gap-1">
-                <span className="brand-tagline text-[8px] font-bold tracking-[0.12em] text-blue-500 uppercase">
+                <span className="brand-tagline text-[8px] font-bold tracking-[0.12em] text-gray-500 uppercase">
                   Trust in Every Drop
                 </span>
               </div>

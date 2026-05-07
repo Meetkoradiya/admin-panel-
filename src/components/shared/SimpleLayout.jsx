@@ -13,7 +13,7 @@ export const SimpleLayout = ({
         <div className="w-full flex flex-col min-h-screen bg-slate-50/50">
             {/* Header */}
             <div className="w-full py-6">
-                <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{title}</h1>
+                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">{title}</h1>
             </div>
 
             {/* Main Content Area */}
