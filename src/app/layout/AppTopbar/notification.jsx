@@ -4,6 +4,7 @@ import { Badge } from "primereact/badge";
 import { useSelector } from "react-redux";
 import { Toast } from "primereact/toast";
 import useApi from "@/hooks/useApi";
+import { Tooltip } from 'primereact/tooltip';
 
 export const Notification = () => {
     const op = useRef(null);
@@ -92,16 +93,19 @@ export const Notification = () => {
     return (
         <>
             <Toast ref={toast} />
+            <Tooltip target="#notif-target" position="bottom" />
             <button
+                id="notif-target"
                 type="button"
-                className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600 relative"
+                className="topbar-btn p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600 relative"
                 onClick={(e) => op.current.toggle(e)}
+                data-pr-tooltip="Notifications"
             >
                 <i className="pi pi-bell text-lg"></i>
-                <Badge 
-                    value={unreadCount > 99 ? '99+' : unreadCount} 
-                    severity={unreadCount > 0 ? "danger" : "info"} 
-                    className={`absolute -top-1 -right-1 scale-75 border-2 border-white ${unreadCount === 0 ? 'opacity-0' : ''}`} 
+                <Badge
+                    value={unreadCount > 99 ? '99+' : unreadCount}
+                    severity={unreadCount > 0 ? "danger" : "info"}
+                    className={`absolute -top-1 -right-1 scale-75 border-2 border-white ${unreadCount === 0 ? 'opacity-0' : ''}`}
                 />
             </button>
 
@@ -124,9 +128,9 @@ export const Notification = () => {
                         {notifications.length === 0 ? (
                             <div className="text-center py-8 px-6">
                                 <div className="w-48 h-48 mx-auto mb-4 overflow-hidden rounded-2xl">
-                                    <img 
-                                        src="/images/notification.jpg" 
-                                        alt="No Notifications" 
+                                    <img
+                                        src="/images/notification.jpg"
+                                        alt="No Notifications"
                                         className="w-full h-full object-contain"
                                     />
                                 </div>
@@ -138,18 +142,16 @@ export const Notification = () => {
                                 <div
                                     key={n.id}
                                     onClick={() => !(n.isRead || n.read) && markAsRead(n.id)}
-                                    className={`flex flex-col p-4 border-b border-slate-50 transition-all ${
-                                        (n.isRead || n.read) 
-                                            ? "bg-white hover:bg-blue-50/30" 
-                                            : "bg-red-50/30 hover:bg-red-50 cursor-pointer"
-                                    }`}
+                                    className={`flex flex-col p-4 border-b border-slate-50 transition-all ${(n.isRead || n.read)
+                                        ? "bg-white hover:bg-blue-50/30"
+                                        : "bg-red-50/30 hover:bg-red-50 cursor-pointer"
+                                        }`}
                                 >
                                     <div className="flex justify-between items-start gap-3">
-                                        <span className={`text-sm ${
-                                            (n.isRead || n.read) 
-                                                ? "text-blue-600 font-medium" 
-                                                : "text-red-600 font-extrabold"
-                                        }`}>
+                                        <span className={`text-sm ${(n.isRead || n.read)
+                                            ? "text-blue-600 font-medium"
+                                            : "text-red-600 font-extrabold"
+                                            }`}>
                                             {n.message || n.text || n.title}
                                         </span>
                                         {!(n.isRead || n.read) && (
@@ -159,9 +161,8 @@ export const Notification = () => {
                                             <i className="pi pi-check text-[10px] text-blue-400 mt-1" />
                                         )}
                                     </div>
-                                    <span className={`text-[10px] font-bold mt-2 uppercase tracking-tighter ${
-                                        (n.isRead || n.read) ? "text-blue-300" : "text-red-300"
-                                    }`}>
+                                    <span className={`text-[10px] font-bold mt-2 uppercase tracking-tighter ${(n.isRead || n.read) ? "text-blue-300" : "text-red-300"
+                                        }`}>
                                         {formatTime(n.createdAt || n.timestamp || n.time)}
                                     </span>
                                 </div>

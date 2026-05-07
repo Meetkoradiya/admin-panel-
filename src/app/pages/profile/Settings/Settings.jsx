@@ -58,14 +58,37 @@ const Settings = () => {
     { id: "notification", label: "Notification", icon: "pi pi-bell" },
   ];
 
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }));
   };
 
   const handleSecurityChange = (e) => {
     const { name, value } = e.target;
     setSecurityData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }));
+  };
+
+  const validateSecurity = () => {
+    let tempErrors = {};
+    if (!securityData.currentPassword) tempErrors.currentPassword = "Please enter your current password!";
+    if (!securityData.newPassword) tempErrors.newPassword = "Please enter your new password!";
+    if (!securityData.confirmPassword) tempErrors.confirmPassword = "Please confirm your new password!";
+    
+    if (securityData.newPassword && securityData.confirmPassword) {
+        if (securityData.newPassword !== securityData.confirmPassword) {
+            tempErrors.confirmPassword = "Passwords do not match!";
+        }
+        if (securityData.newPassword.length < 6) {
+            tempErrors.newPassword = "Password must be at least 6 characters!";
+        }
+    }
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
   const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
@@ -84,10 +107,29 @@ const Settings = () => {
     });
   };
 
+  const validateProfile = () => {
+    let tempErrors = {};
+    if (!formData.username) tempErrors.username = "Full name is required!";
+    if (!formData.mobileNumber) tempErrors.mobileNumber = "Mobile number is required!";
+    else if (!/^\d{10}$/.test(formData.mobileNumber)) tempErrors.mobileNumber = "Mobile number must be 10 digits!";
+    
+    if (!formData.email) tempErrors.email = "Email address is required!";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) tempErrors.email = "Invalid email format!";
+    
+    if (!formData.gender) tempErrors.gender = "Gender is required!";
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
       if (activeTab === "profile") {
+        if (!validateProfile()) {
+          setIsLoading(false);
+          return;
+        }
         const payload = {
           username: formData.username,
           mobileNumber: formData.mobileNumber,
@@ -124,8 +166,7 @@ const Settings = () => {
 
         toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Profile updated successfully' });
       } else if (activeTab === "security") {
-        if (securityData.newPassword !== securityData.confirmPassword) {
-          toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Passwords do not match' });
+        if (!validateSecurity()) {
           setIsLoading(false);
           return;
         }
@@ -183,7 +224,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
+    <div className="p-4 md:p-8 bg-white min-h-screen">
       <Toast ref={toast} />
 
       <div className="max-w-6xl mx-auto">
@@ -238,15 +279,18 @@ const Settings = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-fluid">
                     <div className="field">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Full Name</label>
-                      <InputText name="username" value={formData.username} onChange={handleInputChange} className="p-3 bg-gray-50 border-none rounded-xl font-semibold" />
+                      <InputText name="username" value={formData.username} onChange={handleInputChange} className={classNames("p-3 bg-white border border-slate-200 rounded-xl font-semibold", { "ring-1 ring-red-400": errors.username })} />
+                      {errors.username && <small className="text-red-500 font-bold mt-1 block">{errors.username}</small>}
                     </div>
                     <div className="field">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Mobile Number</label>
-                      <InputText name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} className="p-3 bg-gray-50 border-none rounded-xl font-semibold" />
+                      <InputText name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} className={classNames("p-3 bg-white border border-slate-200 rounded-xl font-semibold", { "ring-1 ring-red-400": errors.mobileNumber })} />
+                      {errors.mobileNumber && <small className="text-red-500 font-bold mt-1 block">{errors.mobileNumber}</small>}
                     </div>
                     <div className="col-span-full field">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Email Address</label>
-                      <InputText name="email" value={formData.email} onChange={handleInputChange} className="p-3 bg-gray-50 border-none rounded-xl font-semibold" />
+                      <InputText name="email" value={formData.email} onChange={handleInputChange} className={classNames("p-3 bg-white border border-slate-200 rounded-xl font-semibold", { "ring-1 ring-red-400": errors.email })} />
+                      {errors.email && <small className="text-red-500 font-bold mt-1 block">{errors.email}</small>}
                     </div>
 
                     {/* Gender Dropdown Added Back */}
@@ -255,11 +299,15 @@ const Settings = () => {
                       <Dropdown
                         value={genderType.find(g => g.code === formData.gender)}
                         options={genderType}
-                        onChange={(e) => setFormData({ ...formData, gender: e.value.code })}
+                        onChange={(e) => {
+                            setFormData({ ...formData, gender: e.value.code });
+                            if (errors.gender) setErrors(prev => ({ ...prev, gender: null }));
+                        }}
                         optionLabel="name"
                         placeholder="Select Gender"
-                        className="bg-gray-50 border-none rounded-xl h-12 flex items-center font-semibold"
+                        className={classNames("bg-white border border-slate-200 rounded-xl h-12 flex items-center font-semibold", { "ring-1 ring-red-400": errors.gender })}
                       />
+                      {errors.gender && <small className="text-red-500 font-bold mt-1 block">{errors.gender}</small>}
                     </div>
                   </div>
                 </div>
@@ -275,15 +323,18 @@ const Settings = () => {
                   <div className="flex flex-col gap-6 p-fluid">
                     <div className="field">
                       <label className="text-sm font-semibold text-gray-700 mb-2 block">Current password</label>
-                      <Password name="currentPassword" value={securityData.currentPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full" />
+                      <Password name="currentPassword" value={securityData.currentPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName={classNames("p-4 bg-white border border-slate-200 rounded-2xl w-full", { "ring-1 ring-red-400": errors.currentPassword })} />
+                      {errors.currentPassword && <small className="text-red-500 font-bold mt-1 ml-1 block">{errors.currentPassword}</small>}
                     </div>
                     <div className="field">
                       <label className="text-sm font-semibold text-gray-700 mb-2 block">New password</label>
-                      <Password name="newPassword" value={securityData.newPassword} onChange={handleSecurityChange} toggleMask inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full" />
+                      <Password name="newPassword" value={securityData.newPassword} onChange={handleSecurityChange} toggleMask inputClassName={classNames("p-4 bg-gray-50 border-none rounded-2xl w-full", { "ring-1 ring-red-400": errors.newPassword })} />
+                      {errors.newPassword && <small className="text-red-500 font-bold mt-1 ml-1 block">{errors.newPassword}</small>}
                     </div>
                     <div className="field">
                       <label className="text-sm font-semibold text-gray-700 mb-2 block">Confirm new password</label>
-                      <Password name="confirmPassword" value={securityData.confirmPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName="p-4 bg-gray-50 border-none rounded-2xl w-full" />
+                      <Password name="confirmPassword" value={securityData.confirmPassword} onChange={handleSecurityChange} toggleMask feedback={false} inputClassName={classNames("p-4 bg-gray-50 border-none rounded-2xl w-full", { "ring-1 ring-red-400": errors.confirmPassword })} />
+                      {errors.confirmPassword && <small className="text-red-500 font-bold mt-1 ml-1 block">{errors.confirmPassword}</small>}
                     </div>
                   </div>
                 </div>
@@ -294,14 +345,14 @@ const Settings = () => {
                 <div className="animate-fadein">
                   <h2 className="text-xl font-bold text-gray-800 mb-8">Notification Preferences</h2>
                   <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl">
+                    <div className="flex items-center justify-between p-5 bg-white border border-slate-100 rounded-2xl">
                       <div>
                         <p className="font-bold text-gray-800">Order Updates</p>
                         <p className="text-xs text-gray-500">Updates about your delivery status.</p>
                       </div>
                       <InputSwitch checked={notifConfig.orderUpdates} onChange={(e) => setNotifConfig({ ...notifConfig, orderUpdates: e.value })} />
                     </div>
-                    <div className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl">
+                    <div className="flex items-center justify-between p-5 bg-white border border-slate-100 rounded-2xl">
                       <div>
                         <p className="font-bold text-gray-800">Email Alerts</p>
                         <p className="text-xs text-gray-500">Security and account alerts.</p>

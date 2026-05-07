@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { OverlayPanel } from "primereact/overlaypanel";
+import { Tooltip } from 'primereact/tooltip';
 
 export const Instruction = () => {
   const op = useRef(null);
@@ -13,10 +14,13 @@ export const Instruction = () => {
 
   return (
     <>
+      <Tooltip target="#instr-target" position="bottom" />
       <button
+        id="instr-target"
         type="button"
-        className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600"
+        className="topbar-btn p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600"
         onClick={(e) => op.current.toggle(e)}
+        data-pr-tooltip="Quick Instructions"
       >
         <i className="pi pi-book text-lg"></i>
       </button>
