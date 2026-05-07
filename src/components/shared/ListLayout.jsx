@@ -53,14 +53,57 @@ const ListLayout = ({
         </div>
     );
 
+    const icon = props.icon || "pi-database";
+
     return (
         <Page title={title}>
             <div className="flex flex-col gap-8 animate-fade-in pb-10">
-                {/* 1. SUMMARY CARDS (OPTIONAL) */}
+                {/* 1. HEADER & ACTIONS */}
+                <div className="layout-card">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 md:p-8 border-b border-slate-50">
+                        <div className="flex items-center gap-4">
+                            <div className="premium-badge">
+                                <i className={`pi ${icon} text-xl`}></i>
+                            </div>
+                            <div>
+                                <h1 className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                                    {title}
+                                </h1>
+                                {subtitle && <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mt-1">{subtitle}</p>}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            {extraActions}
+                            {onAdd && (
+                                <Button
+                                    label={addLabel}
+                                    icon="pi pi-plus"
+                                    variant="primary"
+                                    size="md"
+                                    onClick={onAdd}
+                                    className="px-8"
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="px-6 py-4 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="w-full md:w-80">
+                            <QuickSearchInput
+                                value={globalFilter}
+                                onInput={(e) => setGlobalFilter(e.target.value)}
+                                placeholder="Search records..."
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* 2. SUMMARY CARDS (OPTIONAL) */}
                 {stats && stats.length > 0 && (
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 px-0`}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6`}>
                         {stats.map((s, i) => (
-                            <div key={i} className="bg-white rounded-[2rem] p-7 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[145px] relative group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div key={i} className="layout-card p-7 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[145px] relative">
                                 <div className="flex flex-col gap-1.5">
                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
                                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">{s.value}</h2>
@@ -77,43 +120,39 @@ const ListLayout = ({
                     </div>
                 )}
 
-                {/* 2. MAIN TABLE */}
-                <div className="w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
-                <DataTable
-                    value={data}
-                    header={header}
-                    loading={loading}
-                    globalFilter={globalFilter}
-                    paginator
-                    rows={10}
-                    className="p-datatable-minimal"
-                    responsiveLayout="scroll"
-                    emptyMessage={
-                        <div className="text-center py-24 flex flex-col items-center justify-center bg-white">
-                            <img
-                                src={emptyImage || noDataImg}
-                                alt="No Data"
-                                className="w-80 h-auto mb-6 opacity-90 pointer-events-none select-none"
-                                draggable="false"
-                                onContextMenu={(e) => e.preventDefault()}
-                                onDragStart={(e) => e.preventDefault()}
-                            />
-                            <div className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{emptyMessage}</div>
-                            <p className="text-xs text-slate-300 font-medium tracking-wide">Try adjusting your filters or adding a new record</p>
-                        </div>
-                    }
-                    dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
-                    rowHover
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    {...props}
-                >
-                    {children}
-                </DataTable>
+                {/* 3. MAIN TABLE */}
+                <div className="layout-card">
+                    <DataTable
+                        value={data}
+                        loading={loading}
+                        globalFilter={globalFilter}
+                        paginator
+                        rows={10}
+                        className="p-datatable-minimal"
+                        responsiveLayout="scroll"
+                        emptyMessage={
+                            <div className="text-center py-24 flex flex-col items-center justify-center">
+                                <img
+                                    src={emptyImage || noDataImg}
+                                    alt="No Data"
+                                    className="w-80 h-auto mb-6 opacity-90"
+                                />
+                                <div className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{emptyMessage}</div>
+                                <p className="text-xs text-slate-300 font-medium tracking-wide">Try adjusting your filters or adding a new record</p>
+                            </div>
+                        }
+                        dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
+                        rowHover
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        {...props}
+                    >
+                        {children}
+                    </DataTable>
+                </div>
             </div>
-        </div>
-    </Page>
-);
+        </Page>
+    );
 };
 
 export default ListLayout;

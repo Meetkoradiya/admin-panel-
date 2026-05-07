@@ -41,14 +41,18 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between px-6 h-20">
+    <div className="layout-topbar bg-white border-b border-slate-200 flex items-center justify-between px-6 h-20">
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
       
       <div className="flex items-center gap-4">
         {/* Menu Toggle Button */}
         <button
+            ref={menubuttonRef}
             type="button"
-            onClick={onMenuToggle}
+            onClick={(e) => {
+                console.log("Menu Toggle Clicked");
+                onMenuToggle(e);
+            }}
             className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
         >
             <i className="pi pi-bars text-lg" />

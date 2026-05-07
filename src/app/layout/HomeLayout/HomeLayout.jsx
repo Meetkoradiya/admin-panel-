@@ -138,18 +138,20 @@ function HomeLayout() {
         <AppSidebar />
       </div>
 
-      <div className="layout-main-container bg-slate-50/30">
-        <div className="layout-main">
+      <div className="layout-main-container bg-[#f1f5f9]">
+        <div className="layout-main min-h-screen flex flex-col">
           <AppTopbar ref={topbarRef} />
 
-          <Outlet />
-        </div>
+          <div className="flex-grow p-6 md:p-10">
+            <Outlet />
+          </div>
 
-        <footer className="py-6 flex justify-center border-t border-slate-50 mt-auto">
-          <p className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em]">
-            Site managed by <span className="text-slate-400">Horizon Tech Serv</span>
-          </p>
-        </footer>
+          <footer className="py-8 flex justify-center border-t border-slate-200/50 bg-white/50 backdrop-blur-sm mt-auto">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">
+              Site managed by <span className="text-blue-500">Horizon Tech Serv</span>
+            </p>
+          </footer>
+        </div>
       </div>
 
       <div className="layout-mask"></div>

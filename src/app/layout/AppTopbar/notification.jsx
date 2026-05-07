@@ -17,28 +17,44 @@ export const Notification = () => {
     const { apiGet, apiPut } = useApi();
 
     const fetchNotifications = useCallback(async () => {
-        if (!userId) return;
+        if (!userId) {
+            console.warn("Notification: No userId found in auth state");
+            return;
+        }
         try {
-            const data = await apiGet('/notifications/list', { params: { userId } });
-            const list = Array.isArray(data) ? data : (data?.data || data?.content || data?.notifications || []);
+            console.log(`Notification: Fetching from /notifications/list for user ${userId}`);
+            const response = await apiGet('/notifications/list', { params: { userId } });
+            console.log("Notification: API Response:", response);
+            
+            // Handle different response formats robustly
+            const list = Array.isArray(response) ? response : 
+                        (response?.data && Array.isArray(response.data)) ? response.data :
+                        (response?.notifications && Array.isArray(response.notifications)) ? response.notifications :
+                        (response?.content && Array.isArray(response.content)) ? response.content : [];
+            
             setNotifications(list);
         } catch (error) {
-            console.error("Error fetching notifications:", error);
+            console.error("Notification: Fetch Error:", error);
         }
     }, [userId, apiGet]);
 
     const fetchUnreadCount = useCallback(async () => {
         if (!userId) return;
         try {
-            const data = await apiGet('/notifications/unread-count', { params: { userId } });
+            const response = await apiGet('/notifications/unread-count', { params: { userId } });
             let count = 0;
-            if (typeof data === 'number') count = data;
-            else if (typeof data?.data === 'number') count = data.data;
-            else if (typeof data?.data?.count === 'number') count = data.data.count;
+            
+            // Handle different response formats for count
+            if (typeof response === 'number') count = response;
+            else if (typeof response?.data === 'number') count = response.data;
+            else if (typeof response?.unreadCount === 'number') count = response.unreadCount;
+            else if (typeof response?.data?.count === 'number') count = response.data.count;
+            else if (typeof response?.count === 'number') count = response.count;
 
             setUnreadCount(count);
+            console.log(`Notification: Unread count fetched: ${count}`);
         } catch (error) {
-            console.error("Error fetching unread count:", error);
+            console.error("Notification: Unread Count Error:", error);
         }
     }, [userId, apiGet]);
 
@@ -89,13 +105,22 @@ export const Notification = () => {
         }
     };
 
+    const handleToggle = (e) => {
+        op.current.toggle(e);
+        // Fetch fresh notifications when opening the overlay
+        if (userId) {
+            fetchNotifications();
+            fetchUnreadCount();
+        }
+    };
+
     return (
         <>
             <Toast ref={toast} />
             <button
                 type="button"
                 className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600 relative"
-                onClick={(e) => op.current.toggle(e)}
+                onClick={handleToggle}
             >
                 <i className="pi pi-bell text-lg"></i>
                 <Badge 

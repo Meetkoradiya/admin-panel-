@@ -19,7 +19,21 @@ const AppMenuitem = (props) => {
     ? props.parentKey + "-" + props.index
     : String(props.index);
   const isActiveRoute = item?.to && location.pathname === item.to;
-  const active = activeMenu === key || activeMenu.startsWith(key + "-");
+  
+  // Logic to highlight parent if child is active
+  const checkIsChildActive = (items) => {
+    return items?.some(child => {
+        if (child.to === location.pathname) return true;
+        if (child.items) return checkIsChildActive(child.items);
+        return false;
+    });
+  };
+  const isAnyChildActive = item?.items ? checkIsChildActive(item.items) : false;
+  const isHighlighted = isActiveRoute || isAnyChildActive;
+
+  // activeMenu specifically controls the EXPANDED state of the menu
+  const isExpanded = activeMenu === key || activeMenu.startsWith(key + "-");
+  const active = isExpanded; // maintain variable name for existing code compatibility
 
   // Flyout popup state for mini sidebar
   const [showPopup, setShowPopup] = useState(false);
@@ -186,6 +200,7 @@ const AppMenuitem = (props) => {
           onClick={(e) => itemClick(e)}
           className={classNames(item?.class, "p-ripple", {
             "mini-active": showPopup && isMiniMode,
+            "active-route": isHighlighted
           })}
           target={item?.target}
           tabIndex={0}
