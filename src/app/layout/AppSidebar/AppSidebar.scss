@@ -5,7 +5,8 @@
     display: flex;
     flex-direction: column;
     font-family: 'Poppins', sans-serif;
-    border-right: 1px solid #f1f5f9;
+    border-right: none !important;
+    box-shadow: none !important;
 }
 
 .side-nav-header {
@@ -45,13 +46,11 @@
     flex: 1;
     overflow-y: auto;
     padding: 0.5rem 0;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
 
     &::-webkit-scrollbar {
-        width: 4px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background: #f1f5f9;
-        border-radius: 10px;
+        display: none; /* Chrome, Safari and Opera */
     }
 }
 

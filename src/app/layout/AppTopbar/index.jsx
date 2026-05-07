@@ -41,10 +41,10 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-6 py-4">
+    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between px-6 h-20">
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         {/* Menu Toggle Button */}
         <button
             type="button"

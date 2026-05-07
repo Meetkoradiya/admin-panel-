@@ -58,7 +58,7 @@ const ListLayout = ({
             <div className="flex flex-col gap-8 animate-fade-in pb-10">
                 {/* 1. SUMMARY CARDS (OPTIONAL) */}
                 {stats && stats.length > 0 && (
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 px-1`}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 px-0`}>
                         {stats.map((s, i) => (
                             <div key={i} className="bg-white rounded-[2rem] p-7 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[145px] relative group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                                 <div className="flex flex-col gap-1.5">
