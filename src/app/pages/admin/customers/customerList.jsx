@@ -126,14 +126,12 @@ const CustomerManagement = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Customer List"
+                title="Customers"
                 subtitle="Manage and oversee your customer database"
                 data={customers}
                 loading={loading}
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
-                onAdd={() => navigate('/admin/customers/add')}
-                addLabel="New Customer"
                 emptyImage={successImg}
                 emptyMessage="No Customers Found"
             >

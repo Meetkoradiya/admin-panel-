@@ -124,6 +124,7 @@ export const Notification = () => {
                 type="button"
                 className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600 relative"
                 onClick={(e) => op.current.toggle(e)}
+                data-pr-tooltip="Notifications"
             >
                 <i className="pi pi-bell text-lg"></i>
                 <Badge

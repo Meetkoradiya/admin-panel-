@@ -23,33 +23,6 @@ const ListLayout = ({
     stats,
     ...props
 }) => {
-    const header = (
-        <div className="flex flex-col">
-            <div className="px-6 py-6 bg-white flex flex-col gap-1">
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h2>
-                {subtitle && <p className="text-sm font-medium text-slate-400">{subtitle}</p>}
-            </div>
-            <div className="px-6 py-5 bg-blue-50/50 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="w-full md:w-80">
-                    <QuickSearchInput
-                        value={globalFilter}
-                        onInput={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Search records..."
-                    />
-                </div>
-                <div className="flex items-center gap-3">
-                    {extraActions}
-                    {onAdd && (
-                        <CreateButton
-                            label={addLabel}
-                            onClick={onAdd}
-                        />
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-
     const icon = props.icon || "pi-database";
 
     return (
@@ -117,45 +90,40 @@ const ListLayout = ({
                     </div>
                 )}
 
-                {/* 2. MAIN TABLE */}
+                {/* 3. MAIN TABLE */}
                 <div className="w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
-                <DataTable
-                    value={data}
-                    header={header}
-                    loading={loading}
-                    globalFilter={globalFilter}
-                    paginator
-                    rows={10}
-                    className="p-datatable-minimal"
-                    responsiveLayout="scroll"
-                    emptyMessage={
-                        <div className="text-center py-24 flex flex-col items-center justify-center bg-white">
-                            <img
-                                src={emptyImage || noDataImg}
-                                alt="No Data"
-                                className="w-80 h-auto mb-6 opacity-90 pointer-events-none select-none"
-                                draggable="false"
-                                onContextMenu={(e) => e.preventDefault()}
-                                onDragStart={(e) => e.preventDefault()}
-                            />
-                            <div className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{emptyMessage}</div>
-                            <p className="text-xs text-slate-300 font-medium tracking-wide">Try adjusting your filters or adding a new record</p>
-                        </div>
-                    }
-                    dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
-                    rowHover
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    {...props}
-                >
-                    {children}
-                </DataTable>
+                    <DataTable
+                        value={data}
+                        loading={loading}
+                        globalFilter={globalFilter}
+                        paginator
+                        rows={10}
+                        className="p-datatable-minimal"
+                        responsiveLayout="scroll"
+                        emptyMessage={
+                            <div className="text-center py-24 flex flex-col items-center justify-center bg-white">
+                                <img
+                                    src={emptyImage || noDataImg}
+                                    alt="No Data"
+                                    className="w-80 h-auto mb-6 opacity-90 pointer-events-none select-none"
+                                    draggable="false"
+                                />
+                                <div className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{emptyMessage}</div>
+                                <p className="text-xs text-slate-300 font-medium tracking-wide">Try adjusting your filters or adding a new record</p>
+                            </div>
+                        }
+                        dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
+                        rowHover
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        {...props}
+                    >
+                        {children}
+                    </DataTable>
+                </div>
             </div>
-        </div>
-    </Page>
-);
+        </Page>
+    );
 };
 
 export default ListLayout;
-
-

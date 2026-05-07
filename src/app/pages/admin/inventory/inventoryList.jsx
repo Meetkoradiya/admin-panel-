@@ -231,8 +231,6 @@ const InventoryList = () => {
                 loading={loading}
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
-                onAdd={() => openEdit()}
-                addLabel="Add Stock"
                 stats={statsConfig}
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />

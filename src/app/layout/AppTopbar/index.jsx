@@ -14,6 +14,7 @@ import { Instruction } from "./instruction";
 import { Notification } from "./notification";
 import { User } from "./user";
 import { QuickSearch } from "./QuickSearch";
+import { Tooltip } from "primereact/tooltip";
 import QuickSearchInput from "../../../components/shared/QuickSearchInput";
 import Button from "@/components/ui/Button";
 
@@ -46,7 +47,9 @@ const AppTopbar = forwardRef((props, ref) => {
 
       <div className="flex items-center gap-4">
         {/* Menu Toggle Button */}
+        <Tooltip target="#menu-toggle-btn" position="bottom" content="Toggle Sidebar" />
         <button
+            id="menu-toggle-btn"
             type="button"
             onClick={onMenuToggle}
             className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
@@ -55,7 +58,9 @@ const AppTopbar = forwardRef((props, ref) => {
         </button>
 
         {/* Search Button */}
+        <Tooltip target="#search-btn" position="bottom" content="Search Dashboard" />
         <button
+          id="search-btn"
           type="button"
           onClick={() => setSearchVisible(true)}
           className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
@@ -64,14 +69,9 @@ const AppTopbar = forwardRef((props, ref) => {
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-0.5">
-          <Notification />
-          <Instruction />
-        </div>
-        
-        <div className="h-8 w-[1px] bg-slate-100 mx-2" />
-        
+      <div className="flex items-center gap-3">
+        <Notification />
+        <Instruction />
         <User />
       </div>
     </div>

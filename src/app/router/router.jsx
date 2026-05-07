@@ -41,6 +41,8 @@ const ProductList = lazy(() => import("@/app/pages/admin/product/product"));
 const OrderList = lazy(() => import("@/app/pages/admin/orders/orderList"));
 const DeviceVerificationList = lazy(() => import("@/app/pages/admin/device-verification/deviceVerificationList"));
 const ComplaintList = lazy(() => import("@/app/pages/admin/complaints/complaintList"));
+const ValidationList = lazy(() => import("@/app/pages/admin/validations/validationList"));
+const ValidationCreate = lazy(() => import("@/app/pages/admin/validations/validationCreate"));
 
 const BillingManagement = lazy(() =>
   import("../pages/billing/BillingManagement")
@@ -129,5 +131,7 @@ export const AdminRoutes = [
   // Verification & Support
   { path: "devices", name: "Device Verification", element: <DeviceVerificationList /> },
   { path: "complaints", name: "Complaints", element: <ComplaintList /> },
+  { path: "validations", name: "Validations", element: <ValidationList /> },
+  { path: "validations/add", name: "Add Validation", element: <ValidationCreate /> },
+  { path: "validations/edit/:id", name: "Edit Validation", element: <ValidationCreate /> },
 ];
-
