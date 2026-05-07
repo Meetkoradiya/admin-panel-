@@ -61,5 +61,11 @@ export const menuModel = [
       { label: "Billings", icon: "pi pi-receipt text-teal-500", to: "/admin/billings" },
     ],
   },
-  
+  {
+    label: "PROFILE & SECURITY",
+    items: [
+      { label: "Admin Profile", icon: "pi pi-user text-blue-500", to: "/admin/profile" },
+      { label: "Change Password", icon: "pi pi-lock text-red-500", to: "/admin/change-password" },
+    ],
+  },
 ];

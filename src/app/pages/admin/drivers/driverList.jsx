@@ -126,12 +126,14 @@ const DriverList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Drivers"
+                title="Driver List"
                 subtitle="Manage delivery personnel and assignment status"
                 data={drivers}
                 loading={loading}
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
+                onAdd={() => navigate('/admin/drivers/add')}
+                addLabel="New Driver"
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Personnel" body={driverBodyTemplate} sortField="username" />

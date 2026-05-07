@@ -100,7 +100,7 @@ const ComplaintList = () => {
             <Menu model={menuItems} popup ref={menu} id="status_menu" />
 
             <ListLayout
-                title="Complaints"
+                title="Complaints Management"
                 subtitle="Track and resolve customer issues"
                 data={complaints}
                 loading={loading}

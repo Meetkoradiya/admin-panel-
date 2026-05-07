@@ -119,12 +119,19 @@ const ProductList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Products"
+                title="Product List"
                 subtitle="Configure foundational commodities and water units"
                 data={products}
                 loading={loading}
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
+                onAdd={() => {
+                    setProductId(null);
+                    setProductName("");
+                    setSubmitted(false);
+                    setProductDialog(true);
+                }}
+                addLabel="New Product"
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column field="name" header="Product Title" sortable className="font-bold text-slate-700 text-sm" />

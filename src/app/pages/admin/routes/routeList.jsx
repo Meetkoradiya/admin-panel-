@@ -96,12 +96,14 @@ const RouteList = () => {
         <div className="animate-fade-in">
             <Toast ref={toast} />
             <ListLayout
-                title="Routes"
+                title="Route List"
                 subtitle="Manage and monitor all delivery routes"
                 data={routes}
                 loading={loading}
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
+                onAdd={() => navigate('/admin/routes/add')}
+                addLabel="New Route"
             >
                 <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
                 <Column header="Route Details" body={routeNameTemplate} sortField="routeName" />
