@@ -3,12 +3,24 @@
 
 
 @layer base {
-    body, html, #root, .p-component, .p-inputtext, .p-button, h1, h2, h3, h4, h5, h6 {
+
+    body,
+    html,
+    #root,
+    .p-component,
+    .p-inputtext,
+    .p-button,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         font-family: 'Poppins', sans-serif !important;
     }
 
     body {
-        background-color: #f8fafc;
+        background-color: #f1f5f9;
         color: #334155;
     }
 
@@ -22,11 +34,12 @@
 }
 
 @layer components {
+
     h2,
     .h2 {
         font-size: 1.75rem;
         line-height: 2.25rem;
-        font-weight: 800;
+        font-weight: 700;
         color: #0f172a;
         letter-spacing: -0.025em;
     }
@@ -232,9 +245,12 @@
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-20px);
     }
@@ -298,7 +314,7 @@
     padding: 1.25rem 1.5rem;
     color: #475569;
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     transition: all 0.2s ease;
@@ -310,12 +326,12 @@
 }
 
 .p-datatable.p-datatable-minimal .p-datatable-tbody>tr:hover {
-    background-color: #f0f9ff !important;
-    box-shadow: inset 4px 0 0 #0ea5e9;
+    background-color: #eff6ff !important;
+    box-shadow: inset 4px 0 0 #3b82f6;
     cursor: pointer;
 }
 
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
+.p-datatable.p-datatable-minimal .p-datatable-tbody>tr>td {
     padding: 1.25rem 1.5rem;
     border: 1px solid #e2e8f0 !important;
     vertical-align: middle;
@@ -394,13 +410,13 @@
 /* Global Button Utilities */
 @layer components {
     .btn-primary {
-        background-color: #0ea5e9;
+        background-color: #2563eb;
         border: none;
         color: white;
         padding: 0.875rem 1.75rem;
         border-radius: 0.75rem;
         font-weight: 600;
-        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 0.875rem;
         display: flex;
@@ -412,7 +428,7 @@
     }
 
     .btn-primary:hover {
-        background-color: #0891b2;
+        background-color: #1d4ed8;
         transform: translateY(-2px);
     }
 

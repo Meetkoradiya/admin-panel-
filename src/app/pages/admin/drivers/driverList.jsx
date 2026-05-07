@@ -107,8 +107,8 @@ const DriverList = () => {
                 style={{ width: '36px', height: '36px', borderRadius: '12px' }}
             />
             <div className="flex flex-col">
-                <span className="font-bold text-slate-700 text-sm">{rowData.username}</span>
-                <span className="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
+                <span className="font-semibold text-slate-800 text-sm">{rowData.username}</span>
+                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em] mt-0.5">{rowData.mobileNumber}</span>
             </div>
         </div>
     );

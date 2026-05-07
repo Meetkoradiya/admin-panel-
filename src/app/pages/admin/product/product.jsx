@@ -133,8 +133,8 @@ const ProductList = () => {
                 }}
                 addLabel="New Product"
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column field="name" header="Product Title" sortable className="font-bold text-slate-700 text-sm" />
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-semibold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
+                <Column field="name" header="Product Title" sortable className="font-semibold text-slate-700 text-sm" />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '6rem', textAlign: 'center' }} />
             </ListLayout>
 

@@ -36,10 +36,10 @@ const ListLayout = ({
                                 <i className={`pi ${icon} text-xl`}></i>
                             </div>
                             <div>
-                                <h1 className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                                <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight leading-tight">
                                     {title}
                                 </h1>
-                                {subtitle && <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mt-1">{subtitle}</p>}
+                                {subtitle && <p className="text-slate-400 text-[10px] font-medium uppercase tracking-[0.15em] mt-1">{subtitle}</p>}
                             </div>
                         </div>
 
@@ -75,10 +75,10 @@ const ListLayout = ({
                         {stats.map((s, i) => (
                             <div key={i} className="layout-card p-7 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[145px] relative">
                                 <div className="flex flex-col gap-1.5">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
-                                    <h2 className="text-4xl font-black text-slate-900 tracking-tight">{s.value}</h2>
+                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
+                                    <h2 className="text-4xl font-bold text-slate-900 tracking-tight">{s.value}</h2>
                                 </div>
-                                <div className={`text-[10px] font-bold ${s.textColor || 'text-blue-500'} mt-5 flex items-center gap-2`}>
+                                <div className={`text-[10px] font-semibold ${s.textColor || 'text-blue-500'} mt-5 flex items-center gap-2`}>
                                     <span className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
                                     {s.sub}
                                 </div>

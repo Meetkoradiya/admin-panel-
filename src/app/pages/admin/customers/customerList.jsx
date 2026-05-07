@@ -116,8 +116,8 @@ const CustomerManagement = () => {
                 {rowData.username?.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
-                <span className="font-bold text-slate-800 text-sm">{rowData.username}</span>
-                <span className="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">{rowData.mobileNumber}</span>
+                <span className="font-semibold text-slate-800 text-sm">{rowData.username}</span>
+                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-widest mt-0.5">{rowData.mobileNumber}</span>
             </div>
         </div>
     );
@@ -137,7 +137,7 @@ const CustomerManagement = () => {
                 emptyImage={successImg}
                 emptyMessage="No Customers Found"
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-500 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
+                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-semibold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Customer Info" body={customerBodyTemplate} sortField="username" />
                 <Column field="address" header="Location" className="text-slate-500 font-medium text-sm" />
                 <Column field="status" header="Status" body={statusBodyTemplate} sortable style={{ width: '10rem', textAlign: 'center' }} />

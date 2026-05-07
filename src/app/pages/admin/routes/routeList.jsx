@@ -85,8 +85,8 @@ const RouteList = () => {
 
     const routeNameTemplate = (rowData) => (
         <div className="flex flex-col gap-1 py-1">
-            <span className="text-slate-800 font-bold text-sm">{rowData.routeName || rowData.name}</span>
-            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400 bg-slate-50 w-fit px-2 py-0.5 rounded-md border border-slate-100">
+            <span className="text-slate-800 font-semibold text-sm">{rowData.routeName || rowData.name}</span>
+            <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-slate-400 bg-slate-50 w-fit px-2 py-0.5 rounded-md border border-slate-100">
                 {rowData.id || rowData._id ? `ID: ${rowData.id || rowData._id}` : 'Draft'}
             </span>
         </div>
@@ -105,7 +105,7 @@ const RouteList = () => {
                 onAdd={() => navigate('/admin/routes/add')}
                 addLabel="New Route"
             >
-                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-semibold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
                 <Column header="Route Details" body={routeNameTemplate} sortField="routeName" />
                 <Column field="startPoint" header="Start Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.startPoint || 'â€”'}</span>} />
                 <Column field="endPoint" header="End Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.endPoint || 'â€”'}</span>} />

@@ -9,7 +9,7 @@ import { store, persistor } from "./redux/Store.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { LayoutProvider } from "./app/context/layoutcontent.jsx";
 
-import "primereact/resources/themes/lara-light-cyan/theme.css";
+import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
