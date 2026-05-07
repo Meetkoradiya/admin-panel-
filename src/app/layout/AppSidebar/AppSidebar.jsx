@@ -50,8 +50,8 @@ const AdminSidebar = () => {
               <span className="brand-name font-bold tracking-tight text-slate-800">
                 Amrut Water
               </span>
-              <div className="mt-1.5 flex items-center gap-1.5">
-                <span className="brand-tagline text-[9px] font-semibold tracking-[0.25em] text-blue-500/80 uppercase">
+              <div className="flex items-center gap-1">
+                <span className="brand-tagline text-[8px] font-bold tracking-[0.12em] text-blue-500 uppercase">
                   Trust in Every Drop
                 </span>
               </div>

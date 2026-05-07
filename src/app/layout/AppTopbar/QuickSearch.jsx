@@ -49,7 +49,7 @@ export const QuickSearch = ({ visible, onHide }) => {
                 {/* Search Header */}
                 <div className="p-4 border-b border-slate-100 flex items-center gap-4 sticky top-0 bg-white z-10">
                     <div className="relative flex-1 flex items-center">
-                        <i className="pi pi-search text-slate-400 text-lg absolute left-3 z-10" />
+                        <i className="pi pi-search text-slate-500 text-lg absolute left-4 z-10" />
                         <InputText 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -57,8 +57,8 @@ export const QuickSearch = ({ visible, onHide }) => {
                                 if (e.key === 'Escape') onHide();
                             }}
                             placeholder="Search menu..." 
-                            className="w-full border-none! shadow-none! ring-0! outline-none! text-[15px] font-medium text-slate-700 py-1 bg-transparent"
-                            style={{ paddingLeft: '2.5rem' }}
+                            className="w-full border border-slate-200 rounded-2xl !shadow-none ring-0 outline-none text-[15px] font-medium text-slate-700 py-2.5 !bg-white placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all"
+                            style={{ paddingLeft: '2.8rem' }}
                             autoFocus
                         />
                     </div>

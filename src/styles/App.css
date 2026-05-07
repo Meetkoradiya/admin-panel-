@@ -197,6 +197,17 @@
     width: 100%;
 }
 
+.p-inputtext {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.p-inputtext:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
 /* Premium Animations */
 @keyframes fadeIn {
     from {

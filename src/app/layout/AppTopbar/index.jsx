@@ -41,36 +41,37 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar bg-white border-b border-slate-200 flex items-center justify-between px-6 h-20">
+    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between px-6 h-20">
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
-      
+
       <div className="flex items-center gap-4">
         {/* Menu Toggle Button */}
         <button
-            ref={menubuttonRef}
             type="button"
-            onClick={(e) => {
-                console.log("Menu Toggle Clicked");
-                onMenuToggle(e);
-            }}
+            onClick={onMenuToggle}
             className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
         >
-            <i className="pi pi-bars text-lg" />
+          <i className="pi pi-bars text-lg" />
         </button>
 
         {/* Search Button */}
         <button
-            type="button"
-            onClick={() => setSearchVisible(true)}
-            className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+          type="button"
+          onClick={() => setSearchVisible(true)}
+          className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
         >
-            <i className="pi pi-search text-lg" />
+          <i className="pi pi-search text-lg" />
         </button>
       </div>
 
-      <div className="flex items-center gap-6">
-        <Notification />
-        <Instruction />
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0.5">
+          <Notification />
+          <Instruction />
+        </div>
+        
+        <div className="h-8 w-[1px] bg-slate-100 mx-2" />
+        
         <User />
       </div>
     </div>
