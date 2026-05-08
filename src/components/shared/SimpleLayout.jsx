@@ -47,8 +47,7 @@ export const SimpleLayout = ({
 export const SimpleSection = ({ title, children }) => {
     return (
         <div className="bg-white rounded-3xl border border-slate-100 p-10 shadow-sm transition-all hover:shadow-md">
-            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-blue-500 rounded-full"></span>
+            <h2 className="text-xl font-bold text-slate-800 mb-8 tracking-tight">
                 {title}
             </h2>
             <div className="w-full">
@@ -60,8 +59,8 @@ export const SimpleSection = ({ title, children }) => {
 
 export const SimpleField = ({ label, children, error }) => {
     return (
-        <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-bold text-slate-600 ml-1">{label}</label>
+        <div className="flex flex-col gap-2.5">
+            <label className="text-[14px] font-semibold text-slate-500 ml-0.5">{label}</label>
             {children}
             {error && <span className="text-rose-500 text-xs ml-1 font-medium">{error}</span>}
         </div>

@@ -1,140 +1,300 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import useApi from "@/hooks/useApi";
-import Button from "@/components/ui/Button";
-import { Page } from "@/components/shared/Page";
+import React from 'react';
 
 const MasterDashboard = () => {
-  const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.userData);
-  const { apiGet } = useApi();
+    const stats = [
+        {
+            title: 'Total Admins',
+            value: '12',
+            icon: '👨‍💼',
+            bg: 'bg-blue-100'
+        },
+        {
+            title: 'Total Outlets',
+            value: '8',
+            icon: '🏪',
+            bg: 'bg-green-100'
+        },
+        {
+            title: 'Subscriptions',
+            value: '154',
+            icon: '📦',
+            bg: 'bg-orange-100'
+        },
+        {
+            title: 'Pending Verification',
+            value: '6',
+            icon: '🛡️',
+            bg: 'bg-red-100'
+        }
+    ];
 
-  const [stats, setStats] = useState({
-    totalAdmins: '—',
-    activeAdmins: '—',
-    pendingDevices: '—',
-  });
-  const [loadingStats, setLoadingStats] = useState(true);
+    return (
+        <div className="min-h-screen bg-slate-100 p-6">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-800">
+                        Master Dashboard
+                    </h1>
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoadingStats(true);
-      try {
-        const adminPromise = apiGet('/admin/admins');
-        const devicesPromise = apiGet('/auth/master/device-approvals');
-        
-        const [adminsRes, devicesRes] = await Promise.allSettled([
-          adminPromise,
-          devicesPromise,
-        ]);
+                    <p className="text-slate-500 mt-1">
+                        Welcome back, manage your entire system here.
+                    </p>
+                </div>
 
-        const normalize = (res) => {
-          if (res.status !== 'fulfilled') return [];
-          const v = res.value;
-          return Array.isArray(v) ? v : (Array.isArray(v?.data) ? v.data : []);
-        };
-
-        const admins = normalize(adminsRes);
-        const devices = normalize(devicesRes);
-
-        setStats({
-          totalAdmins: admins.length,
-          activeAdmins: admins.filter(a => a.status === 'ACTIVE').length,
-          pendingDevices: devices.filter(d => (d.status || d.approvalStatus || 'PENDING') === 'PENDING').length,
-        });
-      } catch (e) {
-        console.error('Dashboard stats error:', e);
-      } finally {
-        setLoadingStats(false);
-      }
-    };
-    fetchStats();
-  }, [apiGet]);
-
-  const quickCards = [
-    { title: "Create Admin", desc: "Register a new administrator", icon: "pi pi-user-plus", gradient: "from-blue-500 to-blue-600", shadow: "shadow-blue-200", url: "/master/admins/add" },
-    { title: "Admin List", desc: "View & manage all admins", icon: "pi pi-users", gradient: "from-indigo-500 to-indigo-600", shadow: "shadow-indigo-200", url: "/master/admins" },
-    { title: "Subscriptions", desc: "Manage water plans", icon: "pi pi-calendar", gradient: "from-violet-500 to-violet-600", shadow: "shadow-violet-200", url: "/master/subscriptions" },
-    { title: "Device Verification", desc: "Approve device requests", icon: "pi pi-mobile", gradient: "from-cyan-500 to-cyan-600", shadow: "shadow-cyan-200", url: "/master/devices" },
-  ];
-
-  const statCards = [
-    { label: 'Total Admins', value: stats.totalAdmins, sub: `${stats.activeAdmins} active`, icon: 'pi pi-users', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { label: 'Pending Devices', value: stats.pendingDevices, sub: 'Awaiting approval', icon: 'pi pi-mobile', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { label: 'Active Outlets', value: '42', sub: 'Regional hubs', icon: 'pi pi-map-marker', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-    { label: 'System Health', value: '98%', sub: 'Global uptime', icon: 'pi pi-bolt', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-  ];
-
-  const now = new Date();
-  const greeting = now.getHours() < 12 ? 'Good Morning' : now.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
-
-  return (
-    <div className="animate-fade-in space-y-8">
-      {/* HEADER SECTION */}
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
-            {greeting}, Master Admin 👋
-          </h1>
-          <p className="text-slate-500 font-medium mt-1">
-            System health and administrative overview
-          </p>
-        </div>
-        <button 
-          onClick={() => navigate('/master/admins/add')}
-          className="btn-primary px-8 py-3 h-auto"
-        >
-          <i className="pi pi-plus text-sm" />
-          <span>New Administrator</span>
-        </button>
-      </div>
-
-
-      {/* STATS SECTION */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((s) => (
-          <div key={s.label} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-5 group-hover:scale-110 transition-transform`}>
-              <i className={`${s.icon} text-xl`} />
+                <button className="bg-blue-500 hover:bg-blue-600 transition-all text-white px-6 py-3 rounded-2xl font-semibold shadow-sm">
+                    + Create Admin
+                </button>
             </div>
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">{s.label}</p>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-3xl font-extrabold text-slate-800 tracking-tighter">{loadingStats ? '—' : s.value}</h2>
-              <p className="text-slate-400 text-xs font-semibold">{s.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* QUICK ACTIONS SECTION */}
-      <div className="space-y-6">
-        <div className="flex items-center gap-3 px-2">
-          <div className="h-6 w-1.5 bg-blue-600 rounded-full" />
-          <h2 className="text-xl font-bold text-slate-800">System Management</h2>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {quickCards.map((card) => (
-            <div
-              key={card.url}
-              className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
-              onClick={() => navigate(card.url)}
-            >
-              <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
-                <i className={`${card.icon} text-lg`} />
-              </div>
-              <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>
-              <p className="text-slate-400 text-sm font-medium leading-relaxed">{card.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                {stats.map((item, index) => (
+                    <div
+                        key={index}
+                        className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm"
+                    >
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-slate-500 text-sm font-medium">
+                                    {item.title}
+                                </p>
 
-  );
+                                <h2 className="text-3xl font-bold text-slate-800 mt-3">
+                                    {item.value}
+                                </h2>
+                            </div>
+
+                            <div
+                                className={`h-14 w-14 rounded-2xl flex items-center justify-center text-2xl ${item.bg}`}
+                            >
+                                {item.icon}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Main Layout */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                {/* Recent Admins */}
+                <div className="xl:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold text-slate-800">
+                            Recent Admins
+                        </h2>
+
+                        <button className="text-blue-600 font-semibold text-sm">
+                            View All
+                        </button>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between border border-slate-200 rounded-2xl p-4">
+                            <div>
+                                <h3 className="font-semibold text-slate-800">
+                                    Meet Patel
+                                </h3>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Ahmedabad Outlet
+                                </p>
+                            </div>
+
+                            <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">
+                                Active
+                            </span>
+                        </div>
+
+                        <div className="flex items-center justify-between border border-slate-200 rounded-2xl p-4">
+                            <div>
+                                <h3 className="font-semibold text-slate-800">
+                                    Rohit Parmar
+                                </h3>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Satellite Outlet
+                                </p>
+                            </div>
+
+                            <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">
+                                Pending
+                            </span>
+                        </div>
+
+                        <div className="flex items-center justify-between border border-slate-200 rounded-2xl p-4">
+                            <div>
+                                <h3 className="font-semibold text-slate-800">
+                                    Hiral Ladumor
+                                </h3>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Naranpura Outlet
+                                </p>
+                            </div>
+
+                            <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold">
+                                Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-800 mb-6">
+                        Quick Actions
+                    </h2>
+
+                    <div className="space-y-4">
+                        <button className="w-full bg-blue-500 hover:bg-blue-600 transition-all text-white py-4 rounded-2xl font-semibold">
+                            + Create Admin
+                        </button>
+
+                        <button className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold">
+                            + Add Outlet
+                        </button>
+
+                        <button className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold">
+                            + Add Subscription
+                        </button>
+                    </div>
+
+                    {/* Activity */}
+                    <div className="mt-8 border-t border-slate-200 pt-6">
+                        <h3 className="text-lg font-bold text-slate-800 mb-4">
+                            System Activity
+                        </h3>
+
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-600">
+                                    Active Admins
+                                </span>
+
+                                <span className="font-bold text-green-600">
+                                    9
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-600">
+                                    Verified Devices
+                                </span>
+
+                                <span className="font-bold text-blue-600">
+                                    84
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-600">
+                                    Expired Plans
+                                </span>
+
+                                <span className="font-bold text-red-600">
+                                    2
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">
+                        Outlet Performance
+                    </h2>
+
+                    <div className="space-y-4">
+                        <div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-sm text-slate-600">
+                                    Ahmedabad
+                                </span>
+
+                                <span className="text-sm font-semibold">
+                                    90%
+                                </span>
+                            </div>
+
+                            <div className="w-full h-3 bg-slate-200 rounded-full">
+                                <div className="h-3 w-[90%] bg-blue-500 rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-sm text-slate-600">
+                                    Surat
+                                </span>
+
+                                <span className="text-sm font-semibold">
+                                    75%
+                                </span>
+                            </div>
+
+                            <div className="w-full h-3 bg-slate-200 rounded-full">
+                                <div className="h-3 w-[75%] bg-green-500 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">
+                        Recent Activity
+                    </h2>
+
+                    <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                            <div className="h-3 w-3 rounded-full bg-blue-500 mt-2"></div>
+
+                            <div>
+                                <p className="text-sm text-slate-700">
+                                    New admin created successfully
+                                </p>
+
+                                <span className="text-xs text-slate-400">
+                                    2 min ago
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <div className="h-3 w-3 rounded-full bg-green-500 mt-2"></div>
+
+                            <div>
+                                <p className="text-sm text-slate-700">
+                                    Outlet subscription renewed
+                                </p>
+
+                                <span className="text-xs text-slate-400">
+                                    10 min ago
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <div className="h-3 w-3 rounded-full bg-red-500 mt-2"></div>
+
+                            <div>
+                                <p className="text-sm text-slate-700">
+                                    Device verification pending
+                                </p>
+
+                                <span className="text-xs text-slate-400">
+                                    1 hour ago
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default MasterDashboard;
-
-
