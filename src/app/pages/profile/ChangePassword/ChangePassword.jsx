@@ -2,13 +2,13 @@ import Button from "@/components/ui/Button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { classNames } from "primereact/utils";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout, login } from "../../../../redux/slice/AuthSlice";
 import axios from "axios";
+import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const ChangePassword = () => {
   const toast = useRef(null);
@@ -75,12 +75,12 @@ const ChangePassword = () => {
   const handleSubmit = () => {
     if (!validateForm()) return;
 
-    confirmDialog({
-      message: 'Are you sure you want to change your password?',
-      header: 'Confirm Password Change',
-      icon: 'pi pi-exclamation-triangle',
-      acceptClassName: 'p-button-danger',
-      accept: () => performChange()
+    showConfirmDialog({
+      title: 'Update Password',
+      message: 'Are you sure you want to change your login password?',
+      acceptLabel: 'Update',
+      type: 'edit',
+      onAccept: () => performChange()
     });
   };
 
@@ -199,7 +199,6 @@ const ChangePassword = () => {
   return (
     <div className="p-4 md:p-8 bg-[#f8fafc] min-h-screen font-['Inter']">
       <Toast ref={toast} />
-      <ConfirmDialog className="rounded-2xl" />
       
       <div className="max-w-4xl mx-auto">
         {/* Header */}

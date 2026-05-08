@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Button } from 'primereact/button';
 
@@ -58,30 +58,30 @@ export const showConfirmDialog = ({
         accept: onAccept,
         reject: onReject,
         content: ({ hide }) => (
-            <div className="flex flex-col items-center bg-white rounded-[2.5rem] p-10 shadow-2xl min-w-[380px] max-w-[420px] mx-auto border border-slate-50 animate-zoom-in">
+            <div className="flex flex-col items-center bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-2xl w-[90vw] md:w-auto md:min-w-[420px] md:max-w-[480px] mx-auto border border-slate-50 animate-zoom-in overflow-hidden relative">
                 {/* Visual Icon Header */}
-                <div className={`flex items-center justify-center size-24 rounded-full ${theme.bg} ${theme.text} mb-8 ring-12 ring-white shadow-sm border border-slate-50 transition-transform duration-500 hover:scale-110`}>
-                    <i className={`${theme.icon} text-4xl`}></i>
+                <div className={`flex items-center justify-center size-20 md:size-28 rounded-full ${theme.bg} ${theme.text} mb-6 md:mb-10 ring-[12px] md:ring-[16px] ring-white shadow-sm border border-slate-50 transition-transform duration-500 hover:scale-105`}>
+                    <i className={`${theme.icon} text-3xl md:text-5xl`}></i>
                 </div>
 
                 {/* Information Body */}
-                <div className="text-center mb-10">
-                    <h3 className="text-2xl font-bold text-slate-800 tracking-tight mb-3 px-2 leading-none">{title}</h3>
-                    <p className="text-slate-500 font-bold text-sm leading-relaxed px-6">{message}</p>
+                <div className="text-center mb-8 md:mb-12">
+                    <h3 className="text-xl md:text-3xl font-extrabold text-slate-800 tracking-tight mb-2 md:mb-4 px-2 leading-none uppercase">{title}</h3>
+                    <p className="text-slate-500 font-bold text-[13px] md:text-sm leading-relaxed px-4 md:px-8">{message}</p>
                 </div>
 
                 {/* Dynamic Actions */}
-                <div className="flex flex-col gap-3 w-full">
-                    <button 
-                        onClick={(e) => { hide(e); if(onAccept) onAccept(); }} 
-                        className={`w-full py-4 rounded-2xl text-white font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 ${theme.btn}`}
+                <div className="flex flex-col gap-3 md:gap-4 w-full">
+                    <button
+                        onClick={(e) => { hide(e); if (onAccept) onAccept(); }}
+                        className={`w-full py-3.5 md:py-5 rounded-xl md:rounded-2xl text-white font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-3 text-sm md:text-base ${theme.btn}`}
                     >
-                        <i className={`${theme.icon} text-sm`}></i>
+                        <i className={`${theme.icon} text-xs md:text-sm`}></i>
                         {acceptLabel}
                     </button>
-                    <button 
-                        onClick={(e) => { hide(e); if(onReject) onReject(); }} 
-                        className="w-full py-4 rounded-2xl bg-slate-50 text-slate-400 font-bold hover:bg-slate-100 transition-all active:scale-95"
+                    <button
+                        onClick={(e) => { hide(e); if (onReject) onReject(); }}
+                        className="w-full py-3.5 md:py-5 rounded-xl md:rounded-2xl bg-slate-50 text-slate-400 font-bold hover:bg-slate-100 transition-all active:scale-95 text-sm md:text-base"
                     >
                         {rejectLabel}
                     </button>

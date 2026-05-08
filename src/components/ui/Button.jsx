@@ -29,9 +29,9 @@ const Button = ({
     const variants = {
         primary: "bg-blue-600 text-white border-none shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:shadow-blue-500/30 shadow-inner shadow-white/10",
         secondary: "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm",
-        danger: "bg-rose-500 text-white border-none shadow-lg shadow-rose-500/20 hover:bg-rose-600 hover:shadow-rose-500/30 shadow-inner shadow-white/10",
-        "outline-danger": "bg-transparent text-rose-500 border border-rose-500 hover:bg-rose-50 shadow-sm",
-        "outline-primary": "bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-50 shadow-sm",
+        danger: "bg-red-500 text-white border-none shadow-lg shadow-red-500/20 hover:bg-red-600 hover:shadow-red-500/30 shadow-inner shadow-white/10",
+        "outlineDanger": "!bg-transparent !text-red-500 !border !border-red-500 hover:!bg-red-50 shadow-sm",
+        "outlinePrimary": "!bg-transparent !text-blue-600 !border !border-blue-600 hover:!bg-blue-50 shadow-sm",
         ghost: "bg-transparent text-slate-600 border-none hover:bg-slate-100",
         link: "bg-transparent text-blue-600 border-none underline-offset-4 hover:underline p-0",
         icon: "p-0 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm flex items-center justify-center"
@@ -40,8 +40,8 @@ const Button = ({
     // Size styles (for regular buttons)
     const sizes = {
         sm: "px-3 py-1.5 text-xs rounded-lg gap-1.5 h-8",
-        md: "px-5 py-2.5 text-sm rounded-xl gap-2 h-10",
-        lg: "px-8 py-3.5 text-base rounded-2xl gap-3 h-12.5"
+        md: "px-6 py-3 text-[15px] rounded-2xl gap-2.5 h-12",
+        lg: "px-8 py-4 text-base rounded-2xl gap-3 h-14"
     };
 
     // Size styles (for circular icon buttons)

@@ -28,6 +28,7 @@ const AdminCreate = () => {
         postalCode: '',
         address: ''
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         apiGet('/master/outlets')
@@ -85,29 +86,40 @@ const AdminCreate = () => {
         }
     }, [id, location.state, isEditMode, apiGet, navigate]);
 
+    const validate = () => {
+        let errs = {};
+        if (!admin.username?.trim()) errs.username = "Full name is required!";
+        if (!admin.mobileNumber?.trim()) errs.mobileNumber = "Mobile number is required!";
+        else if (admin.mobileNumber.length !== 10) errs.mobileNumber = "Mobile must be 10 digits!";
+        if (!admin.city?.trim()) errs.city = "City is required!";
+        if (!admin.address?.trim()) errs.address = "Address is required!";
+        if (!isEditMode && !admin.password?.trim()) errs.password = "Password is required!";
+        
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleSave = async () => {
         setSubmitted(true);
-        const isValid = admin.username.trim() && admin.mobileNumber.trim() && admin.mobileNumber.length === 10
-            && (isEditMode || admin.password.trim());
-
-        if (!isValid) return;
-
-        setLoading(true);
-        try {
-            if (isEditMode) {
-                await apiPut(`/admin/admins/${id}`, admin);
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully' });
-            } else {
-                const createPayload = { ...admin };
-                if (admin.outletId) createPayload.outletId = Number(admin.outletId);
-                await apiPost('/admin/register-admin', createPayload);
-                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Created Successfully' });
+        if (validate()) {
+            setLoading(true);
+            try {
+                if (isEditMode) {
+                    await apiPut(`/admin/admins/${id}`, admin);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully' });
+                } else {
+                    const createPayload = { ...admin };
+                    if (admin.outletId) createPayload.outletId = Number(admin.outletId);
+                    await apiPost('/admin/register-admin', createPayload);
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Created Successfully' });
+                }
+                setTimeout(() => navigate('/master/admins'), 1000);
+            } catch (error) {
+                const errorMsg = error.response?.data?.message || error.message || 'Operation failed';
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMsg });
+            } finally {
+                setLoading(false);
             }
-            setTimeout(() => navigate('/master/admins'), 1000);
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Operation failed' });
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -132,19 +144,27 @@ const AdminCreate = () => {
                         <SimpleField label="Full Name">
                             <InputText
                                 value={admin.username}
-                                onChange={(e) => setAdmin({ ...admin, username: e.target.value })}
-                                className={inputClass(admin.username)}
+                                onChange={(e) => {
+                                    setAdmin({ ...admin, username: e.target.value });
+                                    if (errors.username) setErrors({ ...errors, username: null });
+                                }}
+                                className={inputClass(!errors.username)}
                                 placeholder="Enter admin name"
                             />
+                            {errors.username && <small className="text-red-500 font-bold mt-1 ml-1">{errors.username}</small>}
                         </SimpleField>
                         <SimpleField label="Mobile Number">
                             <InputText
                                 value={admin.mobileNumber}
                                 maxLength={10}
-                                onChange={(e) => setAdmin({ ...admin, mobileNumber: e.target.value })}
-                                className={inputClass(admin.mobileNumber && admin.mobileNumber.length === 10)}
+                                onChange={(e) => {
+                                    setAdmin({ ...admin, mobileNumber: e.target.value });
+                                    if (errors.mobileNumber) setErrors({ ...errors, mobileNumber: null });
+                                }}
+                                className={inputClass(!errors.mobileNumber)}
                                 placeholder="Enter mobile number"
                             />
+                            {errors.mobileNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.mobileNumber}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>
@@ -154,10 +174,14 @@ const AdminCreate = () => {
                         <SimpleField label="City">
                             <InputText
                                 value={admin.city}
-                                onChange={(e) => setAdmin({ ...admin, city: e.target.value })}
-                                className={inputClass(true)}
+                                onChange={(e) => {
+                                    setAdmin({ ...admin, city: e.target.value });
+                                    if (errors.city) setErrors({ ...errors, city: null });
+                                }}
+                                className={inputClass(!errors.city)}
                                 placeholder="Enter city"
                             />
+                            {errors.city && <small className="text-red-500 font-bold mt-1 ml-1">{errors.city}</small>}
                         </SimpleField>
                         <SimpleField label="Postal Code">
                             <InputText
@@ -171,10 +195,14 @@ const AdminCreate = () => {
                             <SimpleField label="Address">
                                 <InputText
                                     value={admin.address}
-                                    onChange={(e) => setAdmin({ ...admin, address: e.target.value })}
-                                    className={inputClass(true)}
+                                    onChange={(e) => {
+                                        setAdmin({ ...admin, address: e.target.value });
+                                        if (errors.address) setErrors({ ...errors, address: null });
+                                    }}
+                                    className={inputClass(!errors.address)}
                                     placeholder="Enter permanent address"
                                 />
+                                {errors.address && <small className="text-red-500 font-bold mt-1 ml-1">{errors.address}</small>}
                             </SimpleField>
                         </div>
                     </div>
@@ -194,10 +222,14 @@ const AdminCreate = () => {
                             <InputText
                                 type="password"
                                 value={admin.password}
-                                onChange={(e) => setAdmin({ ...admin, password: e.target.value })}
-                                className={inputClass(isEditMode || admin.password)}
+                                onChange={(e) => {
+                                    setAdmin({ ...admin, password: e.target.value });
+                                    if (errors.password) setErrors({ ...errors, password: null });
+                                }}
+                                className={inputClass(!errors.password)}
                                 placeholder={isEditMode ? "Leave blank to keep same" : "Create password"}
                             />
+                            {errors.password && <small className="text-red-500 font-bold mt-1 ml-1">{errors.password}</small>}
                         </SimpleField>
                         <div className="md:col-span-2">
                             <SimpleField label="Assigned Outlet (Optional)">

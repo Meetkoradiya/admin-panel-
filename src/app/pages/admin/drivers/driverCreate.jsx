@@ -25,6 +25,7 @@ const DriverCreate = () => {
         vehicleName: '',
         vehicleNumber: ''
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchDependencies = async () => {
@@ -78,15 +79,23 @@ const DriverCreate = () => {
         }
     }, [id, location.state, apiGet]);
 
+    const validate = () => {
+        let errs = {};
+        if (!driver.username?.trim()) errs.username = "Full name is required!";
+        if (!driver.mobileNumber?.trim()) errs.mobileNumber = "Mobile number is required!";
+        else if (driver.mobileNumber.length !== 10) errs.mobileNumber = "Mobile must be 10 digits!";
+        if (!driver.vehicleName?.trim()) errs.vehicleName = "Vehicle name is required!";
+        if (!driver.vehicleNumber?.trim()) errs.vehicleNumber = "Vehicle number is required!";
+        if (!driver.route) errs.route = "Please select a route!";
+        if (!id && !driver.password?.trim()) errs.password = "Password is required!";
+        
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleSave = async () => {
         setSubmitted(true);
-        const isValid = driver.username.trim() && 
-                        driver.mobileNumber.trim() && 
-                        driver.mobileNumber.length === 10 &&
-                        driver.vehicleName.trim() &&
-                        driver.vehicleNumber.trim();
-
-        if (isValid) {
+        if (validate()) {
             setLoading(true);
             try {
                 const payload = { ...driver };
@@ -102,7 +111,8 @@ const DriverCreate = () => {
                 }
                 setTimeout(() => navigate('/admin/drivers'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Operation failed' });
+                const errorMsg = error.response?.data?.message || error.message || 'Operation failed';
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMsg });
                 setLoading(false);
             }
         }
@@ -129,19 +139,27 @@ const DriverCreate = () => {
                         <SimpleField label="Full Name">
                             <InputText
                                 value={driver.username}
-                                onChange={(e) => setDriver({ ...driver, username: e.target.value })}
-                                className={inputClass(driver.username)}
+                                onChange={(e) => {
+                                    setDriver({ ...driver, username: e.target.value });
+                                    if (errors.username) setErrors({ ...errors, username: null });
+                                }}
+                                className={inputClass(!errors.username)}
                                 placeholder="Enter driver name"
                             />
+                            {errors.username && <small className="text-red-500 font-bold mt-1 ml-1">{errors.username}</small>}
                         </SimpleField>
                         <SimpleField label="Mobile Number">
                             <InputText
                                 value={driver.mobileNumber}
                                 maxLength={10}
-                                onChange={(e) => setDriver({ ...driver, mobileNumber: e.target.value })}
-                                className={inputClass(driver.mobileNumber && driver.mobileNumber.length === 10)}
+                                onChange={(e) => {
+                                    setDriver({ ...driver, mobileNumber: e.target.value });
+                                    if (errors.mobileNumber) setErrors({ ...errors, mobileNumber: null });
+                                }}
+                                className={inputClass(!errors.mobileNumber)}
                                 placeholder="Enter mobile number"
                             />
+                            {errors.mobileNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.mobileNumber}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>
@@ -151,36 +169,52 @@ const DriverCreate = () => {
                         <SimpleField label="Vehicle Name">
                             <InputText
                                 value={driver.vehicleName}
-                                onChange={(e) => setDriver({ ...driver, vehicleName: e.target.value })}
-                                className={inputClass(driver.vehicleName)}
+                                onChange={(e) => {
+                                    setDriver({ ...driver, vehicleName: e.target.value });
+                                    if (errors.vehicleName) setErrors({ ...errors, vehicleName: null });
+                                }}
+                                className={inputClass(!errors.vehicleName)}
                                 placeholder="Enter vehicle name"
                             />
+                            {errors.vehicleName && <small className="text-red-500 font-bold mt-1 ml-1">{errors.vehicleName}</small>}
                         </SimpleField>
                         <SimpleField label="Vehicle Number">
                             <InputText
                                 value={driver.vehicleNumber}
-                                onChange={(e) => setDriver({ ...driver, vehicleNumber: e.target.value })}
-                                className={inputClass(driver.vehicleNumber)}
+                                onChange={(e) => {
+                                    setDriver({ ...driver, vehicleNumber: e.target.value });
+                                    if (errors.vehicleNumber) setErrors({ ...errors, vehicleNumber: null });
+                                }}
+                                className={inputClass(!errors.vehicleNumber)}
                                 placeholder="Enter registration number"
                             />
+                            {errors.vehicleNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.vehicleNumber}</small>}
                         </SimpleField>
                         <SimpleField label="Assigned Route">
                             <Dropdown
                                 value={driver.route}
                                 options={routesData.map(r => ({ label: r.routeName || r.name, value: r.id }))}
-                                onChange={(e) => setDriver({ ...driver, route: e.value })}
-                                className={dropdownClass}
+                                onChange={(e) => {
+                                    setDriver({ ...driver, route: e.value });
+                                    if (errors.route) setErrors({ ...errors, route: null });
+                                }}
+                                className={classNames(dropdownClass, { 'border-rose-400': errors.route })}
                                 placeholder="Select route"
                             />
+                            {errors.route && <small className="text-red-500 font-bold mt-1 ml-1">{errors.route}</small>}
                         </SimpleField>
                         <SimpleField label="Login Password">
                             <InputText
                                 type="password"
                                 value={driver.password}
-                                onChange={(e) => setDriver({ ...driver, password: e.target.value })}
-                                className={inputClass(!id ? driver.password : true)}
+                                onChange={(e) => {
+                                    setDriver({ ...driver, password: e.target.value });
+                                    if (errors.password) setErrors({ ...errors, password: null });
+                                }}
+                                className={inputClass(!errors.password)}
                                 placeholder={id ? "••••••••" : "Create password"}
                             />
+                            {errors.password && <small className="text-red-500 font-bold mt-1 ml-1">{errors.password}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>

@@ -71,20 +71,25 @@ const ListLayout = ({
 
                 {/* 2. SUMMARY CARDS (OPTIONAL) */}
                 {stats && stats.length > 0 && (
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6`}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-8 mb-4`}>
                         {stats.map((s, i) => (
-                            <div key={i} className="layout-card p-7 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[145px] relative">
-                                <div className="flex flex-col gap-1.5">
-                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
-                                    <h2 className="text-4xl font-bold text-slate-900 tracking-tight">{s.value}</h2>
+                            <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[180px] p-8">
+                                <div className="flex flex-col h-full justify-between z-10">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
+                                        <h2 className="text-6xl font-extrabold text-slate-900 tracking-tighter leading-none">{s.value}</h2>
+                                    </div>
+                                    <div className={`text-[12px] font-bold ${s.textColor || (s.iconColor?.includes('emerald') ? 'text-emerald-500' : s.iconColor?.includes('rose') ? 'text-rose-500' : s.iconColor?.includes('amber') ? 'text-amber-500' : 'text-blue-500')} flex items-start gap-2 mt-6 max-w-[110px] leading-tight`}>
+                                        <span className={`w-2 h-2 rounded-full bg-current opacity-40 mt-1 shrink-0`} />
+                                        {s.sub}
+                                    </div>
                                 </div>
-                                <div className={`text-[10px] font-semibold ${s.textColor || 'text-blue-500'} mt-5 flex items-center gap-2`}>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
-                                    {s.sub}
+                                <div className={`w-24 h-24 rounded-[2rem] ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                                    <i className={`pi ${s.icon || 'pi-file'} text-4xl`} />
                                 </div>
-                                <div className={`absolute right-7 top-1/2 -translate-y-1/2 w-14 h-14 rounded-2xl ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-inner shadow-white/20`}>
-                                    <i className={`pi ${s.icon || 'pi-file'} text-2xl`} />
-                                </div>
+                                
+                                {/* Refined background glow */}
+                                <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg || 'bg-blue-50'} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity duration-500`} />
                             </div>
                         ))}
                     </div>

@@ -21,6 +21,7 @@ const OutletCreate = () => {
         location: '',
         address: ''
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchOutletDetails = async () => {
@@ -54,9 +55,21 @@ const OutletCreate = () => {
         }
     }, [id, location.state, apiGet, navigate]);
 
+    const validate = () => {
+        let errs = {};
+        if (!outlet.name?.trim()) errs.name = "Outlet name is required!";
+        if (!outlet.mobileNumber?.trim()) errs.mobileNumber = "Contact number is required!";
+        else if (outlet.mobileNumber.length !== 10) errs.mobileNumber = "Mobile must be 10 digits!";
+        if (!outlet.location?.trim()) errs.location = "City/Region is required!";
+        if (!outlet.address?.trim()) errs.address = "Address is required!";
+        
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleSave = async () => {
         setSubmitted(true);
-        if (outlet.name.trim() && outlet.mobileNumber.trim()) {
+        if (validate()) {
             setLoading(true);
             try {
                 if (id) {
@@ -68,7 +81,8 @@ const OutletCreate = () => {
                 }
                 setTimeout(() => navigate('/master/outlets'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Operation failed' });
+                const errorMsg = error.response?.data?.message || error.message || 'Operation failed';
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMsg });
                 setLoading(false);
             }
         }
@@ -93,19 +107,27 @@ const OutletCreate = () => {
                         <SimpleField label="Outlet Name">
                             <InputText 
                                 value={outlet.name} 
-                                onChange={(e) => setOutlet({...outlet, name: e.target.value})} 
-                                className={inputClass(outlet.name)}
+                                onChange={(e) => {
+                                    setOutlet({...outlet, name: e.target.value});
+                                    if (errors.name) setErrors({...errors, name: null});
+                                }} 
+                                className={inputClass(!errors.name)}
                                 placeholder="Enter outlet name"
                             />
+                            {errors.name && <small className="text-red-500 font-bold mt-1 ml-1">{errors.name}</small>}
                         </SimpleField>
                         <SimpleField label="Contact Number">
                             <InputText 
                                 value={outlet.mobileNumber} 
                                 maxLength={10}
-                                onChange={(e) => setOutlet({...outlet, mobileNumber: e.target.value})} 
-                                className={inputClass(outlet.mobileNumber && outlet.mobileNumber.length === 10)}
+                                onChange={(e) => {
+                                    setOutlet({...outlet, mobileNumber: e.target.value});
+                                    if (errors.mobileNumber) setErrors({...errors, mobileNumber: null});
+                                }} 
+                                className={inputClass(!errors.mobileNumber)}
                                 placeholder="Enter mobile number"
                             />
+                            {errors.mobileNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.mobileNumber}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>
@@ -115,19 +137,27 @@ const OutletCreate = () => {
                         <SimpleField label="City / Region">
                             <InputText 
                                 value={outlet.location} 
-                                onChange={(e) => setOutlet({...outlet, location: e.target.value})} 
-                                className={inputClass(true)}
+                                onChange={(e) => {
+                                    setOutlet({...outlet, location: e.target.value});
+                                    if (errors.location) setErrors({...errors, location: null});
+                                }} 
+                                className={inputClass(!errors.location)}
                                 placeholder="Enter city"
                             />
+                            {errors.location && <small className="text-red-500 font-bold mt-1 ml-1">{errors.location}</small>}
                         </SimpleField>
                         <div className="md:col-span-2">
                             <SimpleField label="Full Address">
                                 <InputText 
                                     value={outlet.address} 
-                                    onChange={(e) => setOutlet({...outlet, address: e.target.value})} 
-                                    className={inputClass(true)}
+                                    onChange={(e) => {
+                                        setOutlet({...outlet, address: e.target.value});
+                                        if (errors.address) setErrors({...errors, address: null});
+                                    }} 
+                                    className={inputClass(!errors.address)}
                                     placeholder="Enter permanent address"
                                 />
+                                {errors.address && <small className="text-red-500 font-bold mt-1 ml-1">{errors.address}</small>}
                             </SimpleField>
                         </div>
                     </div>

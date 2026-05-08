@@ -77,14 +77,14 @@ const Settings = () => {
     if (!securityData.currentPassword) tempErrors.currentPassword = "Please enter your current password!";
     if (!securityData.newPassword) tempErrors.newPassword = "Please enter your new password!";
     if (!securityData.confirmPassword) tempErrors.confirmPassword = "Please confirm your new password!";
-    
+
     if (securityData.newPassword && securityData.confirmPassword) {
-        if (securityData.newPassword !== securityData.confirmPassword) {
-            tempErrors.confirmPassword = "Passwords do not match!";
-        }
-        if (securityData.newPassword.length < 6) {
-            tempErrors.newPassword = "Password must be at least 6 characters!";
-        }
+      if (securityData.newPassword !== securityData.confirmPassword) {
+        tempErrors.confirmPassword = "Passwords do not match!";
+      }
+      if (securityData.newPassword.length < 6) {
+        tempErrors.newPassword = "Password must be at least 6 characters!";
+      }
     }
 
     setErrors(tempErrors);
@@ -112,10 +112,10 @@ const Settings = () => {
     if (!formData.username) tempErrors.username = "Full name is required!";
     if (!formData.mobileNumber) tempErrors.mobileNumber = "Mobile number is required!";
     else if (!/^\d{10}$/.test(formData.mobileNumber)) tempErrors.mobileNumber = "Mobile number must be 10 digits!";
-    
+
     if (!formData.email) tempErrors.email = "Email address is required!";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) tempErrors.email = "Invalid email format!";
-    
+
     if (!formData.gender) tempErrors.gender = "Gender is required!";
 
     setErrors(tempErrors);
@@ -300,8 +300,8 @@ const Settings = () => {
                         value={genderType.find(g => g.code === formData.gender)}
                         options={genderType}
                         onChange={(e) => {
-                            setFormData({ ...formData, gender: e.value.code });
-                            if (errors.gender) setErrors(prev => ({ ...prev, gender: null }));
+                          setFormData({ ...formData, gender: e.value.code });
+                          if (errors.gender) setErrors(prev => ({ ...prev, gender: null }));
                         }}
                         optionLabel="name"
                         placeholder="Select Gender"

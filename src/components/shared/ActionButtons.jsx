@@ -15,7 +15,7 @@ const ActionButtons = ({ onEdit, onDelete, onDeactivate, isDeactivated }) => {
                         onEdit();
                     }}
                     data-pr-tooltip="Edit"
-                    className="action-tooltip !border-sky-500 !text-sky-500 !bg-transparent hover:!bg-sky-50 transition-colors"
+                    className="action-tooltip !border-blue-500 !text-blue-600 !bg-transparent hover:!bg-blue-50 transition-all duration-200"
                 />
             )}
 
@@ -31,7 +31,7 @@ const ActionButtons = ({ onEdit, onDelete, onDeactivate, isDeactivated }) => {
                         onDelete();
                     }}
                     data-pr-tooltip="Delete"
-                    className="action-tooltip !border-red-500 !text-red-500 !bg-transparent hover:!bg-red-50 transition-colors"
+                    className="action-tooltip !border-red-500 !text-red-600 !bg-transparent hover:!bg-red-50 transition-all duration-200"
                 />
             )}
         </div>

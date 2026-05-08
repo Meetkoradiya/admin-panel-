@@ -21,6 +21,7 @@ const RouteCreate = () => {
         endPoint: '',
         status: 'Active'
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchRouteDetails = async () => {
@@ -57,17 +58,25 @@ const RouteCreate = () => {
         }
     }, [id, location.state, apiGet, navigate]);
 
+    const validate = () => {
+        let errs = {};
+        if (!route.routeName?.trim()) errs.routeName = "Please enter route name!";
+        if (!route.startPoint?.trim()) errs.startPoint = "Please enter start point!";
+        if (!route.endPoint?.trim()) errs.endPoint = "Please enter end point!";
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleSave = async () => {
         setSubmitted(true);
-        if (route.routeName?.trim()) {
+        if (validate()) {
             setLoading(true);
             try {
                 const payload = {
-                    name: route.routeName,
                     routeName: route.routeName,
-                    startPoint: route.startPoint || '',
-                    endPoint: route.endPoint || '',
-                    status: route.status || 'Active'
+                    startPoint: route.startPoint,
+                    endPoint: route.endPoint,
+                    status: route.status
                 };
                 
                 if (id) {
@@ -79,7 +88,8 @@ const RouteCreate = () => {
                 }
                 setTimeout(() => navigate('/admin/routes'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Operation failed' });
+                const errorMsg = error.response?.data?.message || error.message || 'Operation failed';
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMsg });
                 setLoading(false);
             }
         }
@@ -105,27 +115,39 @@ const RouteCreate = () => {
                             <SimpleField label="Route Name">
                                 <InputText
                                     value={route.routeName || ''}
-                                    onChange={(e) => setRoute({ ...route, routeName: e.target.value })}
-                                    className={inputClass(route.routeName)}
+                                    onChange={(e) => {
+                                        setRoute({ ...route, routeName: e.target.value });
+                                        if (errors.routeName) setErrors({ ...errors, routeName: null });
+                                    }}
+                                    className={inputClass(!errors.routeName)}
                                     placeholder="Enter route name"
                                 />
+                                {errors.routeName && <small className="text-red-500 font-bold mt-1 ml-1">{errors.routeName}</small>}
                             </SimpleField>
                         </div>
                         <SimpleField label="Start Point">
                             <InputText
                                 value={route.startPoint || ''}
-                                onChange={(e) => setRoute({ ...route, startPoint: e.target.value })}
-                                className={inputClass(true)}
+                                onChange={(e) => {
+                                    setRoute({ ...route, startPoint: e.target.value });
+                                    if (errors.startPoint) setErrors({ ...errors, startPoint: null });
+                                }}
+                                className={inputClass(!errors.startPoint)}
                                 placeholder="Start location"
                             />
+                            {errors.startPoint && <small className="text-red-500 font-bold mt-1 ml-1">{errors.startPoint}</small>}
                         </SimpleField>
                         <SimpleField label="End Point">
                             <InputText
                                 value={route.endPoint || ''}
-                                onChange={(e) => setRoute({ ...route, endPoint: e.target.value })}
-                                className={inputClass(true)}
+                                onChange={(e) => {
+                                    setRoute({ ...route, endPoint: e.target.value });
+                                    if (errors.endPoint) setErrors({ ...errors, endPoint: null });
+                                }}
+                                className={inputClass(!errors.endPoint)}
                                 placeholder="End location"
                             />
+                            {errors.endPoint && <small className="text-red-500 font-bold mt-1 ml-1">{errors.endPoint}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>

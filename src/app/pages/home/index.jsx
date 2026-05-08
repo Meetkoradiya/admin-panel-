@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Page } from "@/components/shared/Page";
-import { Button } from "primereact/button";
-import { Skeleton } from "primereact/skeleton";
+import Button from "@/components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useApi from "@/hooks/useApi";
@@ -31,7 +30,6 @@ export default function UnifiedDashboard() {
         const ordersList = data?.data || data || [];
         setOrders(Array.isArray(ordersList) ? ordersList : []);
 
-        // Mocking analytics numbers for the cards as seen in the user image
         setStats({
           analytics1: "525",
           analytics2: "556",
@@ -48,86 +46,86 @@ export default function UnifiedDashboard() {
   }, [apiGet]);
 
   const analyticsCards = [
-    { label: 'Analytics 1', value: stats.analytics1, icon: 'pi-file-edit', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { label: 'Analytics 2', value: stats.analytics2, icon: 'pi-clock', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { label: 'Analytics 3', value: stats.analytics3, icon: 'pi-file', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-    { label: 'Analytics 4', value: stats.analytics4, icon: 'pi-chart-bar', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { label: 'Analytics 1', value: stats.analytics1, icon: 'pi-file-edit', bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100' },
+    { label: 'Analytics 2', value: stats.analytics2, icon: 'pi-clock', bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100' },
+    { label: 'Analytics 3', value: stats.analytics3, icon: 'pi-file', bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100' },
+    { label: 'Analytics 4', value: stats.analytics4, icon: 'pi-chart-bar', bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100' },
   ];
 
   const emptyTemplate = () => (
-    <div className="flex flex-col items-center justify-center py-10 text-center">
-      <img src={successImg} alt="No Data" className="w-32 h-auto mb-4 opacity-80 pointer-events-none select-none" draggable="false" />
-      <h4 className="text-sm font-bold text-slate-800">No Orders Found</h4>
-      <p className="text-[10px] text-slate-400 font-medium">This customer has not placed any orders yet.</p>
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <img src={successImg} alt="No Data" className="w-32 h-auto mb-6 opacity-40 grayscale" draggable="false" />
+      <h4 className="text-lg font-bold text-slate-800 uppercase tracking-tight">No Active Records</h4>
+      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2">Logistics logs will appear here once orders are processed</p>
     </div>
   );
 
-  const ExperienceCard = () => (
-    <div className="bg-white rounded-2xl border border-slate-100 p-10 flex flex-col items-center justify-center text-center gap-4 flex-1">
-      <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300">
+  const ExperienceCard = ({ title, subtitle }) => (
+    <div className="bg-white rounded-3xl border border-slate-100 p-10 flex flex-col items-center justify-center text-center gap-6 shadow-sm hover:shadow-md transition-all">
+      <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300">
         <i className="pi pi-file text-3xl" />
       </div>
       <div>
-        <h3 className="text-base font-bold text-slate-800">Add your analytical experience here</h3>
-        <p className="text-xs text-slate-400 font-medium mt-1">Show Graph data for better understanding</p>
+        <h3 className="text-base font-bold text-slate-800 uppercase tracking-tight">{title}</h3>
+        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2">{subtitle}</p>
       </div>
     </div>
   );
 
   return (
     <Page title="Overview">
-      <div className="flex flex-col gap-8 animate-fade-in pb-20">
+      <div className="flex flex-col gap-10 animate-fade-in pb-20">
 
         {/* 1. TOP ANALYTICS CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {analyticsCards.map((card) => (
-            <div key={card.label} className={`p-6 rounded-2xl border ${card.border} ${card.bg} flex flex-col gap-4 relative overflow-hidden`}>
+            <div key={card.label} className={`p-8 rounded-3xl border ${card.border} ${card.bg} flex flex-col gap-6 relative overflow-hidden shadow-sm transition-all hover:shadow-lg hover:-translate-y-1`}>
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-bold text-slate-700">{card.label}</span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{card.label}</span>
                 <h2 className="text-3xl font-black text-slate-900">{card.value}</h2>
               </div>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black flex items-center justify-center text-white">
-                <i className={`pi ${card.icon} text-lg`} />
+              <div className={`absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-2xl bg-white flex items-center justify-center ${card.text} shadow-sm`}>
+                <i className={`pi ${card.icon} text-xl`} />
               </div>
             </div>
           ))}
         </div>
 
         {/* 2. MAIN GRID (2 COLUMNS) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* LEFT: TABLES */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
+          <div className="lg:col-span-8 flex flex-col gap-8">
             {[1, 2].map((i) => (
-              <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+              <div key={i} className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div className="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Administrative Logistics Log</h3>
+                    <i className="pi pi-ellipsis-h text-slate-300 cursor-pointer hover:text-slate-500 transition-colors" />
+                </div>
                 <DataTable
-                  value={[]} // Empty as per user screenshot
+                  value={[]} 
                   emptyMessage={emptyTemplate}
-                  className="p-datatable-sm"
-                  header={<div className="px-4 py-2 border-b border-slate-50 flex justify-between items-center text-[10px] font-black uppercase text-slate-400 tracking-widest">
-                    <span>Order</span>
-                    <span>Date</span>
-                    <span>Quantity</span>
-                    <span>Total</span>
-                    <span>Driver</span>
-                    <span>Status <i className="pi pi-sort-alt ml-1" /></span>
-                  </div>}
+                  className="p-datatable-minimal"
+                  responsiveLayout="scroll"
                 >
-                  <Column field="order" />
-                  <Column field="date" />
-                  <Column field="qty" />
-                  <Column field="total" />
-                  <Column field="driver" />
-                  <Column field="status" />
+                  <Column header="Order" headerClassName="px-8 py-4 bg-slate-50/50 text-[10px] font-bold uppercase text-slate-400 tracking-widest" />
+                  <Column header="Date" headerClassName="py-4 bg-slate-50/50 text-[10px] font-bold uppercase text-slate-400 tracking-widest" />
+                  <Column header="Quantity" headerClassName="py-4 bg-slate-50/50 text-[10px] font-bold uppercase text-slate-400 tracking-widest text-center" />
+                  <Column header="Status" headerClassName="py-4 bg-slate-50/50 text-[10px] font-bold uppercase text-slate-400 tracking-widest text-center" />
                 </DataTable>
               </div>
             ))}
           </div>
 
           {/* RIGHT: EXPERIENCE CARDS */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <ExperienceCard />
-            <ExperienceCard />
+          <div className="lg:col-span-4 flex flex-col gap-8">
+            <ExperienceCard title="Analytical Experience" subtitle="Visualization Terminal" />
+            <ExperienceCard title="Graph Data" subtitle="Distribution Metrics" />
+            <div className="bg-blue-600 rounded-3xl p-8 text-white relative overflow-hidden group shadow-xl shadow-blue-100">
+                <h4 className="text-xl font-bold leading-tight mb-4 tracking-tight">"Efficiency is doing things right."</h4>
+                <p className="text-[9px] font-bold uppercase tracking-[0.3em] opacity-60">Master Directive</p>
+                <i className="pi pi-bolt absolute -right-4 -bottom-4 text-8xl text-white/10" />
+            </div>
           </div>
 
         </div>
@@ -136,3 +134,4 @@ export default function UnifiedDashboard() {
     </Page>
   );
 }
+

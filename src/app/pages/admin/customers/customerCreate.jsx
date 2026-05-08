@@ -30,6 +30,7 @@ const AddCustomer = () => {
         quantity: '',
         product: ''
     });
+    const [errors, setErrors] = useState({});
 
     const [productsData, setProductsData] = useState([]);
     const [routesData, setRoutesData] = useState([]);
@@ -100,9 +101,23 @@ const AddCustomer = () => {
         }
     }, [id, location.state, apiGet, navigate]);
 
+    const validate = () => {
+        let errs = {};
+        if (!customer.username?.trim()) errs.username = "Full name is required!";
+        if (!customer.mobileNumber?.trim()) errs.mobileNumber = "Mobile number is required!";
+        else if (customer.mobileNumber.length !== 10) errs.mobileNumber = "Mobile must be 10 digits!";
+        if (!customer.city?.trim()) errs.city = "City is required!";
+        if (!customer.address?.trim()) errs.address = "Address is required!";
+        if (!customer.price) errs.price = "Price is required!";
+        if (!customer.route) errs.route = "Please select a route!";
+        
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleSave = async () => {
         setSubmitted(true);
-        if (customer.username?.trim() && customer.mobileNumber?.trim() && customer.mobileNumber?.length === 10) {
+        if (validate()) {
             setLoading(true);
             try {
                 const payload = {
@@ -123,7 +138,8 @@ const AddCustomer = () => {
                 }
                 setTimeout(() => navigate('/admin/customers'), 1000);
             } catch (error) {
-                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Operation failed' });
+                const errorMsg = error.response?.data?.message || error.message || 'Operation failed';
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMsg });
             } finally {
                 setLoading(false);
             }
@@ -151,19 +167,27 @@ const AddCustomer = () => {
                         <SimpleField label="Full Name">
                             <InputText
                                 value={customer.username}
-                                onChange={(e) => setCustomer({ ...customer, username: e.target.value })}
-                                className={inputClass(customer.username)}
+                                onChange={(e) => {
+                                    setCustomer({ ...customer, username: e.target.value });
+                                    if (errors.username) setErrors({ ...errors, username: null });
+                                }}
+                                className={inputClass(!errors.username)}
                                 placeholder="Enter customer name"
                             />
+                            {errors.username && <small className="text-red-500 font-bold mt-1 ml-1">{errors.username}</small>}
                         </SimpleField>
                         <SimpleField label="Mobile Number">
                             <InputText
                                 value={customer.mobileNumber}
                                 maxLength={10}
-                                onChange={(e) => setCustomer({ ...customer, mobileNumber: e.target.value })}
-                                className={inputClass(customer.mobileNumber && customer.mobileNumber.length === 10)}
+                                onChange={(e) => {
+                                    setCustomer({ ...customer, mobileNumber: e.target.value });
+                                    if (errors.mobileNumber) setErrors({ ...errors, mobileNumber: null });
+                                }}
+                                className={inputClass(!errors.mobileNumber)}
                                 placeholder="Enter mobile number"
                             />
+                            {errors.mobileNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.mobileNumber}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>
@@ -173,10 +197,14 @@ const AddCustomer = () => {
                         <SimpleField label="City">
                             <InputText
                                 value={customer.city}
-                                onChange={(e) => setCustomer({ ...customer, city: e.target.value })}
-                                className={inputClass(true)}
+                                onChange={(e) => {
+                                    setCustomer({ ...customer, city: e.target.value });
+                                    if (errors.city) setErrors({ ...errors, city: null });
+                                }}
+                                className={inputClass(!errors.city)}
                                 placeholder="Enter city"
                             />
+                            {errors.city && <small className="text-red-500 font-bold mt-1 ml-1">{errors.city}</small>}
                         </SimpleField>
                         <SimpleField label="Postal Code">
                             <InputText
@@ -190,10 +218,14 @@ const AddCustomer = () => {
                             <SimpleField label="Address">
                                 <InputText
                                     value={customer.address}
-                                    onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
-                                    className={inputClass(true)}
+                                    onChange={(e) => {
+                                        setCustomer({ ...customer, address: e.target.value });
+                                        if (errors.address) setErrors({ ...errors, address: null });
+                                    }}
+                                    className={inputClass(!errors.address)}
                                     placeholder="Enter permanent address"
                                 />
+                                {errors.address && <small className="text-red-500 font-bold mt-1 ml-1">{errors.address}</small>}
                             </SimpleField>
                         </div>
                     </div>
@@ -205,10 +237,14 @@ const AddCustomer = () => {
                             <InputText
                                 type="number"
                                 value={customer.price}
-                                onChange={(e) => setCustomer({ ...customer, price: e.target.value })}
-                                className={inputClass(true)}
+                                onChange={(e) => {
+                                    setCustomer({ ...customer, price: e.target.value });
+                                    if (errors.price) setErrors({ ...errors, price: null });
+                                }}
+                                className={inputClass(!errors.price)}
                                 placeholder="0.00"
                             />
+                            {errors.price && <small className="text-red-500 font-bold mt-1 ml-1">{errors.price}</small>}
                         </SimpleField>
                         <SimpleField label="Daily Qty">
                             <InputText
@@ -237,10 +273,14 @@ const AddCustomer = () => {
                             <Dropdown
                                 value={customer.route}
                                 options={routesData.map(r => ({ label: r.routeName || r.name, value: r.id }))}
-                                onChange={(e) => setCustomer({ ...customer, route: e.value })}
-                                className={dropdownClass}
+                                onChange={(e) => {
+                                    setCustomer({ ...customer, route: e.value });
+                                    if (errors.route) setErrors({ ...errors, route: null });
+                                }}
+                                className={classNames(dropdownClass, { 'border-rose-400': errors.route })}
                                 placeholder="Select route"
                             />
+                            {errors.route && <small className="text-red-500 font-bold mt-1 ml-1">{errors.route}</small>}
                         </SimpleField>
                         <SimpleField label="Delivery Frequency">
                             <Dropdown

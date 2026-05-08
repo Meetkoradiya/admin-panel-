@@ -82,10 +82,11 @@ const RouteList = () => {
 
     const routeNameTemplate = (rowData) => (
         <div className="flex flex-col gap-1 py-1">
-            <span className="text-slate-800 font-semibold text-sm">{rowData.routeName || rowData.name}</span>
-            <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-slate-400 bg-slate-50 w-fit px-2 py-0.5 rounded-md border border-slate-100">
-                {rowData.id || rowData._id ? `ID: ${rowData.id || rowData._id}` : 'Draft'}
-            </span>
+            <span className="text-slate-800 font-extrabold text-[13px] tracking-tight">{rowData.routeName || rowData.name}</span>
+            <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID:</span>
+                <span className="text-[10px] font-bold text-slate-400">{rowData.id || rowData._id || 'N/A'}</span>
+            </div>
         </div>
     );
 
@@ -102,12 +103,12 @@ const RouteList = () => {
                 onAdd={() => navigate('/admin/routes/add')}
                 addLabel="New Route"
             >
-                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-semibold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column header="Route Details" body={routeNameTemplate} sortField="routeName" />
-                <Column field="startPoint" header="Start Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.startPoint || 'â€”'}</span>} />
-                <Column field="endPoint" header="End Point" body={(row) => <span className="text-slate-600 font-bold text-xs uppercase tracking-wider">{row.endPoint || 'â€”'}</span>} />
-                <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '8rem', textAlign: 'center' }} />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
+                <Column field="no" header="NO." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '5rem' }} />
+                <Column header="ROUTE DETAILS" body={routeNameTemplate} sortField="routeName" />
+                <Column field="startPoint" header="START POINT" body={(row) => <span className="text-slate-600 font-bold text-[11px] uppercase tracking-wider">{row.startPoint || '—'}</span>} />
+                <Column field="endPoint" header="END POINT" body={(row) => <span className="text-slate-600 font-bold text-[11px] uppercase tracking-wider">{row.endPoint || '—'}</span>} />
+                <Column header="STATUS" body={statusBodyTemplate} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
+                <Column header="ACTIONS" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
     );

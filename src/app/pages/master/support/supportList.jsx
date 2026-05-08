@@ -1,7 +1,7 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
+import Button from '@/components/ui/Button';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
@@ -161,9 +161,22 @@ const SupportList = () => {
     const resolvedCount = complaints.filter(c => c.status === 'RESOLVED').length;
 
     const dialogFooter = (
-        <div className="flex justify-end gap-3 pt-2">
-            <Button label="Cancel" icon="pi pi-times" className="p-button-outlined border-slate-200 text-slate-600 px-6 py-2 rounded-xl font-bold transition-all" onClick={() => setShowDialog(false)} disabled={updating} />
-            <Button label="Update Status" icon="pi pi-check" className="bg-blue-600 border-none text-white px-8 py-2 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onClick={handleStatusUpdate} loading={updating} />
+        <div className="flex justify-end gap-3 pt-4">
+            <Button 
+                label="Discard" 
+                icon="pi pi-trash" 
+                variant="outline-danger" 
+                className="px-8 font-bold transition-all h-11" 
+                onClick={() => setShowDialog(false)} 
+                disabled={updating} 
+            />
+            <Button 
+                label="Update Status" 
+                variant="primary" 
+                className="px-10 font-bold shadow-lg shadow-blue-200 transition-all h-11" 
+                onClick={handleStatusUpdate} 
+                loading={updating} 
+            />
         </div>
     );    return (
         <Page title="Support list">
@@ -241,51 +254,80 @@ const SupportList = () => {
                         <Column header="Status" body={statusTemplate} sortField="status" sortable style={{ textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                         <Column header="Actions" body={actionTemplate} style={{ width: '8rem', textAlign: 'center' }} headerClassName="text-slate-500 font-bold text-xs uppercase tracking-wider bg-slate-50/50 py-4" />
                     </DataTable>
-                </div>
-
-                {/* Status Update Dialog */}
+                      {/* Status Update Dialog */}
                 <Dialog
                     visible={showDialog}
                     onHide={() => setShowDialog(false)}
-                    header={
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
-                                <i className="pi pi-pencil text-base" />
+                    className="custom-dialog-premium"
+                    content={({ hide }) => (
+                        <div className="flex flex-col items-center bg-white rounded-[2rem] md:rounded-[3rem] p-8 md:p-14 shadow-2xl w-[90vw] md:w-auto md:min-w-[460px] md:max-w-[550px] mx-auto border border-slate-50 animate-zoom-in relative">
+                            <button 
+                                onClick={() => setShowDialog(false)} 
+                                className="absolute top-6 right-6 size-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all active:scale-90"
+                            >
+                                <i className="pi pi-times"></i>
+                            </button>
+
+                            <div className="flex items-center justify-center size-20 md:size-24 rounded-3xl bg-blue-50 text-blue-500 mb-8 shadow-sm">
+                                <i className="pi pi-shield text-3xl md:text-4xl"></i>
                             </div>
-                            <span className="font-extrabold text-slate-800 tracking-tight">Resolution Manager</span>
-                        </div>
-                    }
-                    footer={dialogFooter}
-                    style={{ width: '450px' }}
-                    modal draggable={false}
-                    className="rounded-3xl overflow-hidden shadow-3xl"
-                >
-                    <div className="pt-4 space-y-6">
-                        {selectedComplaint && (
-                            <div className="bg-slate-50 rounded-3xl p-5 border border-slate-100">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Active Ticket Details</p>
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-center"><span className="text-xs text-slate-500">Name</span><span className="font-bold text-slate-800 text-sm">{selectedComplaint.complainerName}</span></div>
-                                    <div className="flex justify-between items-center"><span className="text-xs text-slate-500">Contact</span><span className="font-bold text-slate-800 text-sm">{selectedComplaint.complainerMobile || 'â€”'}</span></div>
-                                    <div className="flex flex-col gap-1 mt-2 border-t border-slate-200 pt-3">
-                                        <span className="text-xs text-slate-500">Description</span>
-                                        <p className="text-sm text-slate-700 font-medium leading-relaxed">{selectedComplaint.description}</p>
+
+                            <div className="text-center mb-10 w-full">
+                                <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight mb-3 px-2 leading-none uppercase">Resolution Manager</h3>
+                                <p className="text-slate-400 font-bold text-[12px] md:text-sm uppercase tracking-widest leading-none">Update Ticket Protocol</p>
+                            </div>
+
+                            <div className="w-full flex flex-col gap-8">
+                                {selectedComplaint && (
+                                    <div className="bg-slate-50 rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-inner">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-1.5 h-6 bg-blue-500 rounded-full"></div>
+                                            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">Active Ticket Information</span>
+                                        </div>
+                                        <div className="space-y-5">
+                                            <div className="flex justify-between items-center pb-3 border-b border-slate-200/50">
+                                                <span className="text-xs font-bold text-slate-400 uppercase">Customer</span>
+                                                <span className="font-bold text-slate-800 text-sm">{selectedComplaint.complainerName}</span>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <span className="text-xs font-bold text-slate-400 uppercase">Description</span>
+                                                <p className="text-sm text-slate-600 font-bold leading-relaxed bg-white/50 p-4 rounded-xl border border-slate-100">{selectedComplaint.description}</p>
+                                            </div>
+                                        </div>
                                     </div>
+                                )}
+
+                                <div className="flex flex-col gap-3">
+                                    <label className="text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2">Target Status</label>
+                                    <Dropdown
+                                        value={newStatus}
+                                        options={statusOptions}
+                                        onChange={(e) => setNewStatus(e.value)}
+                                        className="w-full border-slate-100 rounded-2xl bg-slate-50 h-14 md:h-16 flex items-center px-4 font-bold text-slate-700 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all shadow-sm"
+                                        placeholder="Select new status..."
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-3 mt-4">
+                                    <Button 
+                                        label="Update Ticket" 
+                                        onClick={handleStatusUpdate} 
+                                        variant="primary"
+                                        loading={updating}
+                                        className="w-full h-14 md:h-16 text-base shadow-xl shadow-blue-500/20" 
+                                    />
+                                    <Button 
+                                        label="Discard" 
+                                        icon="pi pi-trash" 
+                                        onClick={() => setShowDialog(false)} 
+                                        variant="outlineDanger"
+                                        className="w-full h-14 md:h-16 text-base" 
+                                    />
                                 </div>
                             </div>
-                        )}
-                        <div className="flex flex-col gap-3">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Resolution Protocol</label>
-                            <Dropdown
-                                value={newStatus}
-                                options={statusOptions}
-                                onChange={(e) => setNewStatus(e.value)}
-                                className="w-full border-slate-200 rounded-2xl bg-slate-50 focus:bg-white transition-all shadow-sm outline-none ring-offset-2 ring-blue-500/10 focus:ring-4"
-                                placeholder="Select next status..."
-                            />
                         </div>
-                    </div>
-                </Dialog>
+                    )}
+                />                </Dialog>
             </div>
         </Page>
     );

@@ -57,8 +57,22 @@
         background: #ffffff;
         border: 1px solid #f1f5f9;
         border-radius: 1.5rem;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.04);
         overflow: hidden;
+    }
+
+    .premium-card {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .premium-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
     }
 
     .btn-blue {
@@ -96,8 +110,18 @@
     }
 
     .form-item {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
         position: relative;
+    }
+
+    .section-spacing {
+        margin-bottom: 3rem;
+    }
+
+    .page-container {
+        padding: 2.5rem;
+        max-width: 1600px;
+        margin: 0 auto;
     }
 }
 
@@ -186,23 +210,23 @@
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 10px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #c1c1c1;
-    border-radius: 10px;
-    border: 2px solid #f0f0f0;
+    background-color: #cbd5e1;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #939393;
+    background-color: #94a3b8;
 }
 
 .p-password {

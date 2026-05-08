@@ -146,7 +146,7 @@ function HomeLayout() {
             <Outlet />
           </div>
 
-          <footer className="py-8 flex justify-center border-t border-slate-200/50 bg-white/50 backdrop-blur-sm mt-auto">
+          <footer className="py-8 flex justify-center border-t border-slate-100 bg-white mt-auto">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">
               Site managed by <span className="text-blue-500">Horizon Tech Serv</span>
             </p>

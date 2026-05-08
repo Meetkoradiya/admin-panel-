@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApi from "@/hooks/useApi";
+import Button from "@/components/ui/Button";
+import { Page } from "@/components/shared/Page";
 
 const MasterDashboard = () => {
   const navigate = useNavigate();
@@ -27,7 +29,6 @@ const MasterDashboard = () => {
           devicesPromise,
         ]);
 
-        // Normalize: API may return array directly or wrapped in { data: [...] }
         const normalize = (res) => {
           if (res.status !== 'fulfilled') return [];
           const v = res.value;
@@ -37,12 +38,11 @@ const MasterDashboard = () => {
         const admins = normalize(adminsRes);
         const devices = normalize(devicesRes);
 
-        setStats(prev => ({
-          ...prev,
+        setStats({
           totalAdmins: admins.length,
           activeAdmins: admins.filter(a => a.status === 'ACTIVE').length,
           pendingDevices: devices.filter(d => (d.status || d.approvalStatus || 'PENDING') === 'PENDING').length,
-        }));
+        });
       } catch (e) {
         console.error('Dashboard stats error:', e);
       } finally {
@@ -62,72 +62,82 @@ const MasterDashboard = () => {
   const statCards = [
     { label: 'Total Admins', value: stats.totalAdmins, sub: `${stats.activeAdmins} active`, icon: 'pi pi-users', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
     { label: 'Pending Devices', value: stats.pendingDevices, sub: 'Awaiting approval', icon: 'pi pi-mobile', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { label: 'Active Outlets', value: '42', sub: 'Regional hubs', icon: 'pi pi-map-marker', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { label: 'System Health', value: '98%', sub: 'Global uptime', icon: 'pi pi-bolt', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
   ];
 
   const now = new Date();
   const greeting = now.getHours() < 12 ? 'Good Morning' : now.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
 
   return (
-    <div className="bg-slate-50 min-h-[calc(100vh-3.5rem)] p-6">
-      {/* HEADER */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 mb-8 shadow-sm hover:shadow-md transition-all border border-white/50">
-        <div className="flex justify-between items-center flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold bg-linear-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
-              {greeting}, Master Admin 👋
-            </h1>
-            <p className="text-slate-500 font-medium mt-1">Here&apos;s a quick overview of your water management system.</p>
-          </div>
-          <div className="flex gap-3 w-full md:w-auto">
-            <button 
-              onClick={() => navigate('/master/admins/add')}
-              className="btn-primary btn-responsive"
-            >
-              <i className="pi pi-plus" />
-              New Admin
-            </button>
-          </div>
+    <Page title="Master Dashboard">
+      <div className="flex flex-col gap-10 animate-fade-in pb-20">
+        {/* HEADER */}
+        <div className="bg-white rounded-3xl p-10 shadow-sm border border-slate-50 flex justify-between items-center flex-wrap gap-6">
+            <div>
+                <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
+                {greeting}, <span className="text-blue-600">Master</span> 👋
+                </h1>
+                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-2">Administrative Control Terminal</p>
+            </div>
+            <Button 
+                label="New Admin" 
+                icon="pi pi-plus" 
+                onClick={() => navigate('/master/admins/add')}
+                variant="primary"
+                className="h-14 px-10 shadow-blue-500/20"
+            />
+        </div>
+
+        {/* STATS GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {statCards.map((s) => (
+            <div key={s.label} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+                <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-6 transition-transform group-hover:scale-110 shadow-inner`}>
+                    <i className={`${s.icon} text-xl`} />
+                </div>
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">{s.label}</p>
+                <div className="flex items-baseline gap-2">
+                    <h2 className="text-3xl font-black text-slate-800">{loadingStats && s.value === '—' ? '...' : s.value}</h2>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{s.sub}</p>
+                </div>
+            </div>
+            ))}
+        </div>
+
+        {/* QUICK ACTIONS */}
+        <div className="flex flex-col gap-6">
+            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] ml-2">System Core Protocols</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {quickCards.map((card) => (
+                <div
+                    key={card.url}
+                    className="bg-white rounded-3xl p-8 border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group flex flex-col items-start"
+                    onClick={() => navigate(card.url)}
+                >
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
+                        <i className={`${card.icon} text-xl`} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-800 mb-1 uppercase tracking-tight">{card.title}</h3>
+                    <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">{card.desc}</p>
+                </div>
+                ))}
+            </div>
+        </div>
+
+        {/* INFRASTRUCTURE VIEW */}
+        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-16 shadow-sm flex flex-col items-center justify-center text-center gap-6">
+            <div className="size-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 shadow-inner mb-2">
+                <i className="pi pi-globe text-4xl" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Global Infrastructure Monitor</h3>
+            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] max-w-md leading-relaxed">Awaiting regional synchronization with administrative distribution hubs across the network architecture.</p>
         </div>
       </div>
-
-      {/* STATS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {statCards.map((s) => (
-          <div key={s.label} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-50 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-            <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-4 group-hover:scale-110 transition-transform`}>
-              <i className={`${s.icon} text-xl`} />
-            </div>
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">{s.label}</p>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-3xl font-extrabold text-slate-800">{loadingStats ? '—' : s.value}</h2>
-              <p className="text-slate-400 text-xs font-medium">{s.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* QUICK ACTIONS */}
-      <div className="mb-6 px-2">
-        <h2 className="text-xl font-bold text-slate-800">System Quick Actions</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickCards.map((card) => (
-          <div
-            key={card.url}
-            className="bg-white rounded-3xl p-6 border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group flex flex-col items-start"
-            onClick={() => navigate(card.url)}
-          >
-            <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
-              <i className={`${card.icon} text-lg`} />
-            </div>
-            <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>
-            <p className="text-slate-400 text-sm font-medium">{card.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+    </Page>
   );
 };
 
 export default MasterDashboard;
+
 

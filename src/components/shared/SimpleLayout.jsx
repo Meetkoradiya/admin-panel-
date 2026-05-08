@@ -23,20 +23,19 @@ export const SimpleLayout = ({
                 </div>
             </div>
 
-            {/* Sticky Footer */}
-            <div className="fixed bottom-0 right-0 left-0 bg-white border-t border-slate-100 py-4 px-10 flex items-center justify-end gap-3 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+            {/* Sticky Footer - Sav Simple Solid White */}
+            <div className="fixed bottom-0 right-0 left-0 bg-white border-t border-slate-100 py-6 px-12 flex items-center justify-end gap-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.04)]">
                 <Button
                     label="Discard"
                     icon="pi pi-trash"
-                    variant="outline-danger"
-                    className="px-8 h-11"
+                    variant="outlineDanger"
+                    className="px-10 h-12 text-base"
                     onClick={() => onDiscard ? onDiscard() : window.history.back()}
                 />
                 <Button
                     label={saveLabel}
-                    icon={loading ? "pi pi-spin pi-spinner" : "pi pi-check"}
                     variant="primary"
-                    className="px-12 h-11"
+                    className="px-14 h-12 text-base"
                     onClick={onSave}
                     loading={loading}
                 />
@@ -47,7 +46,7 @@ export const SimpleLayout = ({
 
 export const SimpleSection = ({ title, children }) => {
     return (
-        <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+        <div className="bg-white rounded-3xl border border-slate-100 p-10 shadow-sm transition-all hover:shadow-md">
             <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <span className="w-1.5 h-6 bg-blue-500 rounded-full"></span>
                 {title}
