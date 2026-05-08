@@ -122,7 +122,7 @@ export default function UnifiedDashboard() {
             <ExperienceCard title="Analytical Experience" subtitle="Visualization Terminal" />
             <ExperienceCard title="Graph Data" subtitle="Distribution Metrics" />
             <div className="bg-blue-600 rounded-3xl p-8 text-white relative overflow-hidden group shadow-xl shadow-blue-100">
-                <h4 className="text-xl font-bold leading-tight mb-4 tracking-tight">"Efficiency is doing things right."</h4>
+                <h4 className="text-xl font-bold leading-tight mb-4 tracking-tight">&quot;Efficiency is doing things right.&quot;</h4>
                 <p className="text-[9px] font-bold uppercase tracking-[0.3em] opacity-60">Master Directive</p>
                 <i className="pi pi-bolt absolute -right-4 -bottom-4 text-8xl text-white/10" />
             </div>
