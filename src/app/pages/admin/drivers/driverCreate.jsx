@@ -21,7 +21,6 @@ const DriverCreate = () => {
         username: '',
         mobileNumber: '',
         route: '',
-        password: '',
         vehicleName: '',
         vehicleNumber: ''
     });
@@ -48,7 +47,6 @@ const DriverCreate = () => {
                         username: found.username || '',
                         mobileNumber: found.mobileNumber || '',
                         route: found.routeId || found.route?.id || found.route?._id || '',
-                        password: '',
                         vehicleName: found.vehicleName || '',
                         vehicleNumber: found.vehicleNumber || ''
                     });
@@ -72,7 +70,6 @@ const DriverCreate = () => {
                 username: d.username || '',
                 mobileNumber: d.mobileNumber || '',
                 route: d.routeId || d.route?.id || d.route?._id || '',
-                password: '',
                 vehicleName: d.vehicleName || '',
                 vehicleNumber: d.vehicleNumber || ''
             });
@@ -87,7 +84,6 @@ const DriverCreate = () => {
         if (!driver.vehicleName?.trim()) errs.vehicleName = "Vehicle name is required!";
         if (!driver.vehicleNumber?.trim()) errs.vehicleNumber = "Vehicle number is required!";
         if (!driver.route) errs.route = "Please select a route!";
-        if (!id && !driver.password?.trim()) errs.password = "Password is required!";
         
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -105,7 +101,7 @@ const DriverCreate = () => {
                     await apiPut(`/admin/drivers/${id}`, payload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Updated Successfully' });
                 } else {
-                    const regPayload = { ...payload, password: driver.password || 'driver123' };
+                    const regPayload = { ...payload, password: 'driver123' };
                     await apiPost('/admin/register-driver', regPayload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Registered Successfully' });
                 }
@@ -202,19 +198,6 @@ const DriverCreate = () => {
                                 placeholder="Select route"
                             />
                             {errors.route && <small className="text-red-500 font-bold mt-1 ml-1">{errors.route}</small>}
-                        </SimpleField>
-                        <SimpleField label="Login Password">
-                            <InputText
-                                type="password"
-                                value={driver.password}
-                                onChange={(e) => {
-                                    setDriver({ ...driver, password: e.target.value });
-                                    if (errors.password) setErrors({ ...errors, password: null });
-                                }}
-                                className={inputClass(!errors.password)}
-                                placeholder={id ? "••••••••" : "Create password"}
-                            />
-                            {errors.password && <small className="text-red-500 font-bold mt-1 ml-1">{errors.password}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>
