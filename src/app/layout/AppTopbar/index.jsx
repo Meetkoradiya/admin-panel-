@@ -42,7 +42,7 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between p-4 md:px-10 h-16 sticky top-0 z-[999]">
+    <div className="layout-topbar bg-white border-b border-slate-50 flex items-center justify-between p-4 md:px-8 h-16 sticky top-0 z-[999]">
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
 
       <div className="flex items-center gap-4">
