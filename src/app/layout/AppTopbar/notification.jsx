@@ -26,13 +26,13 @@ export const Notification = () => {
             console.log(`Notification: Fetching from /notifications/list for user ${userId}`);
             const response = await apiGet('/notifications/list', { params: { userId } });
             console.log("Notification: API Response:", response);
-            
+
             // Handle different response formats robustly
-            const list = Array.isArray(response) ? response : 
-                        (response?.data && Array.isArray(response.data)) ? response.data :
-                        (response?.notifications && Array.isArray(response.notifications)) ? response.notifications :
+            const list = Array.isArray(response) ? response :
+                (response?.data && Array.isArray(response.data)) ? response.data :
+                    (response?.notifications && Array.isArray(response.notifications)) ? response.notifications :
                         (response?.content && Array.isArray(response.content)) ? response.content : [];
-            
+
             setNotifications(list);
         } catch (error) {
             console.error("Notification: Fetch Error:", error);
@@ -44,7 +44,7 @@ export const Notification = () => {
         try {
             const response = await apiGet('/notifications/unread-count', { params: { userId } });
             let count = 0;
-            
+
             // Handle different response formats for count
             if (typeof response === 'number') count = response;
             else if (typeof response?.data === 'number') count = response.data;
@@ -122,7 +122,7 @@ export const Notification = () => {
             <button
                 id="notif-target"
                 type="button"
-                className="p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600 relative"
+                className="topbar-action p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-200 transition-all active:scale-95 text-slate-600 relative"
                 onClick={(e) => op.current.toggle(e)}
                 data-pr-tooltip="Notifications"
             >

@@ -5,16 +5,17 @@
     display: flex;
     flex-direction: column;
     font-family: 'Poppins', sans-serif;
-    border-right: none !important;
+    border-right: 1px solid #e2e8f0;
     box-shadow: none !important;
 }
 
 .side-nav-header {
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 1.25rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
+    border-bottom: 1px solid #f8fafc;
 }
 
 .logo-container {
@@ -55,17 +56,17 @@
 }
 
 .layout-menu {
-    padding: 0.5rem 0;
+    padding: 0;
     list-style: none;
 }
 
 .layout-menuitem-root-text {
-    padding: 1.75rem 1.75rem 0.75rem;
-    font-size: 0.65rem;
-    font-weight: 800;
+    padding: 1.25rem 1.5rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
     color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.15em;
 }
 
 .layout-menu-item {
@@ -96,16 +97,30 @@
         }
 
         &:hover {
-            color: #3b82f6;
+            color: #2563eb;
+            background: #f8fafc;
             transform: translateX(4px);
         }
         
         &.active-route {
-            color: #3b82f6;
+            color: #2563eb;
+            background: #eff6ff;
             font-weight: 700;
+            position: relative;
+            
+            &::before {
+                content: '';
+                position: absolute;
+                left: -12px;
+                top: 20%;
+                height: 60%;
+                width: 4px;
+                background: #2563eb;
+                border-radius: 0 4px 4px 0;
+            }
             
             .layout-menuitem-icon {
-                color: #3b82f6;
+                color: #2563eb;
             }
         }
     }
@@ -148,18 +163,19 @@
                 }
 
                 &:hover {
-                    color: #0ea5e9;
-                    background: #f0f9ff;
+                    color: #2563eb;
+                    background: #f0f7ff;
                 }
 
                 &.active-route {
-                    color: #0ea5e9;
-                    background: #f0f9ff;
+                    color: #2563eb;
+                    background: #eff6ff;
                     font-weight: 600;
 
                     .layout-menuitem-icon.pi-circle-fill {
                         opacity: 1;
-                        transform: scale(1.2);
+                        transform: scale(1.4);
+                        background-color: #2563eb;
                     }
                 }
             }

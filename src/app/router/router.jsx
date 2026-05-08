@@ -1,4 +1,4 @@
-﻿import { lazy } from "react";
+import { lazy } from "react";
 
 // Public
 const Login = lazy(() => import("../pages/auth/Login"));
@@ -44,6 +44,8 @@ const DeviceVerificationList = lazy(() => import("@/app/pages/admin/device-verif
 const BillingManagement = lazy(() =>
   import("../pages/billing/BillingManagement")
 );
+
+const ComplaintList = lazy(() => import("@/app/pages/admin/complaints/complaintList"));
 
 // ================= PUBLIC ROUTES =================
 export const PublicRoutes = [
@@ -127,4 +129,5 @@ export const AdminRoutes = [
 
   // Verification & Support
   { path: "devices", name: "Device Verification", element: <DeviceVerificationList /> },
+  { path: "complaints", name: "Complaints", element: <ComplaintList /> },
 ];

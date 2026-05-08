@@ -91,7 +91,7 @@ const ComplaintList = () => {
         { label: 'Total Complaints', value: stats.total, sub: 'All registered', icon: 'pi-file', iconColor: 'text-blue-500', bg: 'bg-blue-50' },
         { label: 'Resolved', value: stats.resolved, sub: 'Successfully closed', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
         { label: 'Pending', value: stats.pending, sub: 'Awaiting action', icon: 'pi-clock', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
-        { label: 'In-progress', value: stats.inProgress, sub: 'Currently handling', icon: 'pi-spinner pi-spin', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
+        { label: 'In-progress', value: stats.inProgress, sub: 'Currently handling', icon: 'pi-sync', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
     ];
 
     return (

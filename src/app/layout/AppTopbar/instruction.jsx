@@ -18,7 +18,7 @@ export const Instruction = () => {
       <button
         id="instr-target"
         type="button"
-        className="topbar-btn p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 transition-all active:scale-95 text-slate-600"
+        className="topbar-action topbar-btn p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-200 transition-all active:scale-95 text-slate-600"
         onClick={(e) => op.current.toggle(e)}
         data-pr-tooltip="Quick Instructions"
       >

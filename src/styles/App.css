@@ -545,3 +545,10 @@
     font-weight: 700 !important;
     padding: 8px 12px !important;
 }
+
+/* Force Topbar Hover Effects */
+.topbar-action:hover,
+.topbar-btn:hover,
+.p-link.hover\:bg-slate-200:hover {
+    background-color: #e2e8f0 !important;
+}

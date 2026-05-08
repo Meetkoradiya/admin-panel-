@@ -46,7 +46,7 @@ export const User = () => {
         <>
             <button
                 type="button"
-                className="p-link w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-all active:scale-95"
+                className="p-link w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-95"
                 onClick={(e) => op.current.toggle(e)}
             >
                 <div className="rounded-full bg-sky-100 ring-2 ring-sky-50 size-9 overflow-hidden flex items-center justify-center">
