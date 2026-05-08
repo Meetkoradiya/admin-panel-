@@ -576,3 +576,39 @@
 .p-link.hover\:bg-slate-200:hover {
     background-color: #e2e8f0 !important;
 }
+/* Modern Route Dropdown Stylings */
+.modern-route-dropdown .p-dropdown {
+    width: 100%;
+    min-height: 58px;
+    border-radius: 20px;
+    border: 1px solid #dbe2ea;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.modern-route-dropdown .p-dropdown:hover {
+    border-color: #3b82f6;
+}
+
+.modern-route-dropdown .p-dropdown.p-focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px #dbeafe;
+}
+
+.modern-route-dropdown .p-dropdown-label {
+    padding: 16px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.modern-route-dropdown .p-dropdown-trigger {
+    width: 3.5rem;
+    color: #475569;
+}
+
+.modern-route-dropdown .p-dropdown-clear-icon {
+    right: 3rem;
+    color: #64748b;
+}

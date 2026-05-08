@@ -83,7 +83,6 @@ const DriverCreate = () => {
         else if (driver.mobileNumber.length !== 10) errs.mobileNumber = "Mobile must be 10 digits!";
         if (!driver.vehicleName?.trim()) errs.vehicleName = "Vehicle name is required!";
         if (!driver.vehicleNumber?.trim()) errs.vehicleNumber = "Vehicle number is required!";
-        if (!driver.route) errs.route = "Please select a route!";
         
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -94,8 +93,10 @@ const DriverCreate = () => {
         if (validate()) {
             setLoading(true);
             try {
-                const payload = { ...driver };
-                if (driver.route) payload.routeId = parseInt(driver.route);
+                const payload = { 
+                    ...driver,
+                    routeId: driver.route ? parseInt(driver.route) : null
+                };
 
                 if (id) {
                     await apiPut(`/admin/drivers/${id}`, payload);
@@ -160,7 +161,7 @@ const DriverCreate = () => {
                     </div>
                 </SimpleSection>
 
-                <SimpleSection title="Vehicle & Logistics">
+                <SimpleSection title="Vehicle Information">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         <SimpleField label="Vehicle Name">
                             <InputText
@@ -186,18 +187,47 @@ const DriverCreate = () => {
                             />
                             {errors.vehicleNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.vehicleNumber}</small>}
                         </SimpleField>
-                        <SimpleField label="Assigned Route">
+                    </div>
+                </SimpleSection>
+
+                <SimpleSection title="Route Information">
+                    <div className="grid grid-cols-1 gap-5">
+                        <SimpleField label="Select Route">
                             <Dropdown
                                 value={driver.route}
-                                options={routesData.map(r => ({ label: r.routeName || r.name, value: r.id }))}
+                                options={routesData.map((route) => ({
+                                    label: route.routeName || route.name,
+                                    value: route.id || route._id
+                                }))}
                                 onChange={(e) => {
-                                    setDriver({ ...driver, route: e.value });
-                                    if (errors.route) setErrors({ ...errors, route: null });
+                                    setDriver({
+                                        ...driver,
+                                        route: e.value
+                                    });
+
+                                    if (errors.route) {
+                                        setErrors({
+                                            ...errors,
+                                            route: null
+                                        });
+                                    }
                                 }}
-                                className={classNames(dropdownClass, { 'border-rose-400': errors.route })}
-                                placeholder="Select route"
+                                placeholder="Choose Route"
+                                filter
+                                showClear
+                                className={classNames(
+                                    'w-full modern-route-dropdown',
+                                    {
+                                        'p-invalid': errors.route
+                                    }
+                                )}
                             />
-                            {errors.route && <small className="text-red-500 font-bold mt-1 ml-1">{errors.route}</small>}
+
+                            {errors.route && (
+                                <small className="text-red-500 font-medium ml-1">
+                                    {errors.route}
+                                </small>
+                            )}
                         </SimpleField>
                     </div>
                 </SimpleSection>

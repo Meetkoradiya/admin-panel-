@@ -9,6 +9,7 @@ import ActionButtons from '@/components/shared/ActionButtons';
 import StatusTag from '@/components/shared/StatusTag';
 import useApi from '@/hooks/useApi';
 import { showConfirmDialog } from '@/utils/confirmUtils';
+import { classNames } from 'primereact/utils';
 
 const DriverList = () => {
     const [drivers, setDrivers] = useState([]);
@@ -99,19 +100,37 @@ const DriverList = () => {
         }
     };
 
-    const driverBodyTemplate = (rowData) => (
-        <div className="flex items-center gap-3">
-            <Avatar
-                label={rowData.username?.charAt(0).toUpperCase()}
-                className="bg-blue-50 text-blue-500 font-bold"
-                style={{ width: '36px', height: '36px', borderRadius: '12px' }}
-            />
-            <div className="flex flex-col">
-                <span className="font-semibold text-slate-800 text-sm">{rowData.username}</span>
-                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em] mt-0.5">{rowData.mobileNumber}</span>
-            </div>
+    const formatDate = (dateString) => {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('en-GB', {
+            day: '2d',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        }).format(date).replace(/ /g, ' ').replace(',', ',');
+    };
+
+    const driverDetailsTemplate = (rowData) => (
+        <div className="flex flex-col">
+            <span className="font-bold text-slate-800 text-sm">{rowData.username || '—'}</span>
+            <span className="text-slate-500 text-sm mt-0.5">{rowData.mobileNumber || '—'}</span>
         </div>
     );
+
+    const statusBodyTemplate = (rowData) => {
+        const isAssigned = !!(rowData.route || rowData.routeName || rowData.routeId);
+        return (
+            <span className={classNames(
+                "px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider inline-block text-center min-w-[100px] text-white shadow-sm",
+                isAssigned ? "bg-[#10B981]" : "bg-[#B91C1C]"
+            )}>
+                {isAssigned ? 'Assigned' : 'Unassigned'}
+            </span>
+        );
+    };
 
     const actionBodyTemplate = (rowData) => (
         <ActionButtons 
@@ -133,18 +152,14 @@ const DriverList = () => {
                 onAdd={() => navigate('/admin/drivers/add')}
                 addLabel="New Driver"
             >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column header="Personnel" body={driverBodyTemplate} sortField="username" />
-                <Column field="mobileNumber" header="Contact" className="text-slate-500 text-sm font-medium" />
-                <Column header="Vehicle" body={(row) => (
-                    <div className="flex flex-col">
-                        <span className="text-slate-700 font-bold text-xs">{row.vehicleName || 'â€”'}</span>
-                        <span className="text-xs text-slate-400 font-bold mt-0.5">{row.vehicleNumber || 'â€”'}</span>
-                    </div>
-                )} />
-                <Column field="route.routeName" header="Assigned Route" body={(row) => <span className="text-blue-500 font-bold text-xs uppercase tracking-wider">{row.route?.routeName || 'Unassigned'}</span>} />
-                <Column header="Status" body={(row) => <StatusTag status={row.status || 'ACTIVE'} />} sortable sortField="status" style={{ width: '8rem', textAlign: 'center' }} />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
+                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-700 text-sm">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column header="Driver Details" body={driverDetailsTemplate} sortField="username" />
+                <Column header="Status" body={statusBodyTemplate} sortable sortField="routeId" style={{ width: '10rem' }} />
+                <Column header="Route name" body={(row) => <span className="text-slate-600 text-sm">{row.route?.routeName || row.routeName || 'Not assigned'}</span>} />
+                <Column header="Vehicle details" body={(row) => <span className="text-slate-600 text-sm">{row.vehicleName || '—'}</span>} />
+                <Column header="Vehicle No." body={(row) => <span className="text-slate-700 font-bold text-sm">{row.vehicleNumber || '—'}</span>} />
+                <Column header="Created at" body={(row) => <span className="text-slate-600 text-sm">{formatDate(row.createdAt || row.updatedAt)}</span>} />
+                <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
     );
