@@ -69,13 +69,13 @@ const AppTopbar = forwardRef((props, ref) => {
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <Notification />
           <Instruction />
         </div>
         
-        <div className="h-8 w-[1px] bg-slate-100 mx-2" />
+        <div className="h-8 w-[1px] bg-slate-100 mx-1" />
         
         <User />
       </div>
