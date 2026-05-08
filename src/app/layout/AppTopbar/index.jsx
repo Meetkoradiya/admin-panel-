@@ -42,7 +42,7 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between px-4 md:px-8 h-20">
+    <div className="layout-topbar bg-white border-b border-slate-200 flex items-center justify-between p-4 md:px-10 h-20">
       <Tooltip target=".topbar-action" position="bottom" />
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
 
@@ -69,13 +69,13 @@ const AppTopbar = forwardRef((props, ref) => {
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <div className="flex items-center gap-0.5">
           <Notification />
           <Instruction />
         </div>
         
-        <div className="h-8 w-[1px] bg-slate-100 mx-2" />
+        <div className="h-8 w-[1px] bg-slate-100 mx-1" />
         
         <User />
       </div>
