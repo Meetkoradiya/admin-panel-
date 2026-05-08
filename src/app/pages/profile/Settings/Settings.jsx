@@ -12,6 +12,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { Password } from "primereact/password";
 import { classNames } from "primereact/utils";
 import { login as loginAction } from "@/redux/slice/AuthSlice";
+import useApi from "@/hooks/useApi";
 import { showConfirmDialog } from "@/utils/confirmUtils";
 
 const Settings = () => {
@@ -109,18 +110,27 @@ const Settings = () => {
 
   const validateProfile = () => {
     let tempErrors = {};
-    if (!formData.username) tempErrors.username = "Full name is required!";
-    if (!formData.mobileNumber) tempErrors.mobileNumber = "Mobile number is required!";
-    else if (!/^\d{10}$/.test(formData.mobileNumber)) tempErrors.mobileNumber = "Mobile number must be 10 digits!";
+    if (!formData.username?.trim()) tempErrors.username = "Full name is required!";
+    
+    if (!formData.mobileNumber?.trim()) {
+      tempErrors.mobileNumber = "Mobile number is required!";
+    } else if (!/^\d{10}$/.test(formData.mobileNumber)) {
+      tempErrors.mobileNumber = "Mobile number must be exactly 10 digits!";
+    }
 
-    if (!formData.email) tempErrors.email = "Email address is required!";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) tempErrors.email = "Invalid email format!";
+    if (!formData.email?.trim()) {
+      tempErrors.email = "Email address is required!";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      tempErrors.email = "Please enter a valid email address!";
+    }
 
-    if (!formData.gender) tempErrors.gender = "Gender is required!";
+    if (!formData.gender) tempErrors.gender = "Please select your gender!";
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
+
+  const { apiPut } = useApi();
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -130,36 +140,45 @@ const Settings = () => {
           setIsLoading(false);
           return;
         }
-        const payload = {
+        const userId = auth.userData?.id || auth.userData?.userId || auth.userData?._id;
+        
+        // 1. Update Profile Details
+        const profilePayload = {
           username: formData.username,
           mobileNumber: formData.mobileNumber,
           email: formData.email,
-          gender: formData.gender
+          gender: formData.gender,
+          // If profile is empty string, it means user clicked remove. 
+          // We send null to tell the backend to clear the field.
+          profileImageUrl: profile === "" ? null : (profile.startsWith('http') ? profile : auth.userData?.profileImageUrl)
         };
+        
+        await apiPut(`/admin/update-profile`, profilePayload);
 
-        // Only send if it's a valid remote URL. If they selected a local file (blob:http), we can't send it yet without uploading.
-        if (profile && profile.startsWith('http')) {
-          payload.profileImageUrl = profile;
+        // 2. Handle New Image Upload if selected
+        let finalProfileUrl = profilePayload.profileImageUrl;
+        if (imageFile) {
+          const imageFd = new FormData();
+          imageFd.append('image', imageFile);
+          
+          try {
+            const imageRes = await apiPut(`/admin/profile-image/${userId}`, imageFd);
+            // The server might return the new URL in different paths
+            finalProfileUrl = imageRes?.data?.profileImageUrl || imageRes?.profileImageUrl || imageRes?.data || finalProfileUrl;
+          } catch (imgErr) {
+            console.error("Image upload failed:", imgErr);
+            toast.current?.show({ severity: 'warn', summary: 'Warning', detail: 'Profile updated, but image upload failed.' });
+          }
         }
-
-        await axios.put(`${BASE_URL}/admin/update-profile`, payload, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
 
         // Update Redux state so the sidebar and header update immediately
         dispatch(
           loginAction({
-            token: auth.token,
-            refreshToken: auth.refreshToken,
-            expires_at: auth.expires_at,
-            time: auth.time,
+            ...auth,
             userData: {
               ...auth.userData,
-              username: formData.username,
-              mobileNumber: formData.mobileNumber,
-              email: formData.email,
-              gender: formData.gender,
-              profileImageUrl: profile || auth.userData?.profileImageUrl,
+              ...profilePayload,
+              profileImageUrl: finalProfileUrl,
             },
           })
         );
@@ -381,12 +400,27 @@ const Settings = () => {
             uploadHandler={(e) => {
               const file = e.files[0];
               if (file) {
+                // Validation: Size (3MB)
+                const maxSize = 3 * 1024 * 1024;
+                if (file.size > maxSize) {
+                  toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Image size must be less than 3 MB!' });
+                  return;
+                }
+
+                // Validation: Format
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                  toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Only JPG, JPEG, WEBP, and PNG formats are allowed!' });
+                  return;
+                }
+
                 setImageFile(file);
                 setProfile(URL.createObjectURL(file));
+                toast.current?.show({ severity: 'info', summary: 'Selected', detail: 'Image selected. Click "Save Changes" to upload.' });
               }
               setShowDialog(false);
             }}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.webp"
             chooseLabel="Select Image"
             className="p-button-rounded bg-blue-50 text-blue-600 border-none"
           />
