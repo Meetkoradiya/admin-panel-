@@ -70,71 +70,68 @@ const MasterDashboard = () => {
   const greeting = now.getHours() < 12 ? 'Good Morning' : now.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
 
   return (
-    <Page title="Master Dashboard">
-      <div className="flex flex-col gap-10 animate-fade-in pb-20">
-        {/* HEADER */}
-        <div className="bg-white rounded-3xl p-10 shadow-sm border border-slate-50 flex justify-between items-center flex-wrap gap-6">
-            <div>
-                <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
-                {greeting}, <span className="text-blue-600">Master</span> 👋
-                </h1>
-                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-2">Administrative Control Terminal</p>
-            </div>
-            <Button 
-                label="New Admin" 
-                icon="pi pi-plus" 
-                onClick={() => navigate('/master/admins/add')}
-                variant="primary"
-                className="h-14 px-10 shadow-blue-500/20"
-            />
+    <div className="animate-fade-in space-y-8">
+      {/* HEADER SECTION */}
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
+            {greeting}, Master Admin 👋
+          </h1>
+          <p className="text-slate-500 font-medium mt-1">
+            System health and administrative overview
+          </p>
         </div>
+        <button 
+          onClick={() => navigate('/master/admins/add')}
+          className="btn-primary px-8 py-3 h-auto"
+        >
+          <i className="pi pi-plus text-sm" />
+          <span>New Administrator</span>
+        </button>
+      </div>
 
-        {/* STATS GRID */}
+
+      {/* STATS SECTION */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {statCards.map((s) => (
+          <div key={s.label} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-5 group-hover:scale-110 transition-transform`}>
+              <i className={`${s.icon} text-xl`} />
+            </div>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">{s.label}</p>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-3xl font-extrabold text-slate-800 tracking-tighter">{loadingStats ? '—' : s.value}</h2>
+              <p className="text-slate-400 text-xs font-semibold">{s.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* QUICK ACTIONS SECTION */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 px-2">
+          <div className="h-6 w-1.5 bg-blue-600 rounded-full" />
+          <h2 className="text-xl font-bold text-slate-800">System Management</h2>
+        </div>
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {statCards.map((s) => (
-            <div key={s.label} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
-                <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-6 transition-transform group-hover:scale-110 shadow-inner`}>
-                    <i className={`${s.icon} text-xl`} />
-                </div>
-                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">{s.label}</p>
-                <div className="flex items-baseline gap-2">
-                    <h2 className="text-3xl font-black text-slate-800">{loadingStats && s.value === '—' ? '...' : s.value}</h2>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{s.sub}</p>
-                </div>
+          {quickCards.map((card) => (
+            <div
+              key={card.url}
+              className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+              onClick={() => navigate(card.url)}
+            >
+              <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
+                <i className={`${card.icon} text-lg`} />
+              </div>
+              <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>
+              <p className="text-slate-400 text-sm font-medium leading-relaxed">{card.desc}</p>
             </div>
-            ))}
-        </div>
-
-        {/* QUICK ACTIONS */}
-        <div className="flex flex-col gap-6">
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] ml-2">System Core Protocols</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {quickCards.map((card) => (
-                <div
-                    key={card.url}
-                    className="bg-white rounded-3xl p-8 border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group flex flex-col items-start"
-                    onClick={() => navigate(card.url)}
-                >
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
-                        <i className={`${card.icon} text-xl`} />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800 mb-1 uppercase tracking-tight">{card.title}</h3>
-                    <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">{card.desc}</p>
-                </div>
-                ))}
-            </div>
-        </div>
-
-        {/* INFRASTRUCTURE VIEW */}
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-16 shadow-sm flex flex-col items-center justify-center text-center gap-6">
-            <div className="size-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 shadow-inner mb-2">
-                <i className="pi pi-globe text-4xl" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Global Infrastructure Monitor</h3>
-            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] max-w-md leading-relaxed">Awaiting regional synchronization with administrative distribution hubs across the network architecture.</p>
+          ))}
         </div>
       </div>
-    </Page>
+    </div>
+
   );
 };
 
