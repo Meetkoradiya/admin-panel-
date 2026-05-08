@@ -138,11 +138,11 @@ function HomeLayout() {
         <AppSidebar />
       </div>
 
-      <div className="layout-main-container bg-[#f1f5f9]">
+      <div className="layout-main-container">
         <div className="layout-main min-h-screen flex flex-col">
           <AppTopbar ref={topbarRef} />
 
-          <div className="flex-grow p-4 md:p-10">
+          <div className="flex-grow p-4 md:px-10 md:py-8">
             <Outlet />
           </div>
 
