@@ -13,6 +13,7 @@ const OutletList = () => {
     const [outlets, setOutlets] = useState([]);
     const [loading, setLoading] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
+    const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
     const toast = useRef(null);
     const navigate = useNavigate();
     const { apiGet, apiDelete } = useApi();
@@ -20,8 +21,14 @@ const OutletList = () => {
     const fetchOutlets = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await apiGet('/master/outlets');
-            setOutlets(Array.isArray(data) ? data : (data?.data || []));
+            const res = await apiGet('/master/outlets');
+            const list = Array.isArray(res) ? res : (res?.data || []);
+            setOutlets(list);
+            setStats({
+                total: list.length,
+                active: list.filter(o => (o.status === 'ACTIVE' || o.status === true)).length,
+                inactive: list.filter(o => (o.status === 'INACTIVE' || o.status === false)).length
+            });
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch outlets' });
         } finally {
@@ -72,6 +79,12 @@ const OutletList = () => {
         />
     );
 
+    const statsConfig = [
+        { label: 'Total Outlets', value: stats.total, sub: 'Franchise network', icon: 'pi-map-marker', iconColor: 'text-indigo-500', bg: 'bg-indigo-50' },
+        { label: 'Active', value: stats.active, sub: 'Operating normally', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Inactive', value: stats.inactive, sub: 'Temporarily closed', icon: 'pi-times-circle', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
+    ];
+
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
@@ -84,6 +97,7 @@ const OutletList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={() => navigate('/master/outlets/add')}
                 addLabel="New Outlet"
+                stats={statsConfig}
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
                 <Column header="Outlet Details" body={nameBodyTemplate} sortField="name" />

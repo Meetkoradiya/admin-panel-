@@ -68,62 +68,64 @@ const MasterDashboard = () => {
   const greeting = now.getHours() < 12 ? 'Good Morning' : now.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
 
   return (
-    <div className="bg-slate-50 min-h-[calc(100vh-3.5rem)] p-6">
-      {/* HEADER */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 mb-8 shadow-sm hover:shadow-md transition-all border border-white/50">
-        <div className="flex justify-between items-center flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold bg-linear-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
-              {greeting}, Master Admin 👋
-            </h1>
-            <p className="text-slate-500 font-medium mt-1">Here&apos;s a quick overview of your water management system.</p>
-          </div>
-          <div className="flex gap-3 w-full md:w-auto">
-            <button 
-              onClick={() => navigate('/master/admins/add')}
-              className="btn-primary btn-responsive"
-            >
-              <i className="pi pi-plus" />
-              New Admin
-            </button>
-          </div>
+    <div className="animate-fade-in space-y-8">
+      {/* HEADER SECTION */}
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
+            {greeting}, Master Admin 👋
+          </h1>
+          <p className="text-slate-500 font-medium mt-1">
+            System health and administrative overview
+          </p>
         </div>
+        <button 
+          onClick={() => navigate('/master/admins/add')}
+          className="btn-primary px-8 py-3 h-auto"
+        >
+          <i className="pi pi-plus text-sm" />
+          <span>New Administrator</span>
+        </button>
       </div>
 
-      {/* STATS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* STATS SECTION */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((s) => (
-          <div key={s.label} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-50 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-            <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-4 group-hover:scale-110 transition-transform`}>
+          <div key={s.label} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-5 group-hover:scale-110 transition-transform`}>
               <i className={`${s.icon} text-xl`} />
             </div>
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">{s.label}</p>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">{s.label}</p>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-3xl font-extrabold text-slate-800">{loadingStats ? '—' : s.value}</h2>
-              <p className="text-slate-400 text-xs font-medium">{s.sub}</p>
+              <h2 className="text-3xl font-extrabold text-slate-800 tracking-tighter">{loadingStats ? '—' : s.value}</h2>
+              <p className="text-slate-400 text-xs font-semibold">{s.sub}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* QUICK ACTIONS */}
-      <div className="mb-6 px-2">
-        <h2 className="text-xl font-bold text-slate-800">System Quick Actions</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickCards.map((card) => (
-          <div
-            key={card.url}
-            className="bg-white rounded-3xl p-6 border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group flex flex-col items-start"
-            onClick={() => navigate(card.url)}
-          >
-            <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
-              <i className={`${card.icon} text-lg`} />
+      {/* QUICK ACTIONS SECTION */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 px-2">
+          <div className="h-6 w-1.5 bg-blue-600 rounded-full" />
+          <h2 className="text-xl font-bold text-slate-800">System Management</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {quickCards.map((card) => (
+            <div
+              key={card.url}
+              className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+              onClick={() => navigate(card.url)}
+            >
+              <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${card.gradient} flex items-center justify-center mb-6 shadow-lg ${card.shadow} group-hover:scale-110 transition-transform text-white`}>
+                <i className={`${card.icon} text-lg`} />
+              </div>
+              <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>
+              <p className="text-slate-400 text-sm font-medium leading-relaxed">{card.desc}</p>
             </div>
-            <h3 className="text-base font-bold text-slate-800 mb-1">{card.title}</h3>
-            <p className="text-slate-400 text-sm font-medium">{card.desc}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

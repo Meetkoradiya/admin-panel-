@@ -15,6 +15,12 @@ const AdminList = () => {
     const [globalFilter, setGlobalFilter] = useState('');
     const [loading, setLoading] = useState(false);
     
+    const [stats, setStats] = useState({
+        total: 0,
+        active: 0,
+        inactive: 0
+    });
+
     // Sync filter with URL
     useUrlFilters(globalFilter, setGlobalFilter);
 
@@ -31,6 +37,12 @@ const AdminList = () => {
             // Filter out Master Admins to show only regular admins
             const regularAdmins = adminList.filter(a => !(a.role === 'MASTER_ADMIN' || a.masterAdmin));
             setAdmins(regularAdmins);
+
+            setStats({
+                total: regularAdmins.length,
+                active: regularAdmins.filter(a => (a.status === 'ACTIVE' || a.status === true)).length,
+                inactive: regularAdmins.filter(a => (a.status === 'INACTIVE' || a.status === false)).length
+            });
         } catch (error) {
             console.error('Fetch Admins Error:', error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch administrators' });
@@ -107,6 +119,12 @@ const AdminList = () => {
         />
     );
 
+    const statsConfig = [
+        { label: 'Total Administrators', value: stats.total, sub: 'Registered accounts', icon: 'pi-users', iconColor: 'text-blue-500', bg: 'bg-blue-50' },
+        { label: 'Active', value: stats.active, sub: 'Currently enabled', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Inactive', value: stats.inactive, sub: 'Access restricted', icon: 'pi-lock', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
+    ];
+
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
@@ -119,6 +137,7 @@ const AdminList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={() => navigate('/master/admins/add')}
                 addLabel="New Admin"
+                stats={statsConfig}
             >
                 <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
                 <Column header="Administrator" body={nameBodyTemplate} sortField="username" />
