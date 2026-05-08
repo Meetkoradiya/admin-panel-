@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
@@ -159,8 +159,20 @@ const ProductList = () => {
                 </div>
 
                 <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-50">
-                    <Button label="Cancel" icon="pi pi-times" onClick={() => setProductDialog(false)} className="p-button-text text-slate-400 hover:bg-slate-50 rounded-xl px-5 font-bold transition-all text-sm" />
-                    <Button label={productId ? "Update" : "Create"} icon="pi pi-check" onClick={saveProduct} className="bg-blue-600 hover:bg-blue-700 border-none text-white rounded-xl px-8 py-3 font-bold shadow-lg shadow-blue-500/20 transition-all text-sm" />
+                    <Button 
+                        label="Cancel" 
+                        icon="pi pi-times" 
+                        onClick={() => setProductDialog(false)} 
+                        variant="ghost"
+                        className="px-5 font-bold transition-all text-sm" 
+                    />
+                    <Button 
+                        label={productId ? "Update" : "Create"} 
+                        icon="pi pi-check" 
+                        onClick={saveProduct} 
+                        variant="primary"
+                        className="px-8 py-3 font-bold text-sm" 
+                    />
                 </div>
             </Dialog>
         </div>

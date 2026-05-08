@@ -104,8 +104,6 @@ const AdminList = () => {
         <ActionButtons 
             onEdit={() => navigate(`/master/admins/edit/${rowData.id || rowData._id}`, { state: { admin: rowData } })}
             onDelete={() => handleDelete(rowData)}
-            onDeactivate={() => toggleStatus(rowData)}
-            isDeactivated={(rowData.status === 'INACTIVE' || rowData.status === false)}
         />
     );
 

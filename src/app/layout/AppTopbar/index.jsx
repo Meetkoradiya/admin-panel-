@@ -14,6 +14,7 @@ import { Instruction } from "./instruction";
 import { Notification } from "./notification";
 import { User } from "./user";
 import { QuickSearch } from "./QuickSearch";
+import { Tooltip } from 'primereact/tooltip';
 import QuickSearchInput from "../../../components/shared/QuickSearchInput";
 import Button from "@/components/ui/Button";
 
@@ -41,7 +42,8 @@ const AppTopbar = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between px-6 h-20">
+    <div className="layout-topbar bg-white border-b border-slate-100 flex items-center justify-between px-4 md:px-8 h-20">
+      <Tooltip target=".topbar-action" position="bottom" />
       <QuickSearch visible={searchVisible} onHide={() => setSearchVisible(false)} />
 
       <div className="flex items-center gap-4">
@@ -50,7 +52,8 @@ const AppTopbar = forwardRef((props, ref) => {
             ref={menubuttonRef}
             type="button"
             onClick={onMenuToggle}
-            className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+            className="topbar-action w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+            data-pr-tooltip="Toggle Menu"
         >
           <i className="pi pi-bars text-lg" />
         </button>
@@ -59,7 +62,8 @@ const AppTopbar = forwardRef((props, ref) => {
         <button
           type="button"
           onClick={() => setSearchVisible(true)}
-          className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+          className="topbar-action w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 rounded-xl transition-all active:scale-95"
+          data-pr-tooltip="Quick Search"
         >
           <i className="pi pi-search text-lg" />
         </button>

@@ -1,6 +1,6 @@
-﻿import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import dayjs from "dayjs";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "primereact/skeleton";
 import { DataTable } from "primereact/datatable";
@@ -183,16 +183,16 @@ const CustomerDetail = () => {
                 onClick={() =>
                   navigate(`/admin/customers/edit/${id}`)
                 }
-                className="h-12 w-full rounded-2xl border-slate-200 font-bold text-slate-600 hover:bg-slate-50"
-                outlined
+                variant="secondary"
+                className="h-12 w-full"
               />
 
               <Button
                 label="Delete"
                 icon="pi pi-trash"
                 onClick={handleDelete}
-                className="h-12 w-full rounded-2xl font-bold text-rose-500 hover:bg-rose-50"
-                text
+                variant="ghost"
+                className="h-12 w-full text-rose-500 hover:bg-rose-50"
               />
             </div>
           </div>
@@ -236,10 +236,10 @@ const CustomerDetail = () => {
 
               <Button
                 icon="pi pi-refresh"
-                text
-                rounded
+                variant="icon"
+                size="sm"
                 onClick={fetchOrders}
-                className="text-slate-400 hover:bg-slate-50"
+                className="text-slate-400"
               />
             </div>
 

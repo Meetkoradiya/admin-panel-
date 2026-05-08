@@ -1,7 +1,7 @@
-﻿import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'primereact/button';
+import Button from '@/components/ui/Button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
@@ -176,7 +176,9 @@ const SignUp = () => {
                                     label="Sign Up"
                                     loading={isLoading}
                                     onClick={handleSignUp}
-                                    className="w-full py-4 text-lg bg-cyan-500 border-none rounded-xl font-bold hover:bg-cyan-600 transition-all shadow-lg shadow-cyan-100"
+                                    variant="primary"
+                                    size="lg"
+                                    className="w-full py-4 text-lg !bg-cyan-500 hover:!bg-cyan-600 shadow-cyan-100"
                                 />
                                 
                                 <div className="text-center mt-6">
@@ -212,7 +214,7 @@ const SignUp = () => {
                 modal
                 closable={false}
                 className="rounded-3xl"
-                footer={<Button label="Back to Login" onClick={() => navigate('/login')} className="bg-slate-900 border-none rounded-xl px-8" />}
+                footer={<Button label="Back to Login" onClick={() => navigate('/login')} variant="primary" className="px-8" />}
             >
                 <p className="m-0 text-slate-600 text-sm leading-relaxed">
                     Your registration has been submitted. For security purposes, a Super Admin must review and approve your account before you can log in.

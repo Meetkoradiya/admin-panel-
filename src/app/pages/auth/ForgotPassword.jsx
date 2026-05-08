@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 const Logo = ({ className }) => (
@@ -88,7 +88,8 @@ const ForgotPassword = () => {
             <Button
               label="Send OTP"
               onClick={handleSendOtp}
-              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-bold text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] mt-2"
+              variant="primary"
+              className="w-full py-4 text-base mt-2"
             />
 
             <div className="pt-4 text-center">

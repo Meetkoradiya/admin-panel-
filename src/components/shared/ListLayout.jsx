@@ -1,5 +1,6 @@
 import React from 'react';
 import { DataTable } from 'primereact/datatable';
+import { Tooltip } from 'primereact/tooltip';
 import Button from "@/components/ui/Button";
 import { Page } from './Page';
 import QuickSearchInput from './QuickSearchInput';
@@ -27,10 +28,11 @@ const ListLayout = ({
 
     return (
         <Page title={title}>
+            <Tooltip target=".action-tooltip" position="bottom" />
             <div className="flex flex-col gap-8 animate-fade-in pb-10">
                 {/* 1. HEADER & ACTIONS */}
                 <div className="layout-card">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 md:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-4 md:p-8">
                         <div className="flex items-center gap-5">
                             <div className="premium-badge h-14 w-14 rounded-2xl">
                                 <i className={`pi ${icon} text-2xl`}></i>
@@ -43,7 +45,7 @@ const ListLayout = ({
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-10">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 md:gap-10">
                             <div className="w-full sm:w-72">
                                 <QuickSearchInput
                                     value={globalFilter}

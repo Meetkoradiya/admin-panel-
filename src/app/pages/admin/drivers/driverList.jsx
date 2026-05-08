@@ -117,8 +117,6 @@ const DriverList = () => {
         <ActionButtons 
             onEdit={() => navigate(`/admin/drivers/edit/${rowData.id || rowData.userId || rowData._id}`, { state: { driver: rowData } })}
             onDelete={() => deleteDriver(rowData)}
-            onDeactivate={() => toggleStatus(rowData)}
-            isDeactivated={rowData.status === 'INACTIVE'}
         />
     );
 

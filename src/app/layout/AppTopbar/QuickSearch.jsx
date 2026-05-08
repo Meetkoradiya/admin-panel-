@@ -42,7 +42,7 @@ export const QuickSearch = ({ visible, onHide }) => {
             closable={false}
             className="quick-search-dialog overflow-hidden rounded-3xl shadow-2xl border-none"
             contentClassName="!p-0"
-            style={{ width: '500px' }}
+            style={{ width: '90vw', maxWidth: '500px' }}
             maskClassName="backdrop-blur-sm bg-slate-900/40"
         >
             <div className="flex flex-col h-[55vh]">

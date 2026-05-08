@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
 import { useNavigate } from 'react-router-dom';
@@ -104,8 +103,6 @@ const CustomerManagement = () => {
             <ActionButtons 
                 onEdit={() => navigate(`/admin/customers/edit/${rowData.id || rowData.userId}`, { state: { customer: rowData } })}
                 onDelete={() => deleteCustomer(rowData)}
-                onDeactivate={() => toggleStatus(rowData)}
-                isDeactivated={rowData.status === 'INACTIVE'}
             />
         );
     };

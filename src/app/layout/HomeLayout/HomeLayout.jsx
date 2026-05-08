@@ -142,7 +142,7 @@ function HomeLayout() {
         <div className="layout-main min-h-screen flex flex-col">
           <AppTopbar ref={topbarRef} />
 
-          <div className="flex-grow p-6 md:p-10">
+          <div className="flex-grow p-4 md:p-10">
             <Outlet />
           </div>
 

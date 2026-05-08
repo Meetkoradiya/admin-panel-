@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'primereact/button';
+import Button from '@/components/ui/Button';
 
 export const SimpleLayout = ({
     title,
@@ -28,17 +28,17 @@ export const SimpleLayout = ({
                 <Button
                     label="Discard"
                     icon="pi pi-trash"
-                    outlined
-                    severity="danger"
-                    className="font-medium rounded-xl px-8 border-rose-500 text-rose-500 hover:bg-rose-50 transition-all text-sm h-11"
+                    variant="outline-danger"
+                    className="px-8 h-11"
                     onClick={() => onDiscard ? onDiscard() : window.history.back()}
                 />
                 <Button
                     label={saveLabel}
                     icon={loading ? "pi pi-spin pi-spinner" : "pi pi-check"}
-                    className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none font-medium rounded-xl px-12 shadow-lg shadow-blue-500/30 text-white transition-all text-sm h-11 flex items-center gap-2 transform active:scale-95"
+                    variant="primary"
+                    className="px-12 h-11"
                     onClick={onSave}
-                    disabled={loading}
+                    loading={loading}
                 />
             </div>
         </div>

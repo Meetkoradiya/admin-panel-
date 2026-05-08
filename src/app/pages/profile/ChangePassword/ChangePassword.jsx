@@ -1,4 +1,4 @@
-﻿import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
@@ -307,7 +307,8 @@ const ChangePassword = () => {
                   loading={isLoading}
                   onClick={handleSubmit}
                   disabled={!isFormValid() || isLoading}
-                  className="px-8 py-3 bg-blue-600 border-none rounded-xl font-bold text-white hover:bg-blue-700 shadow-lg shadow-blue-500/10 text-xs uppercase tracking-widest active:scale-95"
+                  variant="primary"
+                  className="px-8 py-3 text-xs uppercase tracking-widest"
                 />
               </div>
             </div>

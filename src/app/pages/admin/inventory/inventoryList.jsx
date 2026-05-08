@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
+import Button from '@/components/ui/Button';
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';

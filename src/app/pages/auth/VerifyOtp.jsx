@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { InputOtp } from "primereact/inputotp";
-import { Button } from "primereact/button";
+import Button from "@/components/ui/Button";
 import { useNavigate } from "react-router-dom";
 const Logo = ({ className }) => (
   <svg
@@ -74,7 +74,8 @@ const VerifyOtp = () => {
             <Button
               label="Verify & Continue"
               onClick={handleVerify}
-              className="w-full py-4 text-base bg-blue-500 border-none rounded-xl font-bold text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
+              variant="primary"
+              className="w-full py-4 text-base"
             />
 
             <div className="space-y-4 pt-4">

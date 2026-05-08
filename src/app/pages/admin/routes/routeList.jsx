@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
 import ListLayout from '@/components/shared/ListLayout';
@@ -74,8 +73,6 @@ const RouteList = () => {
         <ActionButtons 
             onEdit={() => navigate(`/admin/routes/edit/${rowData.id || rowData._id}`, { state: { route: rowData } })}
             onDelete={() => deleteRoute(rowData)}
-            onDeactivate={() => toggleStatus(rowData)}
-            isDeactivated={rowData.status === 'Inactive'}
         />
     );
 
