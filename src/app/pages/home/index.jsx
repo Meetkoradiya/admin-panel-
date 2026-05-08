@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function Dashboard() {
+  const navigate = useNavigate();
   const cards = [
     {
       title: 'Total Drivers',
@@ -73,7 +76,10 @@ export default function Dashboard() {
               Recent Routes
             </h2>
 
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-all">
+            <button 
+              onClick={() => navigate('/admin/routes')}
+              className="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-all"
+            >
               View All
             </button>
           </div>
@@ -132,15 +138,24 @@ export default function Dashboard() {
           </h2>
 
           <div className="space-y-4">
-            <button className="w-full bg-blue-500 hover:bg-blue-600 transition-all text-white py-4 rounded-2xl font-semibold">
+            <button 
+              onClick={() => navigate('/admin/routes/add')}
+              className="w-full bg-blue-500 hover:bg-blue-600 transition-all text-white py-4 rounded-2xl font-semibold"
+            >
               + Create Route
             </button>
 
-            <button className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold">
+            <button 
+              onClick={() => navigate('/admin/drivers/add')}
+              className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold"
+            >
               + Add Driver
             </button>
 
-            <button className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold">
+            <button 
+              onClick={() => navigate('/admin/customers/add')}
+              className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold"
+            >
               + Add Customer
             </button>
           </div>

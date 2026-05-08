@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const MasterDashboard = () => {
+    const navigate = useNavigate();
     const stats = [
         {
             title: 'Total Admins',
@@ -42,7 +44,10 @@ const MasterDashboard = () => {
                     </p>
                 </div>
 
-                <button className="bg-blue-500 hover:bg-blue-600 transition-all text-white px-6 py-3 rounded-2xl font-semibold shadow-sm">
+                <button 
+                    onClick={() => navigate('/master/admins/add')}
+                    className="bg-blue-500 hover:bg-blue-600 transition-all text-white px-6 py-3 rounded-2xl font-semibold shadow-sm"
+                >
                     + Create Admin
                 </button>
             </div>
@@ -84,7 +89,10 @@ const MasterDashboard = () => {
                             Recent Admins
                         </h2>
 
-                        <button className="text-blue-600 font-semibold text-sm">
+                        <button 
+                            onClick={() => navigate('/master/admins')}
+                            className="text-blue-600 font-semibold text-sm"
+                        >
                             View All
                         </button>
                     </div>
@@ -147,15 +155,24 @@ const MasterDashboard = () => {
                     </h2>
 
                     <div className="space-y-4">
-                        <button className="w-full bg-blue-500 hover:bg-blue-600 transition-all text-white py-4 rounded-2xl font-semibold">
+                        <button 
+                            onClick={() => navigate('/master/admins/add')}
+                            className="w-full bg-blue-500 hover:bg-blue-600 transition-all text-white py-4 rounded-2xl font-semibold"
+                        >
                             + Create Admin
                         </button>
 
-                        <button className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold">
+                        <button 
+                            onClick={() => navigate('/master/outlets/add')}
+                            className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold"
+                        >
                             + Add Outlet
                         </button>
 
-                        <button className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold">
+                        <button 
+                            onClick={() => navigate('/master/subscriptions')}
+                            className="w-full bg-slate-100 hover:bg-slate-200 transition-all text-slate-700 py-4 rounded-2xl font-semibold"
+                        >
                             + Add Subscription
                         </button>
                     </div>
