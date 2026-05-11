@@ -14,9 +14,6 @@ import { Instruction } from "./instruction";
 import { Notification } from "./notification";
 import { User } from "./user";
 import { QuickSearch } from "./QuickSearch";
-import { Tooltip } from 'primereact/tooltip';
-import QuickSearchInput from "../../../components/shared/QuickSearchInput";
-import Button from "@/components/ui/Button";
 
 const AppTopbar = forwardRef((props, ref) => {
   const navigate = useNavigate();
