@@ -31,7 +31,7 @@ const MasterDashboard = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-100 p-6">
+        <div className="animate-fade-in">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>

@@ -94,16 +94,19 @@ const DriverCreate = () => {
             setLoading(true);
             try {
                 const payload = { 
-                    ...driver,
-                    routeId: driver.route ? parseInt(driver.route) : null
+                    username: driver.username,
+                    mobileNumber: driver.mobileNumber,
+                    routeId: driver.route ? parseInt(driver.route) : null,
+                    vehicleName: driver.vehicleName,
+                    vehicleNumber: driver.vehicleNumber,
+                    address: ''
                 };
 
                 if (id) {
                     await apiPut(`/admin/drivers/${id}`, payload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Updated Successfully' });
                 } else {
-                    const regPayload = { ...payload, password: 'driver123' };
-                    await apiPost('/admin/register-driver', regPayload);
+                    await apiPost('/admin/register-driver', payload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Driver Registered Successfully' });
                 }
                 setTimeout(() => navigate('/admin/drivers'), 1000);

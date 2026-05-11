@@ -29,10 +29,10 @@ const ListLayout = ({
     return (
         <Page title={title}>
             <Tooltip target=".action-tooltip" position="bottom" />
-            <div className="flex flex-col gap-8 animate-fade-in pb-10">
+            <div className="flex flex-col gap-6 animate-fade-in pb-6">
                 {/* 1. HEADER & ACTIONS */}
                 <div className="layout-card">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-4 md:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 md:p-6">
                         <div className="flex items-center gap-5">
                             <div className="premium-badge h-14 w-14 rounded-2xl">
                                 <i className={`pi ${icon} text-2xl`}></i>
@@ -71,9 +71,9 @@ const ListLayout = ({
 
                 {/* 2. SUMMARY CARDS (OPTIONAL) */}
                 {stats && stats.length > 0 && (
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-8 mb-4`}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 mb-4`}>
                         {stats.map((s, i) => (
-                            <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[180px] p-8">
+                            <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[160px] p-6">
                                 <div className="flex flex-col h-full justify-between z-10">
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>

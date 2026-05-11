@@ -75,8 +75,7 @@ const RouteCreate = () => {
                 const payload = {
                     routeName: route.routeName,
                     startPoint: route.startPoint,
-                    endPoint: route.endPoint,
-                    status: route.status
+                    endPoint: route.endPoint
                 };
                 
                 if (id) {

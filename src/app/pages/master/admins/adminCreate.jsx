@@ -104,12 +104,17 @@ const AdminCreate = () => {
         if (validate()) {
             setLoading(true);
             try {
+                const payload = {
+                    username: admin.username,
+                    mobileNumber: admin.mobileNumber,
+                    email: admin.email
+                };
+
                 if (isEditMode) {
-                    await apiPut(`/admin/admins/${id}`, admin);
+                    await apiPut(`/admin/update-profile`, payload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully' });
                 } else {
-                    const createPayload = { ...admin };
-                    if (admin.outletId) createPayload.outletId = Number(admin.outletId);
+                    const createPayload = { ...payload, password: admin.password };
                     await apiPost('/admin/register-admin', createPayload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Created Successfully' });
                 }

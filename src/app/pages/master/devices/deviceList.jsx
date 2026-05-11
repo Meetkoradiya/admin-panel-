@@ -14,9 +14,7 @@ const DeviceList = () => {
     const { apiGet, apiPost } = useApi();
 
     const [stats, setStats] = useState({
-        total: 0,
-        android: 0,
-        ios: 0
+        total: 0
     });
 
     const fetchDevices = useCallback(async () => {
@@ -28,9 +26,7 @@ const DeviceList = () => {
             setDevices(normalized);
 
             setStats({
-                total: normalized.length,
-                android: normalized.filter(d => d.os?.toLowerCase() === 'android').length,
-                ios: normalized.filter(d => d.os?.toLowerCase() === 'ios' || d.os?.toLowerCase() === 'apple').length
+                total: normalized.length
             });
         } catch (error) {
             console.error("Fetch Devices Error:", error);
@@ -62,9 +58,7 @@ const DeviceList = () => {
     };
 
     const statsConfig = [
-        { label: 'Total Pending', value: stats.total, sub: 'Waiting for approval', icon: 'pi-clock', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
-        { label: 'Android', value: stats.android, sub: 'Google ecosystem', icon: 'pi-android', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
-        { label: 'iOS / Apple', value: stats.ios, sub: 'Apple ecosystem', icon: 'pi-apple', iconColor: 'text-blue-500', bg: 'bg-blue-50' },
+        { label: 'Total Pending', value: stats.total, sub: 'Waiting for approval', icon: 'pi-clock', iconColor: 'text-amber-500', bg: 'bg-amber-50' }
     ];
 
     return (
@@ -85,12 +79,7 @@ const DeviceList = () => {
                 >
                     <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                     <Column field="deviceName" header="Device Name" body={(row) => <span className="font-bold text-slate-700">{row.deviceName || 'Unknown'}</span>} />
-                    <Column field="os" header="Platform" body={(row) => (
-                        <div className="flex items-center gap-2">
-                            <i className={`pi pi-${row.os?.toLowerCase() === 'android' ? 'android text-emerald-500' : 'apple text-slate-700'}`} />
-                            <span className="text-xs font-bold uppercase">{row.os || 'OS'}</span>
-                        </div>
-                    )} />
+
                     <Column field="deviceId" header="Hardware ID" className="font-mono text-xs text-slate-400" />
                     <Column header="Verify" body={(rowData) => (
                         <ActionButtons

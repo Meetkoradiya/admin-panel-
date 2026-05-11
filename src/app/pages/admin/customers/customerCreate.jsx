@@ -121,12 +121,17 @@ const AddCustomer = () => {
             setLoading(true);
             try {
                 const payload = {
-                    ...customer,
+                    username: customer.username,
+                    mobileNumber: customer.mobileNumber,
+                    routeId: customer.route ? parseInt(customer.route) : null,
                     deposit: Number(customer.deposit) || 0,
-                    price: Number(customer.price) || 0,
-                    pricePerBottle: Number(customer.price) || 0,
-                    quantity: Number(customer.quantity) || 0,
-                    defaultQty: Number(customer.quantity) || 0
+                    address: customer.address || '',
+                    deliveryType: customer.deliveryType || 'DAILY',
+                    products: [{
+                        productId: Number(customer.product) || 0,
+                        quantity: Number(customer.quantity) || 0,
+                        rate: Number(customer.price) || 0
+                    }]
                 };
 
                 if (id) {
