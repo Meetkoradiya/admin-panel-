@@ -94,10 +94,69 @@ const ComplaintList = () => {
         { label: 'In-progress', value: stats.inProgress, sub: 'Currently handling', icon: 'pi-sync', iconColor: 'text-amber-500', bg: 'bg-amber-50', textColor: 'text-amber-500' },
     ];
 
+    const renderComplaintCard = (complaint) => (
+        <div key={complaint.adminId || complaint.id || complaint._id} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500 group relative flex flex-col min-h-[400px] overflow-hidden">
+            {/* Background Glow */}
+            <div className="absolute -right-20 -top-20 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl group-hover:bg-blue-100/50 transition-colors duration-700" />
+            
+            <div className="relative z-10 flex flex-col h-full flex-grow">
+                <div className="flex justify-between items-start mb-8">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-500 shadow-sm">
+                            <i className="pi pi-user text-xl" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <h3 className="font-bold text-slate-800 text-base leading-tight group-hover:text-blue-600 transition-colors">
+                                {complaint.complainerName || complaint.complainer || complaint.customerName || 'Customer'}
+                            </h3>
+                            <div className="flex items-center gap-2">
+                                <i className="pi pi-phone text-[10px] text-slate-300"></i>
+                                <span className="text-[10px] font-semibold text-slate-400 tracking-tight uppercase">
+                                    {complaint.customerMobileNumber || complaint.mobileNumber || 'No Contact'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <StatusTag status={complaint.status || 'PENDING'} className="text-[10px] font-bold h-8 px-4 rounded-xl shadow-sm" />
+                </div>
+
+                <div className="space-y-6 flex-grow">
+                    <div className="bg-slate-50/50 rounded-3xl p-6 border border-slate-100/50 group-hover:bg-white group-hover:border-blue-100 transition-all duration-500 shadow-inner group-hover:shadow-none">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-500">{complaint.complaintType || complaint.type || 'SERVICE'}</span>
+                            </div>
+                            <span className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest">#{String(complaint.adminId || complaint.id || complaint._id || '0').slice(-6).toUpperCase()}</span>
+                        </div>
+                        <p className="text-[13px] text-slate-600 font-semibold leading-relaxed italic line-clamp-4">
+                            &quot;{complaint.description || complaint.complaint || 'No detailed description provided.'}&quot;
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-8 flex items-center justify-between pt-6 border-t border-slate-50 relative z-10">
+                    <div className="flex items-center gap-2 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
+                        <i className="pi pi-calendar text-[12px] text-blue-400" />
+                        {complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                    </div>
+                    <ActionButtons
+                        onEdit={(e) => {
+                            setSelectedComplaint(complaint);
+                            menu.current.toggle(e);
+                        }}
+                        onDelete={() => deleteComplaint(complaint)}
+                        editTooltip="Update Protocol"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
-            <Menu model={menuItems} popup ref={menu} id="status_menu" />
+            <Menu model={menuItems} popup ref={menu} id="status_menu" className="rounded-2xl border-none shadow-xl" />
 
             <ListLayout
                 title="Complaints Management"
@@ -109,24 +168,8 @@ const ComplaintList = () => {
                 onAdd={null}
                 emptyMessage="No complaints recorded yet"
                 stats={statsConfig}
-            >
-                    <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                    <Column header="Status" body={(row) => <StatusTag status={row.status || 'PENDING'} />} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
-                    <Column field="complainer" header="Complainer" body={(row) => <span className="font-bold text-slate-700">{row.complainer || row.customerName || '—'}</span>} />
-                    <Column field="type" header="Type" body={(row) => <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{row.type || 'SERVICE'}</span>} />
-                    <Column field="complaint" header="Complaint" className="text-slate-600 text-sm max-w-xs truncate" />
-                    <Column field="createdAt" header="Date" body={(row) => <span className="text-slate-400 text-xs font-bold">{row.createdAt ? new Date(row.createdAt).toLocaleDateString() : '—'}</span>} />
-                    <Column header="Actions" body={(rowData) => (
-                        <ActionButtons
-                            onEdit={(e) => {
-                                setSelectedComplaint(rowData);
-                                menu.current.toggle(e);
-                            }}
-                            onDelete={() => deleteComplaint(rowData)}
-                            editTooltip="Change Status"
-                        />
-                    )} style={{ width: '10rem', textAlign: 'center' }} />
-                </ListLayout>
+                renderItem={renderComplaintCard}
+            />
         </div>
     );
 };
