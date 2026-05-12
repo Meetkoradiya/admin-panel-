@@ -100,19 +100,6 @@ const DriverList = () => {
         }
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '—';
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('en-GB', {
-            day: '2d',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        }).format(date).replace(/ /g, ' ').replace(',', ',');
-    };
-
     const driverDetailsTemplate = (rowData) => (
         <div className="flex flex-col">
             <span className="font-bold text-slate-800 text-sm">{rowData.username || '—'}</span>
@@ -158,7 +145,6 @@ const DriverList = () => {
                 <Column header="Route name" body={(row) => <span className="text-slate-600 text-sm">{row.route?.routeName || row.routeName || 'Not assigned'}</span>} />
                 <Column header="Vehicle details" body={(row) => <span className="text-slate-600 text-sm">{row.vehicleName || '—'}</span>} />
                 <Column header="Vehicle No." body={(row) => <span className="text-slate-700 font-bold text-sm">{row.vehicleNumber || '—'}</span>} />
-                <Column header="Created at" body={(row) => <span className="text-slate-600 text-sm">{formatDate(row.createdAt || row.updatedAt)}</span>} />
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
