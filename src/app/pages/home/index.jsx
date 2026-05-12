@@ -33,15 +33,11 @@ export default function Dashboard() {
             Dashboard
           </h1>
           <p className="text-slate-500 mt-1">
-            Welcome to Amrut Water Admin Panel
+            Welcome to Amrut Water
           </p>
         </div>
 
-        <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-200">
-          <span className="text-slate-600 font-medium">
-            Admin Panel
-          </span>
-        </div>
+
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
