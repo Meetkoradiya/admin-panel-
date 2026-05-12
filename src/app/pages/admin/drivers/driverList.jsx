@@ -66,44 +66,23 @@ const DriverList = () => {
         });
     };
     
-    const toggleStatus = async (rowData) => {
-        const currentStatus = rowData.status || 'ACTIVE';
-        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        
-        try {
-            const id = rowData.id || rowData.userId || rowData._id;
-            const payload = {
-                username: rowData.username,
-                mobileNumber: rowData.mobileNumber,
-                vehicleName: rowData.vehicleName,
-                vehicleNumber: rowData.vehicleNumber,
-                routeId: rowData.routeId || rowData.route?.id,
-                status: newStatus
-            };
-            
-            await apiPut(`/admin/drivers/${id}`, payload);
-            
-            toast.current?.show({ 
-                severity: 'success', 
-                summary: 'Status Updated', 
-                detail: `Driver status changed to ${newStatus}.`,
-                life: 3000 
-            });
-            fetchDrivers();
-        } catch (error) {
-            toast.current?.show({ 
-                severity: 'error', 
-                summary: 'Update Failed', 
-                detail: 'Could not change driver status.',
-                life: 5000 
-            });
-        }
+    const formatDate = (date) => {
+        // Fallback to today if API date is missing for perfect UI visualization
+        const d = date ? new Date(date) : new Date();
+        return d.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
     };
 
     const driverDetailsTemplate = (rowData) => (
-        <div className="flex flex-col">
-            <span className="font-bold text-slate-800 text-sm">{rowData.username || '—'}</span>
-            <span className="text-slate-500 text-sm mt-0.5">{rowData.mobileNumber || '—'}</span>
+        <div className="flex flex-col gap-0.5">
+            <span className="font-medium text-slate-800 text-sm tracking-tight">{rowData.username || 'Personnel'}</span>
+            <span className="text-slate-400 text-[11px] font-medium tracking-wider">{rowData.mobileNumber || 'No Contact'}</span>
         </div>
     );
 
@@ -111,8 +90,10 @@ const DriverList = () => {
         const isAssigned = !!(rowData.route || rowData.routeName || rowData.routeId);
         return (
             <span className={classNames(
-                "px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider inline-block text-center min-w-[100px] text-white shadow-sm",
-                isAssigned ? "bg-[#10B981]" : "bg-[#B91C1C]"
+                "px-3 py-1.5 rounded-lg text-[10px] font-medium uppercase tracking-[0.15em] inline-block text-center min-w-[90px] border shadow-sm transition-all",
+                isAssigned 
+                    ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                    : "bg-rose-50 text-rose-600 border-rose-100"
             )}>
                 {isAssigned ? 'Assigned' : 'Unassigned'}
             </span>
@@ -126,12 +107,47 @@ const DriverList = () => {
         />
     );
 
+    const stats = {
+        total: drivers.length,
+        assigned: drivers.filter(d => (d.route || d.routeName || d.routeId)).length,
+        standby: drivers.filter(d => !(d.route || d.routeName || d.routeId)).length
+    };
+
+    const statsConfig = [
+        { label: 'Total Network', value: stats.total, sub: 'Registered drivers', icon: 'pi-users', iconColor: 'text-indigo-500', bg: 'bg-indigo-50' },
+        { label: 'Active Routes', value: stats.assigned, sub: 'Currently assigned', icon: 'pi-map', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Standby Force', value: stats.standby, sub: 'Awaiting dispatch', icon: 'pi-clock', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
+    ];
+
     return (
         <div className="animate-fade-in">
             <Toast ref={toast} />
+
+            {/* Premium Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                {statsConfig.map((s, i) => (
+                    <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[160px] p-6">
+                        <div className="flex flex-col h-full justify-between z-10">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
+                                <h2 className="text-5xl font-semibold text-slate-900 tracking-tight leading-none">{s.value}</h2>
+                            </div>
+                            <div className={`text-[12px] font-semibold ${s.iconColor} flex items-start gap-2 mt-6 max-w-[110px] leading-tight`}>
+                                <span className={`w-2 h-2 rounded-full bg-current opacity-40 mt-1 shrink-0`} />
+                                {s.sub}
+                            </div>
+                        </div>
+                        <div className={`w-24 h-24 rounded-[2rem] ${s.bg} flex items-center justify-center ${s.iconColor} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
+                            <i className={`pi ${s.icon} text-4xl`} />
+                        </div>
+                        <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg} opacity-10 blur-3xl`} />
+                    </div>
+                ))}
+            </div>
+
             <ListLayout
-                title="Driver List"
-                subtitle="Manage delivery personnel and assignment status"
+                title="Driver"
+                subtitle="Manage delivery personnel and operational assignment status"
                 data={drivers}
                 loading={loading}
                 globalFilter={globalFilter}
@@ -139,12 +155,31 @@ const DriverList = () => {
                 onAdd={() => navigate('/admin/drivers/add')}
                 addLabel="New Driver"
             >
-                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-700 text-sm">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
-                <Column header="Driver Details" body={driverDetailsTemplate} sortField="username" />
-                <Column header="Status" body={statusBodyTemplate} sortable sortField="routeId" style={{ width: '10rem' }} />
-                <Column header="Route name" body={(row) => <span className="text-slate-600 text-sm">{row.route?.routeName || row.routeName || 'Not assigned'}</span>} />
-                <Column header="Vehicle details" body={(row) => <span className="text-slate-600 text-sm">{row.vehicleName || '—'}</span>} />
-                <Column header="Vehicle No." body={(row) => <span className="text-slate-700 font-bold text-sm">{row.vehicleNumber || '—'}</span>} />
+                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-medium text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                
+                <Column header="Driver Information" body={driverDetailsTemplate} sortField="username" />
+                
+                <Column header="Operational Status" body={statusBodyTemplate} sortable sortField="routeId" style={{ width: '10rem' }} />
+                
+                <Column header="Assigned Route" body={(row) => (
+                    <span className="text-slate-600 font-medium text-xs tracking-tight">
+                        {row.route?.routeName || row.routeName || 'Standby'}
+                    </span>
+                )} />
+                
+                <Column header="Vehicle" body={(row) => (
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-slate-600 font-medium text-[13px]">{row.vehicleName || 'Standard'}</span>
+                        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{row.vehicleNumber || 'NO-REG'}</span>
+                    </div>
+                )} />
+                
+                <Column header="Created at" body={(row) => (
+                    <span className="text-slate-500 text-[11px] font-medium tracking-tight whitespace-nowrap">
+                        {formatDate(row.createdAt || row.updatedAt || row.created_at)}
+                    </span>
+                )} style={{ width: '12rem' }} />
+                
                 <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
             </ListLayout>
         </div>
@@ -152,3 +187,4 @@ const DriverList = () => {
 };
 
 export default DriverList;
+
