@@ -161,7 +161,7 @@ const ListLayout = ({
                             }
                             dataKey={(data) => data.id || data._id || `row_${Math.random()}`}
                             rowHover
-                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                             {...props}
                         >

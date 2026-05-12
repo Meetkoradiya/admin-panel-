@@ -610,37 +610,96 @@
     color: #64748b;
 }
 
-/* Compact Table Styles */
-.p-datatable .p-datatable-thead > tr > th {
-    padding: 0.75rem 1rem !important;
-    font-size: 11px !important;
+
+/* Premium Modern Table Overrides */
+.p-datatable.p-datatable-minimal {
+    border: none !important;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-thead > tr > th {
     background: #f8fafc !important;
-    color: #64748b !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.05em !important;
-}
-
-.p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.6rem 1rem !important;
-    font-size: 13px !important;
-}
-
-.p-datatable .p-datatable-header {
-    padding: 0.75rem 1rem !important;
-    background: #ffffff !important;
+    border: none !important;
     border-bottom: 1px solid #f1f5f9 !important;
+    padding: 1.25rem 1.5rem !important;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
 }
 
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr {
+    background: #ffffff;
+    border: none !important;
+    border-bottom: 1px solid #f8fafc !important;
+    transition: all 0.2s ease;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:last-child {
+    border-bottom: none !important;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
+    padding: 1.25rem 1.5rem !important;
+    border: none !important;
+    vertical-align: middle;
+    color: #475569;
+    font-size: 13px;
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:hover {
+    background-color: #f8fafc !important;
+    transform: scale(0.999);
+}
+
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr.p-highlight {
+    background: #eff6ff !important;
+    color: #3b82f6 !important;
+}
+
+/* Enhanced Paginator */
 .p-paginator {
-    padding: 0.5rem !important;
     background: #ffffff !important;
+    border: none !important;
     border-top: 1px solid #f1f5f9 !important;
+    padding: 1.25rem 1.5rem !important;
+    border-radius: 0 0 1.5rem 1.5rem;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page {
-    min-width: 2rem !important;
-    height: 2rem !important;
-    font-size: 12px !important;
-    border-radius: 8px !important;
+    border-radius: 12px;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    font-weight: 600;
+    font-size: 12px;
+    margin: 0 0.125rem;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+}
+
+.p-paginator .p-link:not(.p-disabled):hover {
+    background: #f8fafc;
+    color: #3b82f6;
+}
+
+.p-dropdown.p-paginator-rpp-options {
+    border-radius: 10px !important;
+    background: #f8fafc !important;
+    border: 1px solid #f1f5f9 !important;
+    margin-left: 1rem;
+}
+
+.p-dropdown.p-paginator-rpp-options .p-dropdown-label {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
 }
 
