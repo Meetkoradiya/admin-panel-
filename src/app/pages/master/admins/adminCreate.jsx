@@ -161,7 +161,7 @@ const AdminCreate = () => {
                                 className={inputClass(!errors.username)}
                                 placeholder="Enter admin name"
                             />
-                            {errors.username && <small className="text-red-500 font-bold mt-1 ml-1">{errors.username}</small>}
+                            {errors.username && <small className="text-red-500 font-medium mt-1 ml-1">{errors.username}</small>}
                         </SimpleField>
                         <SimpleField label="Mobile Number">
                             <InputText
@@ -174,7 +174,7 @@ const AdminCreate = () => {
                                 className={inputClass(!errors.mobileNumber)}
                                 placeholder="Enter mobile number"
                             />
-                            {errors.mobileNumber && <small className="text-red-500 font-bold mt-1 ml-1">{errors.mobileNumber}</small>}
+                            {errors.mobileNumber && <small className="text-red-500 font-medium mt-1 ml-1">{errors.mobileNumber}</small>}
                         </SimpleField>
                     </div>
                 </SimpleSection>
@@ -191,7 +191,7 @@ const AdminCreate = () => {
                                 className={inputClass(!errors.city)}
                                 placeholder="Enter city"
                             />
-                            {errors.city && <small className="text-red-500 font-bold mt-1 ml-1">{errors.city}</small>}
+                            {errors.city && <small className="text-red-500 font-medium mt-1 ml-1">{errors.city}</small>}
                         </SimpleField>
                         <SimpleField label="Postal Code">
                             <InputText
@@ -212,7 +212,7 @@ const AdminCreate = () => {
                                     className={inputClass(!errors.address)}
                                     placeholder="Enter permanent address"
                                 />
-                                {errors.address && <small className="text-red-500 font-bold mt-1 ml-1">{errors.address}</small>}
+                                {errors.address && <small className="text-red-500 font-medium mt-1 ml-1">{errors.address}</small>}
                             </SimpleField>
                         </div>
                     </div>
@@ -239,7 +239,7 @@ const AdminCreate = () => {
                                 className={inputClass(!errors.password)}
                                 placeholder={isEditMode ? "Leave blank to keep same" : "Create password"}
                             />
-                            {errors.password && <small className="text-red-500 font-bold mt-1 ml-1">{errors.password}</small>}
+                            {errors.password && <small className="text-red-500 font-medium mt-1 ml-1">{errors.password}</small>}
                         </SimpleField>
                         <div className="md:col-span-2">
                             <SimpleField label="Assigned Outlet">
@@ -253,7 +253,7 @@ const AdminCreate = () => {
                                     className={classNames(dropdownClass, { 'border-rose-400 bg-rose-50/50': submitted && errors.outletId })}
                                     placeholder="Select an outlet"
                                 />
-                                {errors.outletId && <small className="text-red-500 font-bold mt-1 ml-1">{errors.outletId}</small>}
+                                {errors.outletId && <small className="text-red-500 font-medium mt-1 ml-1">{errors.outletId}</small>}
                             </SimpleField>
                         </div>
                     </div>

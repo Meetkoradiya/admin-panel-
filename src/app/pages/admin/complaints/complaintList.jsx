@@ -125,9 +125,8 @@ const ComplaintList = () => {
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-500">{complaint.complaintType || complaint.type || 'SERVICE'}</span>
+                                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-blue-500">{complaint.complaintType || complaint.type || 'SERVICE'}</span>
                             </div>
-                            <span className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest">#{String(complaint.adminId || complaint.id || complaint._id || '0').slice(-6).toUpperCase()}</span>
                         </div>
                         <p className="text-[13px] text-slate-600 font-semibold leading-relaxed italic line-clamp-4">
                             &quot;{complaint.description || complaint.complaint || 'No detailed description provided.'}&quot;
@@ -158,6 +157,27 @@ const ComplaintList = () => {
             <Toast ref={toast} />
             <Menu model={menuItems} popup ref={menu} id="status_menu" className="rounded-2xl border-none shadow-xl" />
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {statsConfig.map((s, i) => (
+                    <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[160px] p-6">
+                        <div className="flex flex-col h-full justify-between z-10">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
+                                <h2 className="text-5xl font-semibold text-slate-900 tracking-tight leading-none">{s.value}</h2>
+                            </div>
+                            <div className={`text-[12px] font-semibold ${s.textColor || (s.iconColor?.includes('emerald') ? 'text-emerald-500' : s.iconColor?.includes('rose') ? 'text-rose-500' : s.iconColor?.includes('amber') ? 'text-amber-500' : 'text-blue-500')} flex items-start gap-2 mt-6 max-w-[110px] leading-tight`}>
+                                <span className={`w-2 h-2 rounded-full bg-current opacity-40 mt-1 shrink-0`} />
+                                {s.sub}
+                            </div>
+                        </div>
+                        <div className={`w-24 h-24 rounded-[2rem] ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
+                            <i className={`pi ${s.icon || 'pi-file'} text-4xl`} />
+                        </div>
+                        <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg || 'bg-blue-50'} opacity-10 blur-3xl transition-opacity duration-500`} />
+                    </div>
+                ))}
+            </div>
+
             <ListLayout
                 title="Complaints Management"
                 subtitle="Track and resolve customer issues"
@@ -167,7 +187,6 @@ const ComplaintList = () => {
                 setGlobalFilter={setGlobalFilter}
                 onAdd={null}
                 emptyMessage="No complaints recorded yet"
-                stats={statsConfig}
                 renderItem={renderComplaintCard}
             />
         </div>

@@ -82,11 +82,7 @@ const RouteList = () => {
 
     const routeNameTemplate = (rowData) => (
         <div className="flex flex-col gap-1 py-1">
-            <span className="text-slate-800 font-extrabold text-[13px] tracking-tight">{rowData.routeName || rowData.name}</span>
-            <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID:</span>
-                <span className="text-[10px] font-bold text-slate-400">{rowData.id || rowData._id || 'N/A'}</span>
-            </div>
+            <span className="text-slate-800 font-medium text-[13px] tracking-tight">{rowData.routeName || rowData.name}</span>
         </div>
     );
 
