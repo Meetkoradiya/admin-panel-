@@ -66,18 +66,7 @@ const OrderList = () => {
         fetchInitialData();
     }, [fetchOrders, fetchInitialData]);
 
-    const handleGenerateOrders = async () => {
-        setLoading(true);
-        try {
-            await apiPost('/orders/generate');
-            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Orders generated successfully' });
-            fetchOrders();
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to generate orders' });
-        } finally {
-            setLoading(false);
-        }
-    };
+
 
     const handleCustomOrderSubmit = async () => {
         if (!customOrder.customerId || !customOrder.productId) {
@@ -136,15 +125,7 @@ const OrderList = () => {
                 addLabel="Custom Order"
                 emptyImage={successImg}
                 emptyMessage="No Orders Found"
-                extraActions={
-                    <Button 
-                        label="Generate Today's Orders" 
-                        icon="pi pi-refresh" 
-                        className="p-button-outlined p-button-info"
-                        onClick={handleGenerateOrders}
-                        loading={loading}
-                    />
-                }
+
             >
                 <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column field="id" header="Order ID" body={(row) => <span className="font-bold text-blue-500 text-xs">#{row.id || row._id}</span>} />
