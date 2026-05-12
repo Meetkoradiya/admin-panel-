@@ -30,10 +30,10 @@ const ListLayout = ({
     return (
         <Page title={title}>
             <Tooltip target=".action-tooltip" position="bottom" />
-            <div className="flex flex-col gap-6 animate-fade-in pb-6">
+            <div className="flex flex-col gap-4 animate-fade-in pb-4">
                 {/* 1. HEADER & ACTIONS */}
                 <div className="layout-card">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 md:p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 md:p-5">
                         <div className="flex items-center gap-5">
                             <div className="premium-badge h-14 w-14 rounded-2xl">
                                 <i className={`pi ${icon} text-2xl`}></i>
@@ -72,7 +72,7 @@ const ListLayout = ({
 
                 {/* 2. SUMMARY CARDS (OPTIONAL) */}
                 {stats && stats.length > 0 && (
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6 mb-4`}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4 mb-2`}>
                         {stats.map((s, i) => (
                             <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[160px] p-6">
                                 <div className="flex flex-col h-full justify-between z-10">
@@ -88,7 +88,7 @@ const ListLayout = ({
                                 <div className={`w-24 h-24 rounded-[2rem] ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
                                     <i className={`pi ${s.icon || 'pi-file'} text-4xl`} />
                                 </div>
-                                
+
                                 {/* Refined background glow */}
                                 <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg || 'bg-blue-50'} opacity-10 blur-3xl transition-opacity duration-500`} />
                             </div>

@@ -16,7 +16,7 @@ const SubscriptionList = () => {
     const fetchSubscriptions = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await apiGet('/master/subscriptions');
+            const data = await apiGet('/master/water-plans');
             setSubscriptions(Array.isArray(data) ? data : (data?.data || []));
         } catch (error) {
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch subscriptions' });

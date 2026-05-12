@@ -65,7 +65,7 @@
         background: #ffffff;
         border: 1px solid #f1f5f9;
         border-radius: 1.5rem;
-        padding: 2rem;
+        padding: 1.25rem;
         box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -107,16 +107,16 @@
     }
 
     .form-item {
-        margin-bottom: 2rem;
+        margin-bottom: 1.25rem;
         position: relative;
     }
 
     .section-spacing {
-        margin-bottom: 3rem;
+        margin-bottom: 1.5rem;
     }
 
     .page-container {
-        padding: 2.5rem;
+        padding: 1rem;
         max-width: 1600px;
         margin: 0 auto;
     }

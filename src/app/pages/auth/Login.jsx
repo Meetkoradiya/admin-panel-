@@ -114,7 +114,7 @@ const Login = () => {
       // Fallback: fetch user profile from /admin/users
       if (!userData || Object.keys(userData).length === 0) {
         try {
-          const userRes = await axios.get(`${BASE_URL}/admin/users?id=${userId}`, {
+          const userRes = await axios.get(`${BASE_URL}/admin/users/${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           const fetched = userRes.data?.data || userRes.data;

@@ -50,7 +50,7 @@ const DeviceVerificationList = () => {
             acceptLabel: 'Approve',
             onAccept: async () => {
                 try {
-                    await apiPost(`/auth/approve-device/${rowData.id || rowData._id}`);
+                    await apiPost(`/auth/approve-device/${rowData.deviceId || rowData.id || rowData._id}`);
                     toast.current?.show({ severity: 'success', summary: 'Approved', detail: 'Device verified successfully' });
                     fetchDevices();
                 } catch (error) {

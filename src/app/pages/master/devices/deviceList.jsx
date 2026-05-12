@@ -51,7 +51,7 @@ const DeviceList = () => {
             acceptLabel: 'Approve',
             onAccept: async () => {
                 try {
-                    await apiPost(`/auth/master/approve-device/${rowData.id || rowData._id}`);
+                    await apiPost(`/auth/master/approve-device/${rowData.deviceId || rowData.id || rowData._id}`);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Device approved successfully' });
                     fetchDevices();
                 } catch (error) {

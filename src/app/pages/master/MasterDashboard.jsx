@@ -33,7 +33,7 @@ const MasterDashboard = () => {
     return (
         <div className="animate-fade-in">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-800">
                         Master Dashboard
@@ -53,11 +53,11 @@ const MasterDashboard = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
                 {stats.map((item, index) => (
                     <div
                         key={index}
-                        className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm"
+                        className="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm"
                     >
                         <div className="flex items-center justify-between">
                             <div>
@@ -81,10 +81,10 @@ const MasterDashboard = () => {
             </div>
 
             {/* Main Layout */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
                 {/* Recent Admins */}
-                <div className="xl:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
+                <div className="xl:col-span-2 bg-white rounded-3xl p-4 border border-slate-200 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
                         <h2 className="text-xl font-bold text-slate-800">
                             Recent Admins
                         </h2>
@@ -150,7 +150,7 @@ const MasterDashboard = () => {
 
                 {/* Quick Actions */}
                 <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-                    <h2 className="text-xl font-bold text-slate-800 mb-6">
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">
                         Quick Actions
                     </h2>
 
@@ -178,7 +178,7 @@ const MasterDashboard = () => {
                     </div>
 
                     {/* Activity */}
-                    <div className="mt-8 border-t border-slate-200 pt-6">
+                    <div className="mt-4 border-t border-slate-200 pt-4">
                         <h3 className="text-lg font-bold text-slate-800 mb-4">
                             System Activity
                         </h3>
@@ -219,7 +219,7 @@ const MasterDashboard = () => {
             </div>
 
             {/* Bottom Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
                     <h2 className="text-xl font-bold text-slate-800 mb-4">
                         Outlet Performance
