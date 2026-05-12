@@ -27,6 +27,23 @@ const ListLayout = ({
 }) => {
     const icon = props.icon || "pi-database";
 
+    const filteredData = React.useMemo(() => {
+        if (!globalFilter || !data || !Array.isArray(data)) return data;
+
+        const query = globalFilter.toLowerCase().trim();
+        if (!query) return data;
+
+        const checkMatch = (val) => {
+            if (val === null || val === undefined) return false;
+            if (typeof val === 'object') {
+                return Object.values(val).some(checkMatch);
+            }
+            return String(val).toLowerCase().includes(query);
+        };
+
+        return data.filter(item => Object.values(item).some(checkMatch));
+    }, [data, globalFilter]);
+
     return (
         <Page title={title}>
             <Tooltip target=".action-tooltip" position="bottom" />
@@ -105,8 +122,8 @@ const ListLayout = ({
                                 Array.from({ length: 8 }).map((_, i) => (
                                     <div key={i} className="layout-card h-64 animate-pulse bg-slate-50/50" />
                                 ))
-                            ) : data && data.length > 0 ? (
-                                data.map((item, index) => renderItem(item, index))
+                            ) : filteredData && filteredData.length > 0 ? (
+                                filteredData.map((item, index) => renderItem(item, index))
                             ) : (
                                 <div className="col-span-full layout-card">
                                     <div className="text-center py-24 flex flex-col items-center justify-center bg-white">
@@ -124,9 +141,8 @@ const ListLayout = ({
                         </div>
                     ) : (
                         <DataTable
-                            value={data}
+                            value={filteredData}
                             loading={loading}
-                            globalFilter={globalFilter}
                             paginator
                             rows={10}
                             className="p-datatable-minimal"

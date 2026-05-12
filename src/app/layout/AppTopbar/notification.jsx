@@ -60,11 +60,8 @@ export const Notification = () => {
         }
     }, [userId, apiGet, dispatch]);
 
-    useEffect(() => {
-        if (userId) {
-            fetchUnreadCount();
-        }
-    }, [userId, fetchUnreadCount]);
+    // Background fetching removed to prevent continuous calls.
+    // Data is now fetched on-demand in handleToggle when overlay opens.
 
     const markAsRead = async (notificationId) => {
         try {
