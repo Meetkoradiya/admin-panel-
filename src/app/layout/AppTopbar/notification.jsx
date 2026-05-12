@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Badge } from "primereact/badge";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUnreadCount as setUnreadCountRedux, resetUnreadCount, decrementUnreadCount } from "@/redux/slice/NotificationSlice";
 import { Toast } from "primereact/toast";
 import useApi from "@/hooks/useApi";
 import { Tooltip } from 'primereact/tooltip';
@@ -11,7 +12,8 @@ export const Notification = () => {
     const toast = useRef(null);
 
     const [notifications, setNotifications] = useState([]);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const unreadCount = useSelector((state) => state.notification.unreadCount);
+    const dispatch = useDispatch();
 
     const user = useSelector((state) => state.auth.userData);
     const userId = user?.userId || user?.id;
@@ -45,38 +47,30 @@ export const Notification = () => {
             const response = await apiGet('/notifications/unread-count', { params: { userId } });
             let count = 0;
 
-            // Handle different response formats for count
             if (typeof response === 'number') count = response;
             else if (typeof response?.data === 'number') count = response.data;
             else if (typeof response?.unreadCount === 'number') count = response.unreadCount;
             else if (typeof response?.data?.count === 'number') count = response.data.count;
             else if (typeof response?.count === 'number') count = response.count;
 
-            setUnreadCount(count);
+            dispatch(setUnreadCountRedux(count));
             console.log(`Notification: Unread count fetched: ${count}`);
         } catch (error) {
             console.error("Notification: Unread Count Error:", error);
         }
-    }, [userId, apiGet]);
+    }, [userId, apiGet, dispatch]);
 
     useEffect(() => {
         if (userId) {
-            fetchNotifications();
             fetchUnreadCount();
-
-            const interval = setInterval(() => {
-                fetchNotifications();
-                fetchUnreadCount();
-            }, 30000);
-            return () => clearInterval(interval);
         }
-    }, [userId, fetchNotifications, fetchUnreadCount]);
+    }, [userId, fetchUnreadCount]);
 
     const markAsRead = async (notificationId) => {
         try {
             await apiPut(`/notifications/read/${notificationId}`, {});
-            fetchNotifications();
-            fetchUnreadCount();
+            setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, isRead: true, read: true } : n));
+            dispatch(decrementUnreadCount());
         } catch (error) {
             console.error("Error marking notification as read:", error);
             toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Could not mark as read' });
@@ -87,8 +81,8 @@ export const Notification = () => {
         if (!userId) return;
         try {
             await apiPut(`/notifications/read-all`, null, { params: { userId } });
-            fetchNotifications();
-            fetchUnreadCount();
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true, read: true })));
+            dispatch(resetUnreadCount());
             toast.current?.show({ severity: 'success', summary: 'Success', detail: 'All notifications marked as read', life: 2000 });
         } catch (error) {
             console.error("Error marking all as read:", error);
@@ -108,7 +102,7 @@ export const Notification = () => {
 
     const handleToggle = (e) => {
         op.current.toggle(e);
-        // Fetch fresh notifications when opening the overlay
+        // Fetch fresh notifications only when opening the overlay
         if (userId) {
             fetchNotifications();
             fetchUnreadCount();
@@ -123,7 +117,7 @@ export const Notification = () => {
                 id="notif-target"
                 type="button"
                 className="topbar-action p-link w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-200 transition-all active:scale-95 text-slate-600 relative"
-                onClick={(e) => op.current.toggle(e)}
+                onClick={handleToggle}
                 data-pr-tooltip="Notifications"
             >
                 <i className="pi pi-bell text-lg"></i>

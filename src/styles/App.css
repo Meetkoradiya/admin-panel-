@@ -609,3 +609,38 @@
     right: 3rem;
     color: #64748b;
 }
+
+/* Compact Table Styles */
+.p-datatable .p-datatable-thead > tr > th {
+    padding: 0.75rem 1rem !important;
+    font-size: 11px !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.6rem 1rem !important;
+    font-size: 13px !important;
+}
+
+.p-datatable .p-datatable-header {
+    padding: 0.75rem 1rem !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.p-paginator {
+    padding: 0.5rem !important;
+    background: #ffffff !important;
+    border-top: 1px solid #f1f5f9 !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 2rem !important;
+    height: 2rem !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+}
+

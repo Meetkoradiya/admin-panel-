@@ -24,9 +24,9 @@ const MasterDashboard = () => {
         try {
             const [adminsRes, outletsRes, subsRes, devicesRes] = await Promise.allSettled([
                 apiGet('/admin/admins'),
-                apiGet('/admin/outlets'),
-                apiGet('/admin/subscriptions'),
-                apiGet('/admin/devices')
+                apiGet('/master/outlets'),
+                apiGet('/master/subscriptions'),
+                apiGet('/auth/master/device-approvals')
             ]);
 
             // Extract data from settled promises

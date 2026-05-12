@@ -30,10 +30,10 @@ const ListLayout = ({
     return (
         <Page title={title}>
             <Tooltip target=".action-tooltip" position="bottom" />
-            <div className="flex flex-col gap-4 animate-fade-in pb-4">
+            <div className="flex flex-col gap-3 animate-fade-in pb-4">
                 {/* 1. HEADER & ACTIONS */}
                 <div className="layout-card">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 md:p-5">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 md:p-4">
                         <div className="flex items-center gap-5">
                             <div className="premium-badge h-14 w-14 rounded-2xl">
                                 <i className={`pi ${icon} text-2xl`}></i>
@@ -75,18 +75,18 @@ const ListLayout = ({
                 {stats && stats.length > 0 && (
                     <div className={`grid grid-cols-1 sm:grid-cols-2 ${stats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4 mb-2`}>
                         {stats.map((s, i) => (
-                            <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-[160px] p-6">
+                            <div key={i} className="premium-card group relative overflow-hidden flex items-center justify-between min-h-160px p-6">
                                 <div className="flex flex-col h-full justify-between z-10">
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">{s.label}</span>
                                         <h2 className="text-5xl font-semibold text-slate-900 tracking-tight leading-none">{s.value}</h2>
                                     </div>
-                                    <div className={`text-[12px] font-semibold ${s.textColor || (s.iconColor?.includes('emerald') ? 'text-emerald-500' : s.iconColor?.includes('rose') ? 'text-rose-500' : s.iconColor?.includes('amber') ? 'text-amber-500' : 'text-blue-500')} flex items-start gap-2 mt-6 max-w-[110px] leading-tight`}>
+                                    <div className={`text-[12px] font-semibold ${s.textColor || (s.iconColor?.includes('emerald') ? 'text-emerald-500' : s.iconColor?.includes('rose') ? 'text-rose-500' : s.iconColor?.includes('amber') ? 'text-amber-500' : 'text-blue-500')} flex items-start gap-2 mt-6 max-w-110px leading-tight`}>
                                         <span className={`w-2 h-2 rounded-full bg-current opacity-40 mt-1 shrink-0`} />
                                         {s.sub}
                                     </div>
                                 </div>
-                                <div className={`w-24 h-24 rounded-[2rem] ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
+                                <div className={`w-24 h-24 rounded-2rem p-3 md:p-4 ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
                                     <i className={`pi ${s.icon || 'pi-file'} text-4xl`} />
                                 </div>
 

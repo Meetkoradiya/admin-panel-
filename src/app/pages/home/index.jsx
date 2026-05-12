@@ -54,7 +54,7 @@ export default function Dashboard() {
       // Fetch Complaints
       let complaintsList = [];
       try {
-        const complaintsRes = await apiGet('/admin/complaints');
+        const complaintsRes = await apiGet('/customer/admin/complaints');
         complaintsList = complaintsRes?.data?.complaints || complaintsRes?.complaints || complaintsRes?.data || complaintsRes || [];
         if (!Array.isArray(complaintsList)) complaintsList = [];
       } catch (e) { console.warn("Dashboard: Complaints fetch failed (might be expected)"); }
