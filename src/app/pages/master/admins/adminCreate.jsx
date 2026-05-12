@@ -93,6 +93,7 @@ const AdminCreate = () => {
         else if (admin.mobileNumber.length !== 10) errs.mobileNumber = "Mobile must be 10 digits!";
         if (!admin.city?.trim()) errs.city = "City is required!";
         if (!admin.address?.trim()) errs.address = "Address is required!";
+        if (!admin.outletId) errs.outletId = "Assigned outlet is required!";
         if (!isEditMode && !admin.password?.trim()) errs.password = "Password is required!";
         
         setErrors(errs);
@@ -107,11 +108,15 @@ const AdminCreate = () => {
                 const payload = {
                     username: admin.username,
                     mobileNumber: admin.mobileNumber,
-                    email: admin.email
+                    email: admin.email,
+                    outletId: admin.outletId,
+                    city: admin.city,
+                    postalCode: admin.postalCode,
+                    address: admin.address
                 };
 
                 if (isEditMode) {
-                    await apiPut(`/admin/update-profile`, payload);
+                    await apiPut(`/admin/admins/${id}`, payload);
                     toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Admin Updated Successfully' });
                 } else {
                     const createPayload = { ...payload, password: admin.password };
@@ -237,14 +242,18 @@ const AdminCreate = () => {
                             {errors.password && <small className="text-red-500 font-bold mt-1 ml-1">{errors.password}</small>}
                         </SimpleField>
                         <div className="md:col-span-2">
-                            <SimpleField label="Assigned Outlet (Optional)">
+                            <SimpleField label="Assigned Outlet">
                                 <Dropdown
                                     value={admin.outletId}
                                     options={outlets}
-                                    onChange={(e) => setAdmin({ ...admin, outletId: e.value })}
-                                    className={dropdownClass}
+                                    onChange={(e) => {
+                                        setAdmin({ ...admin, outletId: e.value });
+                                        if (errors.outletId) setErrors({ ...errors, outletId: null });
+                                    }}
+                                    className={classNames(dropdownClass, { 'border-rose-400 bg-rose-50/50': submitted && errors.outletId })}
                                     placeholder="Select an outlet"
                                 />
+                                {errors.outletId && <small className="text-red-500 font-bold mt-1 ml-1">{errors.outletId}</small>}
                             </SimpleField>
                         </div>
                     </div>
