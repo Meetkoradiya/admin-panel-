@@ -123,7 +123,7 @@ const MasterDashboard = () => {
                 {statCards.map((item, index) => (
                     <div
                         key={index}
-                        className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all group"
+                        className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm"
                     >
                         <div className="flex items-center justify-between">
                             <div>
@@ -134,7 +134,7 @@ const MasterDashboard = () => {
                                     {loading ? '...' : item.value}
                                 </h2>
                             </div>
-                            <div className={`h-14 w-14 rounded-2xl flex items-center justify-center text-2xl ${item.bg} group-hover:scale-110 transition-transform`}>
+                            <div className={`h-14 w-14 rounded-2xl flex items-center justify-center text-2xl ${item.bg}`}>
                                 {item.icon}
                             </div>
                         </div>
@@ -163,9 +163,9 @@ const MasterDashboard = () => {
                              <div className="text-center py-12 text-slate-400 font-medium">Loading system data...</div>
                         ) : recentAdmins.length > 0 ? (
                             recentAdmins.map((admin) => (
-                                <div key={admin.id} className="flex items-center justify-between border border-slate-100 rounded-2xl p-4 hover:bg-slate-50 transition-all group border-l-4 border-l-transparent hover:border-l-blue-500">
+                                <div key={admin.id} className="flex items-center justify-between border border-slate-100 rounded-2xl p-4 hover:bg-slate-50 transition-all border-l-4 border-l-transparent">
                                     <div>
-                                        <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
+                                        <h3 className="font-semibold text-slate-800">
                                             {admin.name}
                                         </h3>
                                         <p className="text-sm text-slate-500 mt-1">

@@ -77,7 +77,7 @@ const DeviceList = () => {
 
     const deviceBodyTemplate = (rowData) => (
         <div className="flex items-center gap-4 py-1">
-            <div className="w-11 h-11 rounded-2xl bg-blue-50/50 flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm transition-transform hover:scale-105 duration-300">
+            <div className="w-11 h-11 rounded-2xl bg-blue-50/50 flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm">
                 <i className="pi pi-mobile text-xl" />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -126,7 +126,7 @@ const DeviceList = () => {
                                 {s.sub}
                             </div>
                         </div>
-                        <div className={`w-24 h-24 rounded-[2rem] ${s.bg} flex items-center justify-center ${s.iconColor} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500 group-hover:rotate-12`}>
+                        <div className={`w-24 h-24 rounded-[2rem] ${s.bg} flex items-center justify-center ${s.iconColor} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
                             <i className={`pi ${s.icon} text-4xl`} />
                         </div>
                         <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg} opacity-10 blur-3xl`} />
