@@ -85,12 +85,12 @@ const ListLayout = ({
                                         {s.sub}
                                     </div>
                                 </div>
-                                <div className={`w-24 h-24 rounded-[2rem] ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                                <div className={`w-24 h-24 rounded-[2rem] ${s.bg || 'bg-blue-50'} flex items-center justify-center ${s.iconColor || 'text-blue-500'} shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-500`}>
                                     <i className={`pi ${s.icon || 'pi-file'} text-4xl`} />
                                 </div>
                                 
                                 {/* Refined background glow */}
-                                <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg || 'bg-blue-50'} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity duration-500`} />
+                                <div className={`absolute -right-8 -bottom-8 w-40 h-40 rounded-full ${s.bg || 'bg-blue-50'} opacity-10 blur-3xl transition-opacity duration-500`} />
                             </div>
                         ))}
                     </div>
