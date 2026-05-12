@@ -24,7 +24,7 @@ const QuickSearchInput = ({
                 readOnly={readOnly}
                 style={{ paddingLeft: '3rem' }}
                 className={classNames(
-                    "pr-6 py-3 border border-slate-200 rounded-2xl w-full md:w-80 !bg-white hover:border-slate-300 text-[15px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none appearance-none",
+                    "pr-6 py-1 border border-slate-200 rounded-2xl w-full md:w-80 bg-white hover:border-slate-300 text-[14px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none appearance-none",
                     className
                 )}
                 {...props}

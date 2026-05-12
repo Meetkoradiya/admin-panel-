@@ -40,8 +40,8 @@ const Button = ({
     // Size styles (for regular buttons)
     const sizes = {
         sm: "px-3 py-1.5 text-xs rounded-lg gap-1.5 h-8",
-        md: "px-6 py-3 text-[15px] rounded-2xl gap-2.5 h-12",
-        lg: "px-8 py-4 text-base rounded-2xl gap-3 h-14"
+        md: "px-5 py-2 text-sm rounded-xl gap-2 h-10",
+        lg: "px-8 py-3 text-base rounded-2xl gap-3 h-12"
     };
 
     // Size styles (for circular icon buttons)

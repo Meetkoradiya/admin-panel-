@@ -46,7 +46,7 @@ const ListLayout = ({
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 md:gap-10">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 md:gap-12">
                             <div className="w-full sm:w-72">
                                 <QuickSearchInput
                                     value={globalFilter}
@@ -61,8 +61,9 @@ const ListLayout = ({
                                         label={addLabel}
                                         icon="pi pi-plus"
                                         variant="primary"
+                                        size="sm"
                                         onClick={onAdd}
-                                        className="px-6 h-10 font-bold text-[13px] rounded-xl shadow-lg shadow-blue-500/20"
+                                        className="shadow-md shadow-blue-500/10"
                                     />
                                 )}
                             </div>
