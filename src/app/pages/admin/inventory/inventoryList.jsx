@@ -215,8 +215,8 @@ const InventoryList = () => {
 
     const statsConfig = [
         { label: 'Stock Items', value: stats.total, sub: 'Product Varieties', icon: 'pi-box', iconColor: 'text-violet-500', bg: 'bg-violet-50' },
-        { label: 'Available', value: stats.available, sub: 'Ready for Delivery', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
-        { label: 'Damaged', value: stats.damaged, sub: 'Needs Attention', icon: 'pi-exclamation-triangle', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
+        { label: 'Available Bottles', value: stats.available, sub: 'Ready for Delivery', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Damagedc Bottles', value: stats.damaged, sub: 'Needs Attention', icon: 'pi-exclamation-triangle', iconColor: 'text-rose-500', bg: 'bg-rose-50' },
         { label: 'Empty Bottles', value: stats.empty, sub: 'Awaiting Refill', icon: 'pi-history', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
     ];
 
@@ -291,7 +291,7 @@ const InventoryList = () => {
 
                     <div className="grid grid-cols-1 gap-4">
                         <div className="field">
-                            <label className="text-[13px] font-medium text-slate-500 ml-1 mb-2 block">Available Units</label>
+                            <label className="text-[13px] font-medium text-slate-500 ml-1 mb-2 block">Available Bottles</label>
                             <InputNumber
                                 value={editStock.available || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, available: e.value })}
@@ -302,7 +302,7 @@ const InventoryList = () => {
                         </div>
 
                         <div className="field">
-                            <label className="text-[13px] font-medium text-slate-500 ml-1 mb-2 block">Damaged Units</label>
+                            <label className="text-[13px] font-medium text-slate-500 ml-1 mb-2 block">Damaged Bottles</label>
                             <InputNumber
                                 value={editStock.damaged || 0}
                                 onValueChange={(e) => setEditStock({ ...editStock, damaged: e.value })}
