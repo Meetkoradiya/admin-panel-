@@ -141,58 +141,45 @@ const ProductList = () => {
             <Dialog
                 visible={productDialog}
                 onHide={() => setProductDialog(false)}
-                className="custom-dialog-premium"
-                content={({ hide }) => (
-                    <div className="flex flex-col items-center bg-white rounded-[2rem] md:rounded-[3rem] p-8 md:p-14 shadow-2xl w-[90vw] md:w-auto md:min-w-[440px] md:max-w-[500px] mx-auto border border-slate-50 animate-zoom-in relative">
-                        <button 
-                            onClick={() => setProductDialog(false)} 
-                            className="absolute top-6 right-6 size-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all active:scale-90"
-                        >
-                            <i className="pi pi-times"></i>
-                        </button>
-
-                        <div className="flex items-center justify-center size-20 md:size-24 rounded-3xl bg-blue-50 text-blue-500 mb-8 shadow-sm">
-                            <i className="pi pi-box text-3xl md:text-4xl"></i>
-                        </div>
-
-                        <div className="text-center mb-10 w-full">
-                            <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight mb-3 px-2 leading-none uppercase">
-                                {productId ? "Edit Product" : "Create Product"}
-                            </h3>
-                            <p className="text-slate-400 font-bold text-[12px] md:text-sm uppercase tracking-widest leading-none">Foundational Water Units</p>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-6">
-                            <div className="field">
-                                <label className="text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2.5 block">Product Identity</label>
-                                <InputText
-                                    value={productName || ""}
-                                    onChange={(e) => setProductName(e.target.value)}
-                                    placeholder="Enter unique product title"
-                                    className={classNames('w-full p-4 md:p-5 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-slate-700 text-[15px] focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all outline-none', { 'border-red-400 bg-red-50/50': submitted && !productName })}
-                                />
-                                {submitted && !productName && <small className="text-red-500 font-bold mt-2 block ml-1">Product name is required!</small>}
-                            </div>
-
-                            <div className="flex flex-col gap-3 mt-4">
-                                <Button 
-                                    label={productId ? "Update Product" : "Create Product"} 
-                                    onClick={saveProduct} 
-                                    variant="primary"
-                                    className="w-full h-14 md:h-16 text-base shadow-xl shadow-blue-500/20" 
-                                />
-                                <Button 
-                                    label="Discard" 
-                                    icon="pi pi-trash" 
-                                    onClick={() => setProductDialog(false)} 
-                                    variant="outlineDanger"
-                                    className="w-full h-14 md:h-16 text-base" 
-                                />
-                            </div>
+                header={<div className="text-2xl font-medium text-slate-900 px-2 tracking-tight">{productId ? "Edit Product" : "Create Product"}</div>}
+                modal
+                className="p-fluid rounded-3xl overflow-hidden shadow-2xl"
+                style={{ width: '450px' }}
+            >
+                <div className="flex flex-col gap-8 pt-6">
+                    <div className="w-full text-left px-2">
+                        <h4 className="text-xl font-medium text-slate-800 mb-6 tracking-tight">Overview</h4>
+                        
+                        <div className="field">
+                            <label className="text-[14px] font-medium text-[#475569] ml-1 mb-2 block tracking-wide">Product Identity</label>
+                            <InputText
+                                value={productName || ""}
+                                onChange={(e) => setProductName(e.target.value)}
+                                placeholder="Enter product title"
+                                className={classNames('w-full h-13 px-4 rounded-xl bg-white border border-slate-200 font-medium text-slate-700 text-[15px] focus:border-blue-500 transition-all outline-none', { 'border-red-400 bg-red-50/50': submitted && !productName })}
+                            />
+                            {submitted && !productName && <small className="text-red-500 font-medium mt-2 block ml-1 text-xs">Product name is required!</small>}
                         </div>
                     </div>
-                )}
-            />
+
+                    <div className="flex justify-end gap-3 px-2 mt-4 pt-6 border-t border-slate-50">
+                        <Button 
+                            label="Discard" 
+                            icon="pi pi-trash" 
+                            onClick={() => setProductDialog(false)} 
+                            variant="outlineDanger"
+                            className="px-6 h-12 text-sm font-medium rounded-xl" 
+                        />
+                        <Button 
+                            label={productId ? "Update" : "Create"} 
+                            icon="pi pi-check"
+                            onClick={saveProduct} 
+                            variant="primary"
+                            className="px-10 h-12 text-sm font-medium rounded-xl shadow-lg shadow-blue-500/10" 
+                        />
+                    </div>
+                </div>
+            </Dialog>
         </div>
     );
 };
