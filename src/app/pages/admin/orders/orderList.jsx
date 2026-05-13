@@ -1,212 +1,161 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
-import { Toast } from 'primereact/toast';
-import { classNames } from 'primereact/utils';
-import ListLayout from '@/components/shared/ListLayout';
-import StatusTag from '@/components/shared/StatusTag';
-import ActionButtons from '@/components/shared/ActionButtons';
-import useApi from '@/hooks/useApi';
-import { Dialog } from 'primereact/dialog';
-import { InputNumber } from 'primereact/inputnumber';
-import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import useUrlFilters from '@/hooks/useUrlFilters';
-import successImg from '@/assets/illustrations/success.png';
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import { toast } from "sonner";
+import { Column } from "primereact/column";
+import { Toast } from "primereact/toast";
+import useApi from "@/hooks/useApi";
+import ListLayout from "@/components/shared/ListLayout";
+import ActionButtons from "@/components/shared/ActionButtons";
+import StatusTag from "@/components/shared/StatusTag";
 
 const OrderList = () => {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [globalFilter, setGlobalFilter] = useState("");
-    const [showCustomOrderDialog, setShowCustomOrderDialog] = useState(false);
-    const [customOrder, setCustomOrder] = useState({
-        customerId: '',
-        productId: '',
-        qty: 1,
-        price: 0,
-        status: 'PENDING'
-    });
-    const [customers, setCustomers] = useState([]);
-    const [products, setProducts] = useState([]);
-    const toast = useRef(null);
-    const { apiGet, apiPost } = useApi();
+  const navigate = useNavigate();
+  const { apiGet, apiPost, apiDelete } = useApi();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const toastRef = useRef(null);
 
-    const fetchOrders = useCallback(async () => {
-        setLoading(true);
-        try {
-            const data = await apiGet('/orders/all');
-            const ordersList = data?.data || data || [];
-            setOrders(Array.isArray(ordersList) ? ordersList : []);
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch orders' });
-        } finally {
-            setLoading(false);
+  const fetchOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await apiGet("/orders/all");
+      setOrders(res.data || []);
+    } catch (error) {
+      toast.error("Failed to fetch orders");
+    } finally {
+      setLoading(false);
+    }
+  }, [apiGet]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const handleGenerateOrders = async () => {
+    try {
+      await apiPost("/orders/generate");
+      toast.success("Orders generated successfully");
+      fetchOrders();
+    } catch (error) {
+      toast.error("Failed to generate orders");
+    }
+  };
+
+  const deleteOrder = async (rowData) => {
+    try {
+      await apiDelete(`/admin/orders/${rowData.id}`);
+      toast.success("Order deleted");
+      fetchOrders();
+    } catch {
+      toast.error("Delete failed");
+    }
+  };
+
+  const stats = {
+    total: orders.length,
+    delivered: orders.filter(o => o.status === "DELIVERED").length,
+    pending: orders.filter(o => o.status !== "DELIVERED").length
+  };
+
+  const statsConfig = [
+    { label: 'Total Orders', value: stats.total, sub: 'Lifetime volume', icon: 'pi-shopping-bag', iconColor: 'text-indigo-500', bg: 'bg-indigo-50' },
+    { label: 'Delivered', value: stats.delivered, sub: 'Success fulfillment', icon: 'pi-check-circle', iconColor: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { label: 'In Transit', value: stats.pending, sub: 'Active deliveries', icon: 'pi-truck', iconColor: 'text-amber-500', bg: 'bg-amber-50' },
+  ];
+
+  const formatDate = (date) => {
+    return dayjs(date).format("DD MMM YYYY, hh:mm A");
+  };
+
+  return (
+    <div className="animate-fade-in">
+      <Toast ref={toastRef} />
+
+      <ListLayout
+        title="Order"
+        data={orders}
+        loading={loading}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        extraActions={
+          <button 
+            onClick={handleGenerateOrders}
+            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 uppercase tracking-wide"
+          >
+            Generate Orders
+          </button>
         }
-    }, [apiGet]);
-
-    const fetchInitialData = useCallback(async () => {
-        try {
-            const [custRes, prodRes] = await Promise.all([
-                apiGet('/admin/customers'),
-                apiGet('/admin/products')
-            ]);
-            const rawCustomers = custRes?.data || custRes || [];
-            const rawProducts = prodRes?.data || prodRes || [];
-            
-            // Normalize data to ensure 'id' property exists
-            setCustomers(Array.isArray(rawCustomers) ? rawCustomers.map(c => ({...c, id: c.id || c._id || c.userId})) : []);
-            setProducts(Array.isArray(rawProducts) ? rawProducts.map(p => ({...p, id: p.id || p._id})) : []);
-        } catch (error) {
-            console.error("Failed to fetch support data");
-        }
-    }, [apiGet]);
-
-    useEffect(() => {
-        fetchOrders();
-        fetchInitialData();
-    }, [fetchOrders, fetchInitialData]);
-
-
-
-    const handleCustomOrderSubmit = async () => {
-        if (!customOrder.customerId || !customOrder.productId) {
-            toast.current?.show({ severity: 'warn', summary: 'Validation', detail: 'Please select customer and product' });
-            return;
-        }
-        setLoading(true);
-        try {
-            await apiPost('/orders/custom-order', customOrder);
-            toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Custom order created successfully' });
-            setShowCustomOrderDialog(false);
-            fetchOrders();
-        } catch (error) {
-            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to create custom order' });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const statusBodyTemplate = (rowData) => {
-        return <StatusTag status={rowData.status || 'PENDING'} />;
-    };
-
-    const priceBodyTemplate = (rowData) => {
-        return <span className="font-bold text-slate-800">â‚¹{(rowData.price || rowData.amount || 0).toLocaleString()}</span>;
-    };
-
-    const customerBodyTemplate = (rowData) => (
-        <div className="flex flex-col">
-            <span className="font-bold text-slate-700 text-sm">{rowData.customer?.username || rowData.customerName || 'Walk-in'}</span>
-            <span className="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">{rowData.customer?.mobileNumber || 'â€”'}</span>
-        </div>
-    );
-
-    const actionBodyTemplate = (rowData) => (
-        <ActionButtons 
-            onEdit={() => toast.current?.show({ severity: 'info', summary: 'Order Details', detail: 'Fulfillment details view under development' })}
-            onDelete={() => toast.current?.show({ severity: 'warn', summary: 'Restricted', detail: 'Orders cannot be deleted directly' })}
-            onDeactivate={() => {
-                toast.current?.show({ severity: 'info', summary: 'Status Updated', detail: 'Order status has been updated.' });
-            }}
+      >
+        <Column 
+          field="no" 
+          header="No." 
+          body={(_, opts) => <span className="text-slate-400 font-semibold text-[11px]">{opts.rowIndex + 1}</span>} 
+          style={{ width: '5rem' }} 
         />
-    );
 
-    return (
-        <div className="animate-fade-in">
-            <Toast ref={toast} />
-            <ListLayout
-                title="Order List"
-                subtitle="Track fulfillment and delivery statuses across all routes"
-                data={orders}
-                loading={loading}
-                globalFilter={globalFilter}
-                setGlobalFilter={setGlobalFilter}
-                onAdd={() => setShowCustomOrderDialog(true)}
-                addLabel="Custom Order"
-                emptyImage={successImg}
-                emptyMessage="No Orders Found"
+        <Column 
+          header="Order" 
+          body={(row) => <span className="font-bold text-slate-800 text-[13px] tracking-tight">{row.id}</span>} 
+        />
 
-            >
-                <Column field="no" header="#" body={(_, opts) => <span className="text-slate-400 font-bold text-xs">{opts.rowIndex + 1}</span>} style={{ width: '4rem', textAlign: 'center' }} />
-                <Column field="id" header="Order ID" body={(row) => <span className="font-bold text-blue-500 text-xs">#{row.id || row._id}</span>} />
-                <Column header="Customer" body={customerBodyTemplate} sortField="customer.username" />
-                <Column field="product.name" header="Commodity" body={(row) => <span className="text-slate-600 font-medium text-sm">{row.product?.name || 'â€”'}</span>} />
-                <Column field="qty" header="Units" body={(row) => <span className="font-bold text-slate-700">{row.qty || row.quantity || 0}</span>} />
-                <Column header="Total" body={priceBodyTemplate} sortField="price" />
-                <Column header="Status" body={statusBodyTemplate} sortable sortField="status" style={{ width: '10rem', textAlign: 'center' }} />
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '10rem', textAlign: 'center' }} />
-            </ListLayout>
+        <Column 
+          header="CUSTOMER" 
+          body={(row) => (
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bold text-slate-800 text-[14px]">{row.customerName}</span>
+              <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{row.deliveryType}</span>
+            </div>
+          )} 
+        />
 
-            <Dialog 
-                header="Create Custom Order" 
-                visible={showCustomOrderDialog} 
-                style={{ width: '450px' }} 
-                modal 
-                onHide={() => setShowCustomOrderDialog(false)}
-                footer={
-                    <div>
-                        <Button label="Cancel" icon="pi pi-times" onClick={() => setShowCustomOrderDialog(false)} className="p-button-text" />
-                        <Button label="Create Order" icon="pi pi-check" onClick={handleCustomOrderSubmit} autoFocus />
-                    </div>
-                }
-            >
-                <div className="flex flex-col gap-4 mt-2">
-                    <div className="flex flex-col gap-2">
-                        <label htmlFor="customer" className="text-sm font-bold text-slate-600">Select Customer</label>
-                        <Dropdown 
-                            id="customer"
-                            value={customOrder.customerId} 
-                            options={customers} 
-                            onChange={(e) => setCustomOrder({...customOrder, customerId: e.value})} 
-                            optionLabel="username" 
-                            optionValue="id"
-                            placeholder="Select a Customer" 
-                            filter 
-                            className="w-full"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <label htmlFor="product" className="text-sm font-bold text-slate-600">Select Product</label>
-                        <Dropdown 
-                            id="product"
-                            value={customOrder.productId} 
-                            options={products} 
-                            onChange={(e) => setCustomOrder({...customOrder, productId: e.value})} 
-                            optionLabel="name" 
-                            optionValue="id"
-                            placeholder="Select a Product" 
-                            className="w-full"
-                        />
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="flex flex-col gap-2 flex-1">
-                            <label htmlFor="qty" className="text-sm font-bold text-slate-600">Quantity</label>
-                            <InputNumber 
-                                id="qty"
-                                value={customOrder.qty} 
-                                onValueChange={(e) => setCustomOrder({...customOrder, qty: e.value})} 
-                                min={1} 
-                                showButtons
-                                className="w-full"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2 flex-1">
-                            <label htmlFor="price" className="text-sm font-bold text-slate-600">Price (â‚¹)</label>
-                            <InputNumber 
-                                id="price"
-                                value={customOrder.price} 
-                                onValueChange={(e) => setCustomOrder({...customOrder, price: e.value})} 
-                                mode="currency" 
-                                currency="INR" 
-                                locale="en-IN"
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </Dialog>
-        </div>
-    );
+        <Column 
+          header="DRIVER" 
+          body={(row) => <span className="text-slate-600 font-bold text-xs tracking-tight">{row.driverName || 'Unassigned'}</span>} 
+        />
+
+        <Column 
+          header="ORDER TYPE" 
+          body={(row) => (
+            <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+              row.orderType === 'DAILY' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-orange-50 text-orange-600 border-orange-100'
+            }`}>
+              {row.orderType}
+            </span>
+          )} 
+        />
+
+        <Column 
+          header="STATUS" 
+          body={(row) => <StatusTag status={row.status} />} 
+          style={{ width: '12rem' }} 
+        />
+
+        <Column 
+          header="CREATED AT" 
+          body={(row) => (
+            <span className="text-slate-500 text-[11px] font-bold tracking-tight whitespace-nowrap">
+              {formatDate(row.createdAt)}
+            </span>
+          )} 
+          style={{ width: '12rem' }} 
+        />
+
+        <Column 
+          header="ACTIONS" 
+          body={(row) => (
+            <ActionButtons 
+              onEdit={() => navigate(`/admin/orders/create/${row.userId}`)}
+              onDelete={() => deleteOrder(row)}
+              onView={() => navigate(`/admin/orders/${row.id}`)}
+            />
+          )} 
+          style={{ width: '10rem' }} 
+        />
+      </ListLayout>
+    </div>
+  );
 };
 
 export default OrderList;

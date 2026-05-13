@@ -47,41 +47,36 @@ const ListLayout = ({
     return (
         <Page title={title}>
             <Tooltip target=".action-tooltip" position="bottom" />
-            <div className="flex flex-col gap-3 animate-fade-in pb-4">
-                {/* 1. HEADER & ACTIONS */}
-                <div className="layout-card">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 md:p-4">
-                        <div className="flex items-center gap-5">
-                            <div className="premium-badge h-14 w-14 rounded-2xl">
-                                <i className={`pi ${icon} text-2xl`}></i>
-                            </div>
-                            <div>
-                                <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
-                                    {title}
-                                </h1>
-                                {subtitle && <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.15em] mt-1.5">{subtitle}</p>}
-                            </div>
+            <div className="flex flex-col gap-4 animate-fade-in pb-4">
+                {/* Simplified Header & Actions matching "copy-to-copy" image */}
+                <div className="layout-card p-5 md:p-6">
+                    <div className="flex flex-col gap-5">
+                        {/* Title Row */}
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-bold text-slate-800 tracking-tight">
+                                {title} list
+                            </h3>
+                            <div></div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 md:gap-12">
-                            <div className="w-full sm:w-72">
+                        {/* Search & Actions Row */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="w-full sm:w-80">
                                 <QuickSearchInput
                                     value={globalFilter}
                                     onInput={(e) => setGlobalFilter(e.target.value)}
-                                    placeholder="Search records..."
+                                    placeholder="Quick Search..."
                                 />
                             </div>
-                            <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-3 w-full sm:w-auto">
                                 {extraActions}
                                 {onAdd && (
-                                    <Button
-                                        label={addLabel}
-                                        icon="pi pi-plus"
-                                        variant="primary"
-                                        size="sm"
+                                    <button
                                         onClick={onAdd}
-                                        className="shadow-md shadow-blue-500/10"
-                                    />
+                                        className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 uppercase tracking-wide"
+                                    >
+                                        {addLabel}
+                                    </button>
                                 )}
                             </div>
                         </div>

@@ -338,9 +338,7 @@
 
 .p-datatable-minimal th, 
 .p-datatable-minimal td {
-    border-bottom: 1px solid #e2e8f0 !important;
-    border-right: none !important;
-    border-left: none !important;
+    border: 1px solid #e2e8f0 !important;
     padding: 1.25rem 1.5rem !important;
     background-color: #ffffff !important;
     vertical-align: middle !important;

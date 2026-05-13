@@ -25,6 +25,7 @@ const statusStyles = {
     
     // Info - Blue/Slate
     'NEW': 'bg-blue-50 text-blue-600 border-blue-100',
+    'CREATED': 'bg-blue-50 text-blue-600 border-blue-100',
     'ASSIGNED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
     'UNASSIGNED': 'bg-rose-50 text-rose-600 border-rose-100',
     'UNKNOWN': 'bg-slate-50 text-slate-500 border-slate-100'
