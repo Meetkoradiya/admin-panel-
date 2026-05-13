@@ -81,8 +81,8 @@ const DriverList = () => {
 
     const driverDetailsTemplate = (rowData) => (
         <div className="flex flex-col gap-0.5">
-            <span className="font-medium text-slate-800 text-sm tracking-tight">{rowData.username || 'Personnel'}</span>
-            <span className="text-slate-400 text-[11px] font-medium tracking-wider">{rowData.mobileNumber || 'No Contact'}</span>
+            <span className="font-bold text-slate-800 text-[15px] tracking-tight">{rowData.username || 'mahesh'}</span>
+            <span className="text-slate-400 text-[10px] font-bold tracking-[0.05em]">{rowData.mobileNumber || '9313046281'}</span>
         </div>
     );
 
@@ -155,32 +155,63 @@ const DriverList = () => {
                 onAdd={() => navigate('/admin/drivers/add')}
                 addLabel="New Driver"
             >
-                <Column field="no" header="No." body={(_, opts) => <span className="text-slate-400 font-medium text-[10px] ml-2">{opts.rowIndex + 1}</span>} style={{ width: '4rem' }} />
+                <Column 
+                    field="no" 
+                    header="NO." 
+                    body={(_, opts) => <span className="text-slate-400 font-semibold text-[11px]">{opts.rowIndex + 1}</span>} 
+                    style={{ width: '5rem' }} 
+                />
                 
-                <Column header="Driver Information" body={driverDetailsTemplate} sortField="username" />
+                <Column 
+                    header="DRIVER INFORMATION" 
+                    body={driverDetailsTemplate} 
+                    sortField="username" 
+                />
                 
-                <Column header="Operational Status" body={statusBodyTemplate} sortable sortField="routeId" style={{ width: '10rem' }} />
+                <Column 
+                    header="OPERATIONAL STATUS" 
+                    body={(row) => <StatusTag status={(row.route || row.routeName || row.routeId) ? 'ASSIGNED' : 'UNASSIGNED'} />} 
+                    sortable 
+                    sortField="routeId" 
+                    style={{ width: '12rem' }} 
+                />
                 
-                <Column header="Assigned Route" body={(row) => (
-                    <span className="text-slate-600 font-medium text-xs tracking-tight">
-                        {row.route?.routeName || row.routeName || 'Standby'}
-                    </span>
-                )} />
+                <Column 
+                    header="ASSIGNED ROUTE" 
+                    body={(row) => (
+                        <span className="text-slate-600 font-bold text-xs tracking-tight">
+                            {row.route?.routeName || row.routeName || 'Standby'}
+                        </span>
+                    )} 
+                />
                 
-                <Column header="Vehicle" body={(row) => (
-                    <div className="flex flex-col gap-0.5">
-                        <span className="text-slate-600 font-medium text-[13px]">{row.vehicleName || 'Standard'}</span>
-                        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{row.vehicleNumber || 'NO-REG'}</span>
-                    </div>
-                )} />
+                <Column 
+                    header="VEHICLE" 
+                    body={(row) => (
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-slate-700 font-bold text-[13px]">{row.vehicleName || 'ven'}</span>
+                            <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
+                                {row.vehicleNumber || 'GJ-10-CR-4563'}
+                            </span>
+                        </div>
+                    )} 
+                />
                 
-                <Column header="Created at" body={(row) => (
-                    <span className="text-slate-500 text-[11px] font-medium tracking-tight whitespace-nowrap">
-                        {formatDate(row.createdAt || row.updatedAt || row.created_at)}
-                    </span>
-                )} style={{ width: '12rem' }} />
+                <Column 
+                    header="CREATED AT" 
+                    body={(row) => (
+                        <span className="text-slate-500 text-[11px] font-bold tracking-tight whitespace-nowrap">
+                            {formatDate(row.createdAt || row.updatedAt)}
+                        </span>
+                    )} 
+                    style={{ width: '12rem' }} 
+                />
                 
-                <Column header="Actions" body={actionBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
+                <Column 
+                    header="ACTIONS" 
+                    body={actionBodyTemplate} 
+                    style={{ width: '10rem' }} 
+                />
             </ListLayout>
         </div>
     );

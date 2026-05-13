@@ -25,7 +25,8 @@ const statusStyles = {
     
     // Info - Blue/Slate
     'NEW': 'bg-blue-50 text-blue-600 border-blue-100',
-    'ASSIGNED': 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    'ASSIGNED': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'UNASSIGNED': 'bg-rose-50 text-rose-600 border-rose-100',
     'UNKNOWN': 'bg-slate-50 text-slate-500 border-slate-100'
 };
 
@@ -36,7 +37,7 @@ const StatusTag = ({ status, className = "" }) => {
     const style = statusStyles[normalizedStatus] || statusStyles['UNKNOWN'];
 
     return (
-        <span className={`px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-wider inline-flex items-center justify-center min-w-[90px] ${style} ${className}`}>
+        <span className={`px-3 py-1.5 rounded-xl border text-[10px] font-extrabold uppercase tracking-[0.12em] inline-flex items-center justify-center min-w-[100px] shadow-sm ${style} ${className}`}>
             {value.toString().replace(/_/g, ' ')}
         </span>
     );
