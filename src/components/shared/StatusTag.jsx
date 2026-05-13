@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 const statusStyles = {
     // Success - Green
@@ -36,7 +36,7 @@ const StatusTag = ({ status, className = "" }) => {
     const style = statusStyles[normalizedStatus] || statusStyles['UNKNOWN'];
 
     return (
-        <span className={`px-4 py-1.5 rounded-xl border text-[10px] font-semibold uppercase tracking-widest inline-flex items-center justify-center min-w-[80px] ${style} ${className}`}>
+        <span className={`px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-wider inline-flex items-center justify-center min-w-[90px] ${style} ${className}`}>
             {value.toString().replace(/_/g, ' ')}
         </span>
     );

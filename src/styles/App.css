@@ -55,7 +55,7 @@
 
     .layout-card {
         background: #ffffff;
-        border: 1px solid #f1f5f9;
+        border: 1px solid #e2e8f0;
         border-radius: 1.5rem;
         box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.04);
         overflow: hidden;
@@ -324,64 +324,105 @@
     }
 }
 
-/* Premium PrimeReact Overrides */
+/* Force udbhi (vertical) lines on all table cells with ultra-high specificity */
 .p-datatable.p-datatable-minimal table {
-    border-collapse: collapse !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    border: 1px solid #e2e8f0 !important;
+    table-layout: auto !important;
+    border-radius: 1.5rem !important;
+    overflow: hidden !important;
 }
+
+.p-datatable.p-datatable-minimal .p-datatable-thead > tr > th,
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
+    border-right: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Perfecting the bottom border of the last row */
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:last-child > td {
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Remove double borders at the very edges */
+.p-datatable.p-datatable-minimal .p-datatable-thead > tr > th:last-child,
+.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td:last-child {
+    border-right: none !important;
+}
+
+
 
 .p-datatable.p-datatable-minimal .p-datatable-thead>tr>th {
     background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 1.25rem 1.5rem;
-    color: #475569;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.2s ease;
+    padding: 1.25rem 1.5rem !important;
+    color: #64748b !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    transition: all 0.2s ease !important;
+    text-align: center !important;
+}
+
+/* First column in header left aligned unless specified */
+.p-datatable.p-datatable-minimal .p-datatable-thead>tr>th:nth-child(2) {
+    text-align: left !important;
 }
 
 .p-datatable.p-datatable-minimal .p-datatable-tbody>tr {
-    background: #ffffff;
-    transition: all 0.2s ease;
+    background: #ffffff !important;
+    transition: all 0.2s ease !important;
 }
 
 .p-datatable.p-datatable-minimal .p-datatable-tbody>tr:hover {
-    background-color: #eff6ff !important;
-    box-shadow: inset 4px 0 0 #3b82f6;
-    cursor: pointer;
+    background-color: #f8fafc !important;
+    cursor: pointer !important;
 }
 
 .p-datatable.p-datatable-minimal .p-datatable-tbody>tr>td {
-    padding: 1.25rem 1.5rem;
-    border: 1px solid #e2e8f0 !important;
-    vertical-align: middle;
-    color: #334155;
-    font-size: 0.875rem;
+    padding: 1.1rem 1.5rem !important;
+    vertical-align: middle !important;
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    text-align: center !important;
+}
+
+
+
+
+
+
+/* Alignment logic to match design */
+.p-datatable.p-datatable-minimal .p-datatable-tbody>tr>td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
 }
 
 /* Paginator Polishing */
 .p-paginator {
     background: #ffffff !important;
-    border-top: 1px solid #f1f5f9 !important;
-    padding: 1.5rem !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 1.25rem 1.5rem !important;
     border-radius: 0 0 1.5rem 1.5rem;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page {
     border-radius: 12px;
-    min-width: 2.5rem;
-    height: 2.5rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin: 0 0.25rem;
     transition: all 0.2s ease;
+    border: none !important;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
     background: #3b82f6 !important;
     color: #ffffff !important;
-    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 15px -3px rgba(59, 130, 246, 0.3);
 }
 
 .p-paginator .p-link {
@@ -393,40 +434,29 @@
     color: #3b82f6;
 }
 
-.p-dropdown.p-paginator-rpp-options,
-.p-dropdown.p-paginator-rpp-options *,
-.p-dropdown.p-paginator-rpp-options *::before,
-.p-dropdown.p-paginator-rpp-options *::after,
-.p-dropdown.p-paginator-rpp-options .p-dropdown-label,
-.p-dropdown.p-paginator-rpp-options .p-dropdown-trigger,
-.p-dropdown.p-paginator-rpp-options .p-inputtext,
-.p-dropdown.p-paginator-rpp-options:not(.p-disabled).p-focus,
-.p-dropdown.p-paginator-rpp-options:not(.p-disabled):hover {
-    background: transparent !important;
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-}
-
 .p-dropdown.p-paginator-rpp-options {
-    border-radius: 12px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    background: #f8fafc !important;
+    border: 1px solid #f1f5f9 !important;
+    margin-left: 1rem;
 }
 
 .p-dropdown.p-paginator-rpp-options .p-dropdown-label {
-    padding: 0.5rem 0.75rem !important;
+    padding: 0.4rem 0.6rem !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
 }
 
 /* Action Button Polishing */
 .p-button.p-button-rounded {
-    border-radius: 14px !important;
+    border-radius: 12px !important;
 }
 
 .p-button.p-button-text:not(.p-disabled):hover {
     background: #f8fafc !important;
 }
+
 
 /* Global Button Utilities */
 @layer components {
@@ -611,95 +641,5 @@
 }
 
 
-/* Premium Modern Table Overrides */
-.p-datatable.p-datatable-minimal {
-    border: none !important;
-}
-
-.p-datatable.p-datatable-minimal .p-datatable-thead > tr > th {
-    background: #f8fafc !important;
-    border: none !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    padding: 1.25rem 1.5rem !important;
-    color: #64748b;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.2s ease;
-}
-
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr {
-    background: #ffffff;
-    border: none !important;
-    border-bottom: 1px solid #f8fafc !important;
-    transition: all 0.2s ease;
-}
-
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:last-child {
-    border-bottom: none !important;
-}
-
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr > td {
-    padding: 1.25rem 1.5rem !important;
-    border: none !important;
-    vertical-align: middle;
-    color: #475569;
-    font-size: 13px;
-}
-
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr:hover {
-    background-color: #f8fafc !important;
-    transform: scale(0.999);
-}
-
-.p-datatable.p-datatable-minimal .p-datatable-tbody > tr.p-highlight {
-    background: #eff6ff !important;
-    color: #3b82f6 !important;
-}
-
-/* Enhanced Paginator */
-.p-paginator {
-    background: #ffffff !important;
-    border: none !important;
-    border-top: 1px solid #f1f5f9 !important;
-    padding: 1.25rem 1.5rem !important;
-    border-radius: 0 0 1.5rem 1.5rem;
-}
-
-.p-paginator .p-paginator-pages .p-paginator-page {
-    border-radius: 12px;
-    min-width: 2.25rem;
-    height: 2.25rem;
-    font-weight: 600;
-    font-size: 12px;
-    margin: 0 0.125rem;
-    transition: all 0.2s ease;
-    border: none;
-}
-
-.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    background: #3b82f6 !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
-}
-
-.p-paginator .p-link:not(.p-disabled):hover {
-    background: #f8fafc;
-    color: #3b82f6;
-}
-
-.p-dropdown.p-paginator-rpp-options {
-    border-radius: 10px !important;
-    background: #f8fafc !important;
-    border: 1px solid #f1f5f9 !important;
-    margin-left: 1rem;
-}
-
-.p-dropdown.p-paginator-rpp-options .p-dropdown-label {
-    padding: 0.4rem 0.6rem !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    color: #64748b !important;
-}
+/* Removed redundant overrides to favor standardized minimal table styles above */
 

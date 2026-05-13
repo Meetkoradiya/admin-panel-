@@ -147,6 +147,7 @@ const ListLayout = ({
                             rows={10}
                             className="p-datatable-minimal"
                             responsiveLayout="scroll"
+                            showGridlines
                             emptyMessage={
                                 <div className="text-center py-24 flex flex-col items-center justify-center bg-white">
                                     <img
