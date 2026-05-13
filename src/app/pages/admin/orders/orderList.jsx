@@ -146,7 +146,6 @@ const OrderList = () => {
           header="ACTIONS" 
           body={(row) => (
             <ActionButtons 
-              onEdit={() => navigate(`/admin/orders/create/${row.userId}`)}
               onDelete={() => deleteOrder(row)}
               onView={() => navigate(`/admin/orders/${row.id}`)}
             />
